@@ -5,12 +5,14 @@
 // main.c
 // Consola para ingreso de datos.
 
+// -------------------------------------------------------------------------------------
 // Con esto desaparece el error de las líneas con strcasecmp(), que parece que es POSIX.
 // https://pubs.opengroup.org/onlinepubs/009696799/functions/strcasecmp.html
 // #ifdef _MSC_VER
 // #define strncasecmp _strnicmp
 // #define strcasecmp _stricmp
 // #endif
+// -------------------------------------------------------------------------------------
 
 #include <string.h>
 
