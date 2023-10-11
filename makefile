@@ -1,9 +1,9 @@
 todo: main.o sistema.o 
 	g++ -o main main.o sistema.o 
-main.o: main.c
-	g++ -c main.c
-sistema.o: sistema.h sistema.c
-	g++ -c sistema.c
+main.o: main.cpp
+	g++ -c main.cpp
+sistema.o: sistema.h sistema.cpp
+	g++ -c sistema.cpp
 limpiar:
 	rm *.o
 	rm main
