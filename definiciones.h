@@ -17,9 +17,9 @@ enum _retorno { OK,
 typedef enum _retorno TipoRet;
 
 // definición de dato para identificar un nodo como ARCHIVO o DIRECTORIO.
-// enum _tipo { DIR,
-//              FILE };
-// typedef enum _tipo Tipo;
+enum _tipo { DIRECTORIO,
+             ARCHIVO };
+typedef enum _tipo TipoNodo;
 
 // Definición de CADENA.
 typedef char* Cadena;

@@ -18,7 +18,8 @@ struct _sistema {
     // manipular el sistema de directorios Se deberan crear nuevos modulos
 
     // Tipo de nodo
-    string tipo;  // "DIR" || "FILE"
+    // string tipo;  // "DIR" || "FILE"
+    TipoNodo tipo;
 
     // Nombre del archivo/directorio
     // Cadena nombre;
@@ -68,7 +69,7 @@ void imprimir_nivel(Sistema &s, int nivel) {
         } else {
             cout << s->nombre << "   ";
             // Si es un archivo mostramos sus permisos.
-            if (s->tipo == "FILE") {
+            if (s->tipo == 1) {
                 if (s->escritura) {
                     cout << "Lectura/Escritura";
                 } else {
@@ -76,6 +77,7 @@ void imprimir_nivel(Sistema &s, int nivel) {
                 }
             }
         }
+
         cout << endl;
         imprimir_nivel(s->sh, nivel);
     }
@@ -86,7 +88,7 @@ bool arbol_pertenece(Sistema &s, Cadena nombre) {
 
     if (s == NULL) {
         return false;
-    } else if (s->nombre == nombre) {
+    } else if (s->nombre == nombre) {  // no es case sensitive, permite la creacion de 'Hola.mp3' y 'hola.mp3'.
         // } else if (strcasecmp(s->nombre, nombre) == 0) {
         return true;
     } else {
@@ -99,7 +101,7 @@ TipoRet CREARSISTEMA(Sistema &s) {
     // sin subdirectorios ni archivos. Para mas detalles ver letra.
 
     Sistema raiz = new (_sistema);
-    raiz->tipo = "DIR";
+    raiz->tipo = _tipo(0);
     raiz->nombre = "RAIZ";
     raiz->ph = NULL;
     raiz->sh = NULL;
@@ -143,8 +145,7 @@ TipoRet RMDIR(Sistema &s, Cadena nombreDirectorio) {
 }
 
 TipoRet MOVE(Sistema &s, Cadena nombre, Cadena directorioDestino) {
-    // mueve un directorio o archivo desde su directorio origen hacia un
-    // nuevo
+    // mueve un directorio o archivo desde su directorio origen hacia un nuevo
     // directorio destino. Para mas detalles ver letra.
     return NO_IMPLEMENTADA;
 }
@@ -168,7 +169,7 @@ TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo) {
     // con permisos de lectura y escritura.
     Sistema newFile = new (_sistema);
     newFile->nombre = nombreArchivo;
-    newFile->tipo = "FILE";
+    newFile->tipo = _tipo(1);
     newFile->contenido = "";  // NULL o ""?
     newFile->ph = NULL;
     newFile->sh = NULL;
@@ -196,7 +197,6 @@ TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo) {
         // No tiene primer hijo
         s->ph = newFile;
     }
-
     return OK;
 }
 
