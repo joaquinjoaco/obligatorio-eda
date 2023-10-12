@@ -54,7 +54,6 @@ int main() {
         cout << "> ";
         fflush(stdin);
         ejecutado = false;
-
         fgets(comando, MAX_COMANDO, stdin);
 
         pch = strtok(comando, "( ,)\n");

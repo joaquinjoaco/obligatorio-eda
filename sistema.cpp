@@ -21,6 +21,7 @@ struct _sistema {
     string tipo;  // "DIR" || "FILE"
 
     // Nombre del archivo/directorio
+    // Cadena nombre;
     string nombre;
     // -----------------------------
 
@@ -86,18 +87,12 @@ bool arbol_pertenece(Sistema &s, Cadena nombre) {
     if (s == NULL) {
         return false;
     } else if (s->nombre == nombre) {
+        // } else if (strcasecmp(s->nombre, nombre) == 0) {
         return true;
     } else {
         return arbol_pertenece(s->ph, nombre) || arbol_pertenece(s->sh, nombre);
     }
 }
-
-// Sistema encontrar(Sistema &s, Cadena nombre) {
-//     // retorna true si 'e' pertenece al arbol 'a'.
-//     Sistema aux = s;
-//     aux = aux->ph;
-
-// }
 
 TipoRet CREARSISTEMA(Sistema &s) {
     // Inicializa el sistema para que contenga únicamente al directorio RAIZ,
@@ -116,17 +111,17 @@ TipoRet CREARSISTEMA(Sistema &s) {
     return OK;
 }
 
-TipoRet DESTRUIRSISTEMA(Sistema &s){
+TipoRet DESTRUIRSISTEMA(Sistema &s) {
     // Destruye el sistema, liberando la memoria asignada a las estructuras que
     // datos que constituyen el file system. Para mas detalles ver letra.
-	if(s!=NULL){
+    if (s != NULL) {
         DESTRUIRSISTEMA(s->ph);
         DESTRUIRSISTEMA(s->sh);
         delete s;
         return OK;
-    }else{
-		return ERROR;
-	}
+    } else {
+        return ERROR;
+    }
 }
 
 TipoRet CD(Sistema &s, Cadena nombreDirectorio) {
@@ -205,38 +200,37 @@ TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo) {
     return OK;
 }
 
-TipoRet DELETE(Sistema &s, Cadena nombreArchivo){
+TipoRet DELETE(Sistema &s, Cadena nombreArchivo) {
     // Elimina un archivo del directorio actual, siempre y cuando no sea de sólo
     // lectura. Para mas detalles ver letra.
-    if(!arbol_pertenece(s, nombreArchivo)){
-        return ERROR; // El archivo no existe en el directorio actual
+    if (!arbol_pertenece(s, nombreArchivo)) {
+        return ERROR;  // El archivo no existe en el directorio actual
     }
 
     // Encontrar el archivo
-    Sistema archivo=s->ph;
-    Sistema archivoAnterior=NULL;
+    Sistema archivo = s->ph;
+    Sistema archivoAnterior = NULL;
 
-    while(archivo!=NULL && archivo->nombre!=nombreArchivo){
-        archivoAnterior=archivo;
-        archivo=archivo->sh;
+    while (archivo != NULL && archivo->nombre != nombreArchivo) {
+        archivoAnterior = archivo;
+        archivo = archivo->sh;
     }
 
     // Verificar si el archivo es de solo lectura, en este caso no se elimina
-    if(archivo->escritura==false){
+    if (archivo->escritura == false) {
         return ERROR;
     }
 
     // Eliminar el archivo del directorio actual
-    if(archivoAnterior==NULL){
-        s->ph=archivo->sh; // El archivo es el primer hijo del directorio
-    }else{
-        archivoAnterior->sh=archivo->sh; // El archivo no es el primer hijo
+    if (archivoAnterior == NULL) {
+        s->ph = archivo->sh;  // El archivo es el primer hijo del directorio
+    } else {
+        archivoAnterior->sh = archivo->sh;  // El archivo no es el primer hijo
     }
 
-    delete archivo; // Liberar memoria del archivo
+    delete archivo;  // Liberar memoria del archivo
     return OK;
 }
-
 
 TipoRet ATTRIB(Sistema &s, Cadena nombreArchivo, Cadena parametro) {
     if (arbol_pertenece(s, nombreArchivo) &&
@@ -290,20 +284,20 @@ TipoRet DF(Sistema &s, Cadena nombreArchivo, int k) {
     return NO_IMPLEMENTADA;
 }
 
-TipoRet TYPE(Sistema &s, Cadena nombreArchivo){
+TipoRet TYPE(Sistema &s, Cadena nombreArchivo) {
     // Imprime el contenido del archivo parámetro.
     // Para mas detalles ver letra.
 
     // Verificar si el archivo existe en el directorio actual.
-    if(!arbol_pertenece(s, nombreArchivo)){
+    if (!arbol_pertenece(s, nombreArchivo)) {
         return ERROR;
     }
 
     // Encontrar el archivo
-    Sistema archivo=s->ph;
+    Sistema archivo = s->ph;
 
-    while(archivo!= NULL&& archivo->nombre!=nombreArchivo){
-        archivo=archivo->sh;
+    while (archivo != NULL && archivo->nombre != nombreArchivo) {
+        archivo = archivo->sh;
     }
 
     cout << "Contenido de " << nombreArchivo << ":" << endl;
@@ -312,32 +306,32 @@ TipoRet TYPE(Sistema &s, Cadena nombreArchivo){
     return OK;
 }
 
-TipoRet SEARCH(Sistema &s, Cadena nombreArchivo, Cadena texto){
+TipoRet SEARCH(Sistema &s, Cadena nombreArchivo, Cadena texto) {
     // Busca dentro del archivo la existencia del texto.
     // Para mas detalles ver letra.
 
     // Chequea si el archivo existe
-    if(!arbol_pertenece(s, nombreArchivo)){
+    if (!arbol_pertenece(s, nombreArchivo)) {
         return ERROR;
     }
 
     // Encontrar el archivo
-    Sistema archivo=s->ph;
+    Sistema archivo = s->ph;
 
-    while(archivo != NULL && archivo->nombre != nombreArchivo){
+    while (archivo != NULL && archivo->nombre != nombreArchivo) {
         archivo = archivo->sh;
     }
 
     // Realiza la búsqueda del texto dentro del archivo
-    string contenidoArchivo=archivo->contenido;
+    string contenidoArchivo = archivo->contenido;
 
     // Encuentra la primera ocurrencia del texto en el contenido del archivo
-    size_t posicion=contenidoArchivo.find(texto);
+    size_t posicion = contenidoArchivo.find(texto);
 
-    if(posicion!=string::npos){
+    if (posicion != string::npos) {
         cout << "Texto encontrado en la posición: " << posicion << endl;
         return OK;
-    }else{
+    } else {
         cout << "Texto no encontrado en el archivo." << endl;
         return ERROR;
     }
