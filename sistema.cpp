@@ -7,24 +7,118 @@
 
 #include "sistema.h"
 
+#include <string.h>
+
 #include <iostream>
 
 using namespace std;
 
 struct _sistema {
-    // aquí deben figurar los campos que usted considere necesarios para manipular el sistema de directorios
-    // Se deberan crear nuevos modulos
+    // aquí deben figurar los campos que usted considere necesarios para
+    // manipular el sistema de directorios Se deberan crear nuevos modulos
+
+    // Tipo de nodo
+    string tipo;  // "DIR" || "FILE"
+
+    // Nombre del archivo/directorio
+    string nombre;
+    // -----------------------------
+
+    // Primer hijo (para directorios)
+    Sistema ph;
+    // ------------------------------
+    // Siguiente hermano (para directorios y archivos)
+    Sistema sh;
+    // -----------------------------------------------
+
+    // Atributos para archivos
+    string contenido;
+    bool lectura;
+    bool escritura;
+    // -----------------------
 };
 
+int mayor(int a, int b) {
+    if (a > b) {
+        return a;
+    } else {
+        return b;
+    }
+}
+
+int arbol_profunidad(Sistema &s) {
+    // retorna la profundidad del arbol (para el caso de narios calculamos la
+    // profunidad como la cantidad de niveles). EL primer nodo es el nivel 1.
+
+    if (s == NULL) {
+        return 0;
+    } else {
+        mayor(1 + arbol_profunidad(s->ph), arbol_profunidad(s->sh));
+    }
+}
+
+void imprimir_nivel(Sistema &s, int nivel) {
+    if (s != NULL) {
+        if (nivel != 0) {
+            // se va ramificando con las llamadas recursivas.
+            imprimir_nivel(s->ph, nivel - 1);
+            imprimir_nivel(s->sh, nivel);
+
+        } else {
+            cout << s->nombre << "   ";
+            // Si es un archivo mostramos sus permisos.
+            if (s->tipo == "FILE") {
+                if (s->escritura) {
+                    cout << "Lectura/Escritura";
+                } else {
+                    cout << "Lectura";
+                }
+            }
+        }
+        cout << endl;
+        imprimir_nivel(s->sh, nivel);
+    }
+}
+
+bool arbol_pertenece(Sistema &s, Cadena nombre) {
+    // retorna true si 'e' pertenece al arbol 'a'.
+
+    if (s == NULL) {
+        return false;
+    } else if (s->nombre == nombre) {
+        return true;
+    } else {
+        return arbol_pertenece(s->ph, nombre) || arbol_pertenece(s->sh, nombre);
+    }
+}
+
+// Sistema encontrar(Sistema &s, Cadena nombre) {
+//     // retorna true si 'e' pertenece al arbol 'a'.
+//     Sistema aux = s;
+//     aux = aux->ph;
+
+// }
+
 TipoRet CREARSISTEMA(Sistema &s) {
-    // Inicializa el sistema para que contenga únicamente al directorio RAIZ, sin subdirectorios ni archivos.
-    // Para mas detalles ver letra.
-    return NO_IMPLEMENTADA;
+    // Inicializa el sistema para que contenga únicamente al directorio RAIZ,
+    // sin subdirectorios ni archivos. Para mas detalles ver letra.
+
+    Sistema raiz = new (_sistema);
+    raiz->tipo = "DIR";
+    raiz->nombre = "RAIZ";
+    raiz->ph = NULL;
+    raiz->sh = NULL;
+    raiz->contenido = "";
+    raiz->lectura = true;
+    raiz->escritura = true;
+
+    s = raiz;
+    return OK;
 }
 
 TipoRet DESTRUIRSISTEMA(Sistema &s) {
-    // Destruye el sistema, liberando la memoria asignada a las estructuras que datos que constituyen el file system.
-    // Para mas detalles ver letra.
+    // Destruye el sistema, liberando la memoria asignada a las estructuras que
+    // datos que constituyen el file system. Para mas detalles ver letra.
     return NO_IMPLEMENTADA;
 }
 
@@ -47,32 +141,94 @@ TipoRet RMDIR(Sistema &s, Cadena nombreDirectorio) {
 }
 
 TipoRet MOVE(Sistema &s, Cadena nombre, Cadena directorioDestino) {
-    // mueve un directorio o archivo desde su directorio origen hacia un nuevo directorio destino.
-    // Para mas detalles ver letra.
+    // mueve un directorio o archivo desde su directorio origen hacia un
+    // nuevo
+    // directorio destino. Para mas detalles ver letra.
     return NO_IMPLEMENTADA;
 }
 
 TipoRet DIR(Sistema &s, Cadena parametro) {
     // Muestra el contenido del directorio actual.
     // Para mas detalles ver letra.
-    return NO_IMPLEMENTADA;
+    for (int i = 0; i < arbol_profunidad(s); i++) {
+        imprimir_nivel(s, i);
+        cout << "\n";
+    }
+
+    return OK;
 }
 
 TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo) {
     // Crea un nuevo archivo en el directorio actual.
     // Para mas detalles ver letra.
-    return NO_IMPLEMENTADA;
+
+    // lo inserta como ultimo hermano (o ultimo elemento de la lista)
+    // con permisos de lectura y escritura.
+    Sistema newFile = new (_sistema);
+    newFile->nombre = nombreArchivo;
+    newFile->tipo = "FILE";
+    newFile->contenido = "";  // NULL o ""?
+    newFile->ph = NULL;
+    newFile->sh = NULL;
+    newFile->escritura = true;
+    newFile->lectura = true;
+
+    if (arbol_pertenece(s, nombreArchivo)) {
+        return ERROR;
+    }
+
+    if (s->ph != NULL) {
+        // Tiene un primer hijo
+        Sistema aux = s;
+        aux = aux->ph;  // vamos al primer hijo.
+
+        // vamos al ultimo hermano (o ultimo elemento de la lista).
+        while (aux->sh != NULL) {
+            aux = aux->sh;
+        }
+
+        // apuntamos el ultimo hermano al nuevo archivo
+        aux->sh = newFile;
+
+    } else {
+        // No tiene primer hijo
+        s->ph = newFile;
+    }
+
+    return OK;
 }
 
 TipoRet DELETE(Sistema &s, Cadena nombreArchivo) {
-    // Elimina un archivo del directorio actual, siempre y cuando no sea de sólo lectura.
-    // Para mas detalles ver letra.
+    // Elimina un archivo del directorio actual, siempre y cuando no sea de sólo
+    // lectura. Para mas detalles ver letra.
     return NO_IMPLEMENTADA;
 }
 
 TipoRet ATTRIB(Sistema &s, Cadena nombreArchivo, Cadena parametro) {
-    // Agrega un texto al comienzo del archivo NombreArchivo.
-    // Para mas detalles ver letra.
+    if (arbol_pertenece(s, nombreArchivo) &&
+        (strcasecmp(parametro, "+W") == 0 ||
+         strcasecmp(parametro, "-W") == 0)) {
+        Sistema aux = s;
+        // avanzamos al primer hijo para recorrer los hermanos.
+        aux = aux->ph;
+
+        // buscamos el nodo a editar,
+        while (aux->nombre != nombreArchivo) {
+            aux = aux->sh;
+        }
+
+        if (strcasecmp(parametro, "+W") == 0) {
+            aux->escritura = true;
+        } else {
+            aux->escritura = false;
+        }
+
+        return OK;
+
+    } else {
+        return ERROR;
+    }
+
     return NO_IMPLEMENTADA;
 }
 
@@ -112,8 +268,9 @@ TipoRet SEARCH(Sistema &s, Cadena nombreArchivo, Cadena texto) {
     return NO_IMPLEMENTADA;
 }
 
-TipoRet REPLACE(Sistema &s, Cadena nombreArchivo, Cadena texto1, Cadena texto2) {
-    // Busca y reemplaza dentro del archivo la existencia del texto1 por el texto2.
-    // Para mas detalles ver letra.
+TipoRet REPLACE(Sistema &s, Cadena nombreArchivo, Cadena texto1,
+                Cadena texto2) {
+    // Busca y reemplaza dentro del archivo la existencia del texto1 por el
+    // texto2. Para mas detalles ver letra.
     return NO_IMPLEMENTADA;
 }
