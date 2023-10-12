@@ -290,10 +290,26 @@ TipoRet DF(Sistema &s, Cadena nombreArchivo, int k) {
     return NO_IMPLEMENTADA;
 }
 
-TipoRet TYPE(Sistema &s, Cadena nombreArchivo) {
+TipoRet TYPE(Sistema &s, Cadena nombreArchivo){
     // Imprime el contenido del archivo parámetro.
     // Para mas detalles ver letra.
-    return NO_IMPLEMENTADA;
+
+    // Verificar si el archivo existe en el directorio actual.
+    if(!arbol_pertenece(s, nombreArchivo)){
+        return ERROR;
+    }
+
+    // Encontrar el archivo
+    Sistema archivo=s->ph;
+
+    while(archivo!= NULL&& archivo->nombre!=nombreArchivo){
+        archivo=archivo->sh;
+    }
+
+    cout << "Contenido de " << nombreArchivo << ":" << endl;
+    cout << archivo->contenido << endl;
+
+    return OK;
 }
 
 TipoRet SEARCH(Sistema &s, Cadena nombreArchivo, Cadena texto) {
