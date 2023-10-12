@@ -312,10 +312,35 @@ TipoRet TYPE(Sistema &s, Cadena nombreArchivo){
     return OK;
 }
 
-TipoRet SEARCH(Sistema &s, Cadena nombreArchivo, Cadena texto) {
+TipoRet SEARCH(Sistema &s, Cadena nombreArchivo, Cadena texto){
     // Busca dentro del archivo la existencia del texto.
     // Para mas detalles ver letra.
-    return NO_IMPLEMENTADA;
+
+    // Chequea si el archivo existe
+    if(!arbol_pertenece(s, nombreArchivo)){
+        return ERROR;
+    }
+
+    // Encontrar el archivo
+    Sistema archivo=s->ph;
+
+    while(archivo != NULL && archivo->nombre != nombreArchivo){
+        archivo = archivo->sh;
+    }
+
+    // Realiza la búsqueda del texto dentro del archivo
+    string contenidoArchivo=archivo->contenido;
+
+    // Encuentra la primera ocurrencia del texto en el contenido del archivo
+    size_t posicion=contenidoArchivo.find(texto);
+
+    if(posicion!=string::npos){
+        cout << "Texto encontrado en la posición: " << posicion << endl;
+        return OK;
+    }else{
+        cout << "Texto no encontrado en el archivo." << endl;
+        return ERROR;
+    }
 }
 
 TipoRet REPLACE(Sistema &s, Cadena nombreArchivo, Cadena texto1,
