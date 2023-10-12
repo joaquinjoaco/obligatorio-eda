@@ -116,10 +116,17 @@ TipoRet CREARSISTEMA(Sistema &s) {
     return OK;
 }
 
-TipoRet DESTRUIRSISTEMA(Sistema &s) {
+TipoRet DESTRUIRSISTEMA(Sistema &s){
     // Destruye el sistema, liberando la memoria asignada a las estructuras que
     // datos que constituyen el file system. Para mas detalles ver letra.
-    return NO_IMPLEMENTADA;
+	if(s!=NULL){
+        DESTRUIRSISTEMA(s->ph);
+        DESTRUIRSISTEMA(s->sh);
+        delete s;
+        return OK;
+    }else{
+		return ERROR;
+	}
 }
 
 TipoRet CD(Sistema &s, Cadena nombreDirectorio) {
@@ -198,11 +205,38 @@ TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo) {
     return OK;
 }
 
-TipoRet DELETE(Sistema &s, Cadena nombreArchivo) {
+TipoRet DELETE(Sistema &s, Cadena nombreArchivo){
     // Elimina un archivo del directorio actual, siempre y cuando no sea de sólo
     // lectura. Para mas detalles ver letra.
-    return NO_IMPLEMENTADA;
+    if(!arbol_pertenece(s, nombreArchivo)){
+        return ERROR; // El archivo no existe en el directorio actual
+    }
+
+    // Encontrar el archivo
+    Sistema archivo=s->ph;
+    Sistema archivoAnterior=NULL;
+
+    while(archivo!=NULL && archivo->nombre!=nombreArchivo){
+        archivoAnterior=archivo;
+        archivo=archivo->sh;
+    }
+
+    // Verificar si el archivo es de solo lectura, en este caso no se elimina
+    if(archivo->escritura==false){
+        return ERROR;
+    }
+
+    // Eliminar el archivo del directorio actual
+    if(archivoAnterior==NULL){
+        s->ph=archivo->sh; // El archivo es el primer hijo del directorio
+    }else{
+        archivoAnterior->sh=archivo->sh; // El archivo no es el primer hijo
+    }
+
+    delete archivo; // Liberar memoria del archivo
+    return OK;
 }
+
 
 TipoRet ATTRIB(Sistema &s, Cadena nombreArchivo, Cadena parametro) {
     if (arbol_pertenece(s, nombreArchivo) &&
