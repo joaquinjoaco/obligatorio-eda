@@ -55,7 +55,7 @@ int arbol_profunidad(Sistema &s) {
     if (s == NULL) {
         return 0;
     } else {
-        mayor(1 + arbol_profunidad(s->ph), arbol_profunidad(s->sh));
+        return mayor(1 + arbol_profunidad(s->ph), arbol_profunidad(s->sh));
     }
 }
 
@@ -170,7 +170,7 @@ TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo) {
     Sistema newFile = new (_sistema);
     newFile->nombre = nombreArchivo;
     newFile->tipo = _tipo(1);
-    newFile->contenido = "";  // NULL o ""?
+    newFile->contenido = "pepito clavo un clavito";  // NULL o ""?
     newFile->ph = NULL;
     newFile->sh = NULL;
     newFile->escritura = true;

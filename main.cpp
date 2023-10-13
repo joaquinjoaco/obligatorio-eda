@@ -55,6 +55,7 @@ int main() {
         fflush(stdin);
         ejecutado = false;
         fgets(comando, MAX_COMANDO, stdin);
+        // devuelve un string de largo finito (MAX_COMANDO) terminado en una.
 
         pch = strtok(comando, "( ,)\n");
 
