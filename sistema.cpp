@@ -5,6 +5,8 @@
 // sistema.c
 // Modulo de Implementacion del File System.
 
+#define TEXTO_MAX 22
+
 #include "sistema.h"
 
 #include <string.h>
@@ -261,28 +263,105 @@ TipoRet ATTRIB(Sistema &s, Cadena nombreArchivo, Cadena parametro) {
 }
 
 TipoRet IC(Sistema &s, Cadena nombreArchivo, Cadena texto) {
-    // Agrega un texto al final del archivo NombreArchivo.
-    // Para mas detalles ver letra.
+   
+  
+if (arbol_pertenece(s, nombreArchivo)) {
+        Sistema aux = s;
+        // avanzamos al primer hijo para recorrer los hermanos.
+        aux = aux->ph;
+
+        // buscamos el nodo a editar,
+        while (aux->nombre != nombreArchivo) {
+            aux = aux->sh;
+        }
+
+    aux->contenido = (texto + aux->contenido).substr(0, TEXTO_MAX);
+
+    cout << aux->contenido << endl;
+
+        return OK;
+
+    } else {
+        return ERROR;
+    }
+
     return NO_IMPLEMENTADA;
 }
 
 TipoRet IF(Sistema &s, Cadena nombreArchivo, Cadena texto) {
-    // Agrega un texto al final del archivo NombreArchivo.
-    // Para mas detalles ver letra.
+
+if (arbol_pertenece(s, nombreArchivo)) {
+        Sistema aux = s;
+        // avanzamos al primer hijo para recorrer los hermanos.
+        aux = aux->ph;
+
+        // buscamos el nodo a editar,
+        while (aux->nombre != nombreArchivo) {
+            aux = aux->sh;
+        }
+
+    aux->contenido = (aux->contenido + texto).substr(0, TEXTO_MAX);
+
+        return OK;
+
+    } else {
+        return ERROR;
+    }
+
     return NO_IMPLEMENTADA;
 }
-
 TipoRet DC(Sistema &s, Cadena nombreArchivo, int k) {
-    // Elimina los a lo sumo K primeros caracteres del archivo parámetro.
-    // Para mas detalles ver letra.
+  
+  if (arbol_pertenece(s, nombreArchivo)) {
+        Sistema aux = s;
+        // avanzamos al primer hijo para recorrer los hermanos.
+        aux = aux->ph;
+
+        // buscamos el nodo a editar,
+        while (aux->nombre != nombreArchivo) {
+            aux = aux->sh;
+        }
+
+    int auxNum = aux->contenido.length();
+
+        aux->contenido = aux->contenido.substr(k, auxNum);
+
+        return OK;
+
+    } else {
+        return ERROR;
+    }
+
     return NO_IMPLEMENTADA;
 }
 
 TipoRet DF(Sistema &s, Cadena nombreArchivo, int k) {
-    // Elimina los a lo sumo K últimos caracteres del archivo parámetro.
-    // Para mas detalles ver letra.
+    
+      if (arbol_pertenece(s, nombreArchivo)) {
+        Sistema aux = s;
+        // avanzamos al primer hijo para recorrer los hermanos.
+        aux = aux->ph;
+
+        // buscamos el nodo a editar,
+        while (aux->nombre != nombreArchivo) {
+            aux = aux->sh;
+        }
+
+    int auxNum = aux->contenido.length();
+    int limite = auxNum - k;
+
+        aux->contenido = aux->contenido.substr(0,limite);
+
+
+        return OK;
+
+    } else {
+        return ERROR;
+    }
+
     return NO_IMPLEMENTADA;
 }
+    
 
 TipoRet TYPE(Sistema &s, Cadena nombreArchivo) {
     // Imprime el contenido del archivo parámetro.
