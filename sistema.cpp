@@ -172,7 +172,7 @@ TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo) {
     Sistema newFile = new (_sistema);
     newFile->nombre = nombreArchivo;
     newFile->tipo = _tipo(1);
-    newFile->contenido = "pepito clavo un clavito";  // NULL o ""?
+    newFile->contenido = "";  // NULL o ""?
     newFile->ph = NULL;
     newFile->sh = NULL;
     newFile->escritura = true;
@@ -275,9 +275,9 @@ if (arbol_pertenece(s, nombreArchivo)) {
             aux = aux->sh;
         }
 
+    // agregamos al contenido el texto ingresado en la cadena, limitandolo
+    // a 22 caracteres en el contenido total
     aux->contenido = (texto + aux->contenido).substr(0, TEXTO_MAX);
-
-    cout << aux->contenido << endl;
 
         return OK;
 
@@ -300,6 +300,8 @@ if (arbol_pertenece(s, nombreArchivo)) {
             aux = aux->sh;
         }
 
+    // agregamos al contenido el texto ingresado en la cadena (al final en este caso), 
+    // limitandolo a 22 caracteres en el contenido total
     aux->contenido = (aux->contenido + texto).substr(0, TEXTO_MAX);
 
         return OK;
@@ -322,8 +324,10 @@ TipoRet DC(Sistema &s, Cadena nombreArchivo, int k) {
             aux = aux->sh;
         }
 
+    // revisamos el largo total del contenido
     int auxNum = aux->contenido.length();
 
+        //almacenamos el nuevo contenido con k caracteres borrados de su inicio
         aux->contenido = aux->contenido.substr(k, auxNum);
 
         return OK;
@@ -350,6 +354,7 @@ TipoRet DF(Sistema &s, Cadena nombreArchivo, int k) {
     int auxNum = aux->contenido.length();
     int limite = auxNum - k;
 
+        //almacenamos el nuevo contenido con k caracteres borrados de su final.
         aux->contenido = aux->contenido.substr(0,limite);
 
 
