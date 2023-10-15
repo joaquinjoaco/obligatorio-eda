@@ -274,13 +274,18 @@ if (arbol_pertenece(s, nombreArchivo)) {
         while (aux->nombre != nombreArchivo) {
             aux = aux->sh;
         }
-
     // agregamos al contenido el texto ingresado en la cadena, limitandolo
     // a 22 caracteres en el contenido total
+      if(aux->escritura == 1){
+    // agregamos al contenido el texto ingresado en la cadena (al final en este caso), 
+    // limitandolo a 22 caracteres en el contenido total
     aux->contenido = (texto + aux->contenido).substr(0, TEXTO_MAX);
 
         return OK;
-
+}  else {
+    cout << "No tiene permiso de Escritura";
+    return ERROR;
+}
     } else {
         return ERROR;
     }
@@ -299,12 +304,16 @@ if (arbol_pertenece(s, nombreArchivo)) {
         while (aux->nombre != nombreArchivo) {
             aux = aux->sh;
         }
-
+    if(aux->escritura == 1){
     // agregamos al contenido el texto ingresado en la cadena (al final en este caso), 
     // limitandolo a 22 caracteres en el contenido total
     aux->contenido = (aux->contenido + texto).substr(0, TEXTO_MAX);
-
+    
         return OK;
+}  else {
+    cout << "No tiene permiso de Escritura";
+    return ERROR;
+}
 
     } else {
         return ERROR;
@@ -324,14 +333,17 @@ TipoRet DC(Sistema &s, Cadena nombreArchivo, int k) {
             aux = aux->sh;
         }
 
+if(aux->escritura == 1){
     // revisamos el largo total del contenido
-    int auxNum = aux->contenido.length();
-
+    	int auxNum = aux->contenido.length();
         //almacenamos el nuevo contenido con k caracteres borrados de su inicio
         aux->contenido = aux->contenido.substr(k, auxNum);
 
         return OK;
-
+} else {
+	cout << "No tiene permiso de Escritura";
+	return ERROR;	
+}
     } else {
         return ERROR;
     }
@@ -351,6 +363,7 @@ TipoRet DF(Sistema &s, Cadena nombreArchivo, int k) {
             aux = aux->sh;
         }
 
+if(aux->escritura == 1){
     int auxNum = aux->contenido.length();
     int limite = auxNum - k;
 
@@ -359,7 +372,11 @@ TipoRet DF(Sistema &s, Cadena nombreArchivo, int k) {
 
 
         return OK;
-
+   }else {
+   	cout << "No tiene permiso de Escritura";
+	return ERROR;
+   }
+        
     } else {
         return ERROR;
     }
