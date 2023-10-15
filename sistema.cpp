@@ -107,7 +107,7 @@ TipoRet CREARSISTEMA(Sistema &s) {
     raiz->nombre = "RAIZ";
     raiz->ph = NULL;
     raiz->sh = NULL;
-    raiz->contenido = "";
+    raiz->contenido = " ";
     raiz->lectura = true;
     raiz->escritura = true;
 
