@@ -6,7 +6,8 @@
 // Consola para ingreso de datos.
 
 // -------------------------------------------------------------------------------------
-// Con esto desaparece el error de las líneas con strcasecmp(), que parece que es POSIX.
+// Con esto desaparece el error de las líneas con strcasecmp(), que parece que
+// es POSIX.
 // https://pubs.opengroup.org/onlinepubs/009696799/functions/strcasecmp.html
 // #ifdef _MSC_VER
 // #define strncasecmp _strnicmp
@@ -26,7 +27,7 @@ using namespace std;
 int main() {
     Sistema s;
     CREARSISTEMA(s);
-    char* comando = new (char[MAX_COMANDO]);
+    char* comando = new (char[MAX_NOMBRE]);
     char *pch, *pch1, *pch2, *pch3;
     TipoRet ret;
     bool ejecutado = false;
@@ -126,7 +127,8 @@ int main() {
         } else if (strcasecmp(pch, "IC") == 0) {
             pch = strtok(NULL, "( ,)\n");
             if (pch != NULL) {
-                pch1 = strtok(NULL, "( ,)\n");
+                pch1 = strtok(
+                    NULL, "(,)\n");  // modificación: delimitadores (sólo ",")
                 if (pch1 != NULL) {
                     ret = IC(s, pch, pch1);
                     ejecutado = true;
@@ -137,7 +139,8 @@ int main() {
         } else if (strcasecmp(pch, "IF") == 0) {
             pch = strtok(NULL, "( ,)\n");
             if (pch != NULL) {
-                pch1 = strtok(NULL, "( ,)\n");
+                pch1 = strtok(
+                    NULL, "(,)\n");  // modificación: delimitadores (sólo ",")
                 if (pch1 != NULL) {
                     ret = IF(s, pch, pch1);
                     ejecutado = true;

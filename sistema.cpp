@@ -5,8 +5,6 @@
 // sistema.c
 // Modulo de Implementacion del File System.
 
-#define TEXTO_MAX 22
-
 #include "sistema.h"
 
 #include <string.h>
@@ -24,8 +22,7 @@ struct _sistema {
     TipoNodo tipo;
 
     // Nombre del archivo/directorio
-    // Cadena nombre;
-    string nombre;
+    Cadena nombre = new (char[MAX_NOMBRE]);
     // -----------------------------
 
     // Primer hijo (para directorios)
@@ -36,7 +33,7 @@ struct _sistema {
     // -----------------------------------------------
 
     // Atributos para archivos
-    string contenido;
+    Cadena contenido = new (char[TEXTO_MAX]);
     bool lectura;
     bool escritura;
     // -----------------------
@@ -90,8 +87,10 @@ bool arbol_pertenece(Sistema &s, Cadena nombre) {
 
     if (s == NULL) {
         return false;
-    } else if (s->nombre == nombre) {  // no es case sensitive, permite la creacion de 'Hola.mp3' y 'hola.mp3'.
-        // } else if (strcasecmp(s->nombre, nombre) == 0) {
+        // } else if (s->nombre == nombre) {
+        // no es case sensitive, permite la
+        // creacion de 'Hola.mp3' y 'hola.mp3'.
+    } else if (strcmp(s->nombre, nombre) == 0) {  // Hola case sensitive
         return true;
     } else {
         return arbol_pertenece(s->ph, nombre) || arbol_pertenece(s->sh, nombre);
@@ -104,10 +103,12 @@ TipoRet CREARSISTEMA(Sistema &s) {
 
     Sistema raiz = new (_sistema);
     raiz->tipo = _tipo(0);
-    raiz->nombre = "RAIZ";
+    // raiz->nombre = "RAIZ";
+    strcpy(raiz->nombre, "RAIZ");
     raiz->ph = NULL;
     raiz->sh = NULL;
-    raiz->contenido = " ";
+    // raiz->contenido = " ";
+    strcpy(raiz->contenido, "");
     raiz->lectura = true;
     raiz->escritura = true;
 
@@ -170,9 +171,11 @@ TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo) {
     // lo inserta como ultimo hermano (o ultimo elemento de la lista)
     // con permisos de lectura y escritura.
     Sistema newFile = new (_sistema);
-    newFile->nombre = nombreArchivo;
+    // newFile->nombre = nombreArchivo;
+    strcpy(newFile->nombre, nombreArchivo);
     newFile->tipo = _tipo(1);
-    newFile->contenido = "";  // NULL o ""?
+    // newFile->contenido = "";  // NULL o ""?
+    strcpy(newFile->contenido, "pelado clavo un clavito");
     newFile->ph = NULL;
     newFile->sh = NULL;
     newFile->escritura = true;
@@ -212,8 +215,7 @@ TipoRet DELETE(Sistema &s, Cadena nombreArchivo) {
     // Encontrar el archivo
     Sistema archivo = s->ph;
     Sistema archivoAnterior = NULL;
-
-    while (archivo != NULL && archivo->nombre != nombreArchivo) {
+    while (archivo != NULL && strcmp(archivo->nombre, nombreArchivo) != 0) {
         archivoAnterior = archivo;
         archivo = archivo->sh;
     }
@@ -243,7 +245,8 @@ TipoRet ATTRIB(Sistema &s, Cadena nombreArchivo, Cadena parametro) {
         aux = aux->ph;
 
         // buscamos el nodo a editar,
-        while (aux->nombre != nombreArchivo) {
+        // while (aux->nombre != nombreArchivo) {
+        while (strcmp(aux->nombre, nombreArchivo) != 0) {
             aux = aux->sh;
         }
 
@@ -254,7 +257,6 @@ TipoRet ATTRIB(Sistema &s, Cadena nombreArchivo, Cadena parametro) {
         }
 
         return OK;
-
     } else {
         return ERROR;
     }
@@ -263,127 +265,135 @@ TipoRet ATTRIB(Sistema &s, Cadena nombreArchivo, Cadena parametro) {
 }
 
 TipoRet IC(Sistema &s, Cadena nombreArchivo, Cadena texto) {
-   
-  
-if (arbol_pertenece(s, nombreArchivo)) {
-        Sistema aux = s;
-        // avanzamos al primer hijo para recorrer los hermanos.
-        aux = aux->ph;
+    // Agrega un texto al final del archivo NombreArchivo.
+    // Para mas detalles ver letra.
 
-        // buscamos el nodo a editar,
-        while (aux->nombre != nombreArchivo) {
-            aux = aux->sh;
-        }
-    // agregamos al contenido el texto ingresado en la cadena, limitandolo
-    // a 22 caracteres en el contenido total
-      if(aux->escritura == 1){
-    // agregamos al contenido el texto ingresado en la cadena (al final en este caso), 
-    // limitandolo a 22 caracteres en el contenido total
-    aux->contenido = (texto + aux->contenido).substr(0, TEXTO_MAX);
+    // if (arbol_pertenece(s, nombreArchivo)) {
+    //     Sistema aux = s;
+    //     // avanzamos al primer hijo para recorrer los hermanos.
+    //     aux = aux->ph;
 
-        return OK;
-}  else {
-    cout << "No tiene permiso de Escritura";
-    return ERROR;
-}
-    } else {
-        return ERROR;
-    }
+    //     // buscamos el nodo a editar,
+    //     while (aux->nombre != nombreArchivo) {
+    //         aux = aux->sh;
+    //     }
+    //     // agregamos al contenido el texto ingresado en la cadena,
+    //     limitandolo
+    //     // a 22 caracteres en el contenido total
+    //     if (aux->escritura == 1) {
+    //         // agregamos al contenido el texto ingresado en la cadena (al
+    //         final
+    //         // en este caso), limitandolo a 22 caracteres en el contenido
+    //         total
+    //         aux->contenido = (texto + aux->contenido).substr(0, TEXTO_MAX);
 
+    //         return OK;
+    //     } else {
+    //         cout << "No tiene permiso de Escritura";
+    //         return ERROR;
+    //     }
+    // } else {
+    //     return ERROR;
+    // }
     return NO_IMPLEMENTADA;
 }
 
 TipoRet IF(Sistema &s, Cadena nombreArchivo, Cadena texto) {
+    // Agrega un texto al final del archivo NombreArchivo.
+    // Para mas detalles ver letra.
+    // if (arbol_pertenece(s, nombreArchivo)) {
+    //     Sistema aux = s;
+    //     // avanzamos al primer hijo para recorrer los hermanos.
+    //     aux = aux->ph;
 
-if (arbol_pertenece(s, nombreArchivo)) {
-        Sistema aux = s;
-        // avanzamos al primer hijo para recorrer los hermanos.
-        aux = aux->ph;
+    //     // buscamos el nodo a editar,
+    //     while (aux->nombre != nombreArchivo) {
+    //         aux = aux->sh;
+    //     }
+    //     if (aux->escritura == 1) {
+    //         // agregamos al contenido el texto ingresado en la cadena (al
+    //         final
+    //         // en este caso), limitandolo a 22 caracteres en el contenido
+    //         total aux->contenido = (aux->contenido + texto).substr(0,
+    //         TEXTO_MAX);
 
-        // buscamos el nodo a editar,
-        while (aux->nombre != nombreArchivo) {
-            aux = aux->sh;
-        }
-    if(aux->escritura == 1){
-    // agregamos al contenido el texto ingresado en la cadena (al final en este caso), 
-    // limitandolo a 22 caracteres en el contenido total
-    aux->contenido = (aux->contenido + texto).substr(0, TEXTO_MAX);
-    
-        return OK;
-}  else {
-    cout << "No tiene permiso de Escritura";
-    return ERROR;
-}
+    //         return OK;
+    //     } else {
+    //         cout << "No tiene permiso de Escritura";
+    //         return ERROR;
+    //     }
 
-    } else {
-        return ERROR;
-    }
-
+    // } else {
+    //     return ERROR;
+    // }
     return NO_IMPLEMENTADA;
 }
+
 TipoRet DC(Sistema &s, Cadena nombreArchivo, int k) {
-  
-  if (arbol_pertenece(s, nombreArchivo)) {
-        Sistema aux = s;
-        // avanzamos al primer hijo para recorrer los hermanos.
-        aux = aux->ph;
+    // Elimina los a lo sumo K primeros caracteres del archivo parámetro.
+    // Para mas detalles ver letra.
+    // if (arbol_pertenece(s, nombreArchivo)) {
+    //     Sistema aux = s;
+    //     // avanzamos al primer hijo para recorrer los hermanos.
+    //     aux = aux->ph;
 
-        // buscamos el nodo a editar,
-        while (aux->nombre != nombreArchivo) {
-            aux = aux->sh;
-        }
+    //     // buscamos el nodo a editar,
+    //     while (aux->nombre != nombreArchivo) {
+    //         aux = aux->sh;
+    //     }
 
-if(aux->escritura == 1){
-    // revisamos el largo total del contenido
-    	int auxNum = aux->contenido.length();
-        //almacenamos el nuevo contenido con k caracteres borrados de su inicio
-        aux->contenido = aux->contenido.substr(k, auxNum);
+    //     if (aux->escritura == 1) {
+    //         // revisamos el largo total del contenido
+    //         int auxNum = aux->contenido.length();
+    //         // almacenamos el nuevo contenido con k caracteres borrados de su
+    //         // inicio
+    //         aux->contenido = aux->contenido.substr(k, auxNum);
 
-        return OK;
-} else {
-	cout << "No tiene permiso de Escritura";
-	return ERROR;	
-}
-    } else {
-        return ERROR;
-    }
+    //         return OK;
+    //     } else {
+    //         cout << "No tiene permiso de Escritura";
+    //         return ERROR;
+    //     }
+    // } else {
+    //     return ERROR;
+    // }
 
     return NO_IMPLEMENTADA;
 }
 
 TipoRet DF(Sistema &s, Cadena nombreArchivo, int k) {
-    
-      if (arbol_pertenece(s, nombreArchivo)) {
-        Sistema aux = s;
-        // avanzamos al primer hijo para recorrer los hermanos.
-        aux = aux->ph;
+    // Elimina los a lo sumo K últimos caracteres del archivo parámetro.
+    // Para mas detalles ver letra.
+    // if (arbol_pertenece(s, nombreArchivo)) {
+    //     Sistema aux = s;
+    //     // avanzamos al primer hijo para recorrer los hermanos.
+    //     aux = aux->ph;
 
-        // buscamos el nodo a editar,
-        while (aux->nombre != nombreArchivo) {
-            aux = aux->sh;
-        }
+    //     // buscamos el nodo a editar,
+    //     while (aux->nombre != nombreArchivo) {
+    //         aux = aux->sh;
+    //     }
 
-if(aux->escritura == 1){
-    int auxNum = aux->contenido.length();
-    int limite = auxNum - k;
+    //     if (aux->escritura == 1) {
+    //         int auxNum = aux->contenido.length();
+    //         int limite = auxNum - k;
 
-        //almacenamos el nuevo contenido con k caracteres borrados de su final.
-        aux->contenido = aux->contenido.substr(0,limite);
+    //         // almacenamos el nuevo contenido con k caracteres borrados de su
+    //         // final.
+    //         aux->contenido = aux->contenido.substr(0, limite);
 
+    //         return OK;
+    //     } else {
+    //         cout << "No tiene permiso de Escritura";
+    //         return ERROR;
+    //     }
 
-        return OK;
-   }else {
-   	cout << "No tiene permiso de Escritura";
-	return ERROR;
-   }
-        
-    } else {
-        return ERROR;
-    }
+    // } else {
+    //     return ERROR;
+    // }
 
     return NO_IMPLEMENTADA;
 }
-    
 
 TipoRet TYPE(Sistema &s, Cadena nombreArchivo) {
     // Imprime el contenido del archivo parámetro.
@@ -397,7 +407,7 @@ TipoRet TYPE(Sistema &s, Cadena nombreArchivo) {
     // Encontrar el archivo
     Sistema archivo = s->ph;
 
-    while (archivo != NULL && archivo->nombre != nombreArchivo) {
+    while (archivo != NULL && strcmp(archivo->nombre, nombreArchivo) != 0) {
         archivo = archivo->sh;
     }
 
@@ -419,7 +429,7 @@ TipoRet SEARCH(Sistema &s, Cadena nombreArchivo, Cadena texto) {
     // Encontrar el archivo
     Sistema archivo = s->ph;
 
-    while (archivo != NULL && archivo->nombre != nombreArchivo) {
+    while (archivo != NULL && strcmp(archivo->nombre, nombreArchivo) != 0) {
         archivo = archivo->sh;
     }
 

@@ -9,16 +9,15 @@
 // Definiciones generales del proyecto (constantes, etc).
 
 #define MAX_COMANDO 50
+#define TEXTO_MAX 22
+#define MAX_NOMBRE 16
 
 // definición de TIPO DE RETORNO.
-enum _retorno { OK,
-                ERROR,
-                NO_IMPLEMENTADA };
+enum _retorno { OK, ERROR, NO_IMPLEMENTADA };
 typedef enum _retorno TipoRet;
 
 // definición de dato para identificar un nodo como ARCHIVO o DIRECTORIO.
-enum _tipo { DIRECTORIO,
-             ARCHIVO };
+enum _tipo { DIRECTORIO, ARCHIVO };
 typedef enum _tipo TipoNodo;
 
 // Definición de CADENA.
