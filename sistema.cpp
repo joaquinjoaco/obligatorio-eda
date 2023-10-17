@@ -188,7 +188,7 @@ TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo) {
     strcpy(newFile->nombre, nombreArchivo);
     newFile->tipo = _tipo(1);
     // newFile->contenido = "";  // NULL o ""?
-    strcpy(newFile->contenido, "pelado clavo un clavito");
+    strcpy(newFile->contenido, "");
     newFile->ph = NULL;
     newFile->sh = NULL;
     newFile->escritura = true;
@@ -278,66 +278,70 @@ TipoRet ATTRIB(Sistema &s, Cadena nombreArchivo, Cadena parametro) {
 }
 
 TipoRet IC(Sistema &s, Cadena nombreArchivo, Cadena texto) {
-    // Agrega un texto al final del archivo NombreArchivo.
+    // Agrega un texto al principio del archivo NombreArchivo.
     // Para mas detalles ver letra.
 
-    // if (arbol_pertenece(s, nombreArchivo)) {
-    //     Sistema aux = s;
-    //     // avanzamos al primer hijo para recorrer los hermanos.
-    //     aux = aux->ph;
+    if(arbol_pertenece(s, nombreArchivo)){
+        Sistema aux = s;
+        // avanzamos al primer hijo para recorrer los hermanos.
+        aux = aux->ph;
 
-    //     // buscamos el nodo a editar,
-    //     while (strcmp(aux->nombre, nombreArchivo) != 0) {
-    //         aux = aux->sh;
-    //     }
-    //     // agregamos al contenido el texto ingresado en la cadena,
-    //     // limitandolo
-    //     // a 22 caracteres en el contenido total
-    //     if (aux->escritura == 1) {
-    //         // agregamos al contenido el texto ingresado
-    //         // en la cadena (al final en este caso),
-    //         //  limitandolo a 22 caracteres en el contenido total
-    //         aux->contenido = (texto + aux->contenido).substr(0, TEXTO_MAX);
-    //         return OK;
-    //     } else {
-    //         cout << "No tiene permiso de Escritura";
-    //         return ERROR;
-    //     }
-    // } else {
-    //     return ERROR;
-    // }
-    // return NO_IMPLEMENTADA;
+        // buscamos el nodo a editar,
+        while(strcmp(aux->nombre, nombreArchivo) != 0){
+            aux = aux->sh;
+        }
+        if(aux->escritura){
+            // Agregar texto al principio del contenido del archivo
+            char temp[TEXTO_MAX];
+            strcpy(temp, aux->contenido);
+            strcpy(aux->contenido, texto);
+            strcat(aux->contenido, temp);
+
+            // Se limita el contenido a 22 caracteres
+            if (strlen(aux->contenido) > TEXTO_MAX) {
+                aux->contenido[TEXTO_MAX] = '\0';
+            }
+
+            return OK;
+        } else{
+            cout << "No tiene permiso de Escritura" << endl;
+            return ERROR;
+        }
+    }else{
+        return ERROR;
+    }
 }
 
-TipoRet IF(Sistema &s, Cadena nombreArchivo, Cadena texto) {
+TipoRet IF(Sistema &s, Cadena nombreArchivo, Cadena texto){
     // Agrega un texto al final del archivo NombreArchivo.
     // Para mas detalles ver letra.
-    // if (arbol_pertenece(s, nombreArchivo)) {
-    //     Sistema aux = s;
-    //     // avanzamos al primer hijo para recorrer los hermanos.
-    //     aux = aux->ph;
 
-    //     // buscamos el nodo a editar,
-    //     while (strcmp(aux->nombre, nombreArchivo) != 0) {
-    //         aux = aux->sh;
-    //     }
-    //     if (aux->escritura == 1) {
-    //         // agregamos al contenido el texto ingresado en la cadena (al
-    //         final
-    //         // en este caso), limitandolo a 22 caracteres en el contenido
-    //         total aux->contenido = (aux->contenido + texto).substr(0,
-    //         TEXTO_MAX);
+    if(arbol_pertenece(s, nombreArchivo)){
+        Sistema aux = s;
+        // avanzamos al primer hijo para recorrer los hermanos.
+        aux = aux->ph;
 
-    //         return OK;
-    //     } else {
-    //         cout << "No tiene permiso de Escritura";
-    //         return ERROR;
-    //     }
+        // buscamos el nodo a editar,
+        while(strcmp(aux->nombre, nombreArchivo) != 0){
+            aux = aux->sh;
+        }
+        if(aux->escritura){
+            // agregamos al contenido el texto ingresado en la cadena (al final
+            // en este caso)
+            strcat(aux->contenido, texto);
+            // Se limita el contenido a 22 caracteres
+            if(strlen(aux->contenido) > TEXTO_MAX){
+                aux->contenido[TEXTO_MAX] = '\0';
+            }
 
-    // } else {
-    //     return ERROR;
-    // }
-    return NO_IMPLEMENTADA;
+            return OK;
+        }else{
+            cout << "No tiene permiso de Escritura" << endl;
+            return ERROR;
+        }
+    }else{
+        return ERROR;
+    }
 }
 
 TipoRet DC(Sistema &s, Cadena nombreArchivo, int k) {
