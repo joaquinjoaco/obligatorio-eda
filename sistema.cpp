@@ -116,11 +116,9 @@ TipoRet CREARSISTEMA(Sistema &s) {
 
     Sistema raiz = new (_sistema);
     raiz->tipo = _tipo(0);
-    // raiz->nombre = "RAIZ";
     strcpy(raiz->nombre, "RAIZ");
     raiz->ph = NULL;
     raiz->sh = NULL;
-    // raiz->contenido = " ";
     strcpy(raiz->contenido, "");
     raiz->lectura = true;
     raiz->escritura = true;
@@ -184,10 +182,8 @@ TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo) {
     // lo inserta como ultimo hermano (o ultimo elemento de la lista)
     // con permisos de lectura y escritura.
     Sistema newFile = new (_sistema);
-    // newFile->nombre = nombreArchivo;
     strcpy(newFile->nombre, nombreArchivo);
     newFile->tipo = _tipo(1);
-    // newFile->contenido = "";  // NULL o ""?
     strcpy(newFile->contenido, "");
     newFile->ph = NULL;
     newFile->sh = NULL;
@@ -195,6 +191,7 @@ TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo) {
     newFile->lectura = true;
 
     if (arbol_pertenece(s, nombreArchivo)) {
+        cout << "El archivo '" << nombreArchivo << "' ya existe.";
         return ERROR;
     }
 
@@ -222,6 +219,7 @@ TipoRet DELETE(Sistema &s, Cadena nombreArchivo) {
     // Elimina un archivo del directorio actual, siempre y cuando no sea de sólo
     // lectura. Para mas detalles ver letra.
     if (!arbol_pertenece(s, nombreArchivo)) {
+        cout << "El archivo '" << nombreArchivo << "' no existe en el directorio actual.";
         return ERROR;  // El archivo no existe en el directorio actual
     }
 
@@ -235,6 +233,7 @@ TipoRet DELETE(Sistema &s, Cadena nombreArchivo) {
 
     // Verificar si el archivo es de solo lectura, en este caso no se elimina
     if (archivo->escritura == false) {
+        cout << "El archivo '" << nombreArchivo << "' no se puede eliminar.";
         return ERROR;
     }
 
@@ -246,51 +245,56 @@ TipoRet DELETE(Sistema &s, Cadena nombreArchivo) {
     }
 
     delete archivo;  // Liberar memoria del archivo
+    cout << "El archivo '" << nombreArchivo << "' fue eliminado exitosamente.";
     return OK;
 }
 
 TipoRet ATTRIB(Sistema &s, Cadena nombreArchivo, Cadena parametro) {
-    if (arbol_pertenece(s, nombreArchivo) &&
-        (strcasecmp(parametro, "+W") == 0 ||
-         strcasecmp(parametro, "-W") == 0)) {
-        Sistema aux = s;
-        // avanzamos al primer hijo para recorrer los hermanos.
-        aux = aux->ph;
+    if (arbol_pertenece(s, nombreArchivo)) {
+        if ((strcasecmp(parametro, "+W") == 0 ||
+             strcasecmp(parametro, "-W") == 0)) {
+            Sistema aux = s;
+            // avanzamos al primer hijo para recorrer los hermanos.
+            aux = aux->ph;
 
-        // buscamos el nodo a editar,
-        // while (aux->nombre != nombreArchivo) {
-        while (strcmp(aux->nombre, nombreArchivo) != 0) {
-            aux = aux->sh;
-        }
+            // buscamos el nodo a editar,
+            while (strcmp(aux->nombre, nombreArchivo) != 0) {
+                aux = aux->sh;
+            }
 
-        if (strcasecmp(parametro, "+W") == 0) {
-            aux->escritura = true;
+            if (strcasecmp(parametro, "+W") == 0) {
+                aux->escritura = true;
+                cout << "El permiso de escritura fue agregado exitosamente al archivo." << nombreArchivo;
+            } else {
+                aux->escritura = false;
+                cout << "El permiso de escritura fue removido exitosamente del archivo." << nombreArchivo;
+            }
+
+            return OK;
         } else {
-            aux->escritura = false;
+            cout << "Parametro incorrecto, usar -W o +W.";
+            return ERROR;
         }
-
-        return OK;
     } else {
+        cout << "El archivo '" << nombreArchivo << "' No existe.";
         return ERROR;
     }
-
-    return NO_IMPLEMENTADA;
 }
 
 TipoRet IC(Sistema &s, Cadena nombreArchivo, Cadena texto) {
     // Agrega un texto al principio del archivo NombreArchivo.
     // Para mas detalles ver letra.
 
-    if(arbol_pertenece(s, nombreArchivo)){
+    if (arbol_pertenece(s, nombreArchivo)) {
         Sistema aux = s;
         // avanzamos al primer hijo para recorrer los hermanos.
         aux = aux->ph;
 
         // buscamos el nodo a editar,
-        while(strcmp(aux->nombre, nombreArchivo) != 0){
+        while (strcmp(aux->nombre, nombreArchivo) != 0) {
             aux = aux->sh;
         }
-        if(aux->escritura){
+        if (aux->escritura) {
             // Agregar texto al principio del contenido del archivo
             char temp[TEXTO_MAX];
             strcpy(temp, aux->contenido);
@@ -303,43 +307,43 @@ TipoRet IC(Sistema &s, Cadena nombreArchivo, Cadena texto) {
             }
 
             return OK;
-        } else{
+        } else {
             cout << "No tiene permiso de Escritura" << endl;
             return ERROR;
         }
-    }else{
+    } else {
         return ERROR;
     }
 }
 
-TipoRet IF(Sistema &s, Cadena nombreArchivo, Cadena texto){
+TipoRet IF(Sistema &s, Cadena nombreArchivo, Cadena texto) {
     // Agrega un texto al final del archivo NombreArchivo.
     // Para mas detalles ver letra.
 
-    if(arbol_pertenece(s, nombreArchivo)){
+    if (arbol_pertenece(s, nombreArchivo)) {
         Sistema aux = s;
         // avanzamos al primer hijo para recorrer los hermanos.
         aux = aux->ph;
 
         // buscamos el nodo a editar,
-        while(strcmp(aux->nombre, nombreArchivo) != 0){
+        while (strcmp(aux->nombre, nombreArchivo) != 0) {
             aux = aux->sh;
         }
-        if(aux->escritura){
+        if (aux->escritura) {
             // agregamos al contenido el texto ingresado en la cadena (al final
             // en este caso)
             strcat(aux->contenido, texto);
             // Se limita el contenido a 22 caracteres
-            if(strlen(aux->contenido) > TEXTO_MAX){
+            if (strlen(aux->contenido) > TEXTO_MAX) {
                 aux->contenido[TEXTO_MAX] = '\0';
             }
 
             return OK;
-        }else{
+        } else {
             cout << "No tiene permiso de Escritura" << endl;
             return ERROR;
         }
-    }else{
+    } else {
         return ERROR;
     }
 }
