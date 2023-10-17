@@ -11,15 +11,18 @@
 
 #include <iostream>
 
+// #include "auxiliares.h"
+
 using namespace std;
 
 struct _sistema {
     // aquí deben figurar los campos que usted considere necesarios para
     // manipular el sistema de directorios Se deberan crear nuevos modulos
 
+    // LA ESTRUCTURA OPTADA ES LA DE TIPO ARBOL GENERAL
     // Tipo de nodo
-    // string tipo;  // "DIR" || "FILE"
-    TipoNodo tipo;
+    TipoNodo tipo;  //  "DIR" || "FILE"
+    // --------------------------------
 
     // Nombre del archivo/directorio
     Cadena nombre = new (char[MAX_NOMBRE]);
@@ -39,7 +42,12 @@ struct _sistema {
     // -----------------------
 };
 
+// --------------------------------------------------------------------------------------------------
+// ------------------------------ Funciones auxiliares ----------------------------------------------
+// --------------------------------------------------------------------------------------------------
+
 int mayor(int a, int b) {
+    // retorna el mayor de dos enteros.
     if (a > b) {
         return a;
     } else {
@@ -48,8 +56,8 @@ int mayor(int a, int b) {
 }
 
 int arbol_profunidad(Sistema &s) {
-    // retorna la profundidad del arbol (para el caso de narios calculamos la
-    // profunidad como la cantidad de niveles). EL primer nodo es el nivel 1.
+    // retorna la profundidad del arbol (para el caso de arboles generales calculamos la
+    // profunidad como la cantidad de niveles). El primer nodo es el nivel 1.
 
     if (s == NULL) {
         return 0;
@@ -59,6 +67,7 @@ int arbol_profunidad(Sistema &s) {
 }
 
 void imprimir_nivel(Sistema &s, int nivel) {
+    // imprime el nivel dado del arbol general.
     if (s != NULL) {
         if (nivel != 0) {
             // se va ramificando con las llamadas recursivas.
@@ -90,12 +99,16 @@ bool arbol_pertenece(Sistema &s, Cadena nombre) {
         // } else if (s->nombre == nombre) {
         // no es case sensitive, permite la
         // creacion de 'Hola.mp3' y 'hola.mp3'.
-    } else if (strcmp(s->nombre, nombre) == 0) {  // Hola case sensitive
+    } else if (strcmp(s->nombre, nombre) == 0) {
         return true;
     } else {
         return arbol_pertenece(s->ph, nombre) || arbol_pertenece(s->sh, nombre);
     }
 }
+
+// --------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------
 
 TipoRet CREARSISTEMA(Sistema &s) {
     // Inicializa el sistema para que contenga únicamente al directorio RAIZ,
@@ -274,19 +287,17 @@ TipoRet IC(Sistema &s, Cadena nombreArchivo, Cadena texto) {
     //     aux = aux->ph;
 
     //     // buscamos el nodo a editar,
-    //     while (aux->nombre != nombreArchivo) {
+    //     while (strcmp(aux->nombre, nombreArchivo) != 0) {
     //         aux = aux->sh;
     //     }
     //     // agregamos al contenido el texto ingresado en la cadena,
-    //     limitandolo
+    //     // limitandolo
     //     // a 22 caracteres en el contenido total
     //     if (aux->escritura == 1) {
-    //         // agregamos al contenido el texto ingresado en la cadena (al
-    //         final
-    //         // en este caso), limitandolo a 22 caracteres en el contenido
-    //         total
+    //         // agregamos al contenido el texto ingresado
+    //         // en la cadena (al final en este caso),
+    //         //  limitandolo a 22 caracteres en el contenido total
     //         aux->contenido = (texto + aux->contenido).substr(0, TEXTO_MAX);
-
     //         return OK;
     //     } else {
     //         cout << "No tiene permiso de Escritura";
@@ -295,7 +306,7 @@ TipoRet IC(Sistema &s, Cadena nombreArchivo, Cadena texto) {
     // } else {
     //     return ERROR;
     // }
-    return NO_IMPLEMENTADA;
+    // return NO_IMPLEMENTADA;
 }
 
 TipoRet IF(Sistema &s, Cadena nombreArchivo, Cadena texto) {
@@ -307,7 +318,7 @@ TipoRet IF(Sistema &s, Cadena nombreArchivo, Cadena texto) {
     //     aux = aux->ph;
 
     //     // buscamos el nodo a editar,
-    //     while (aux->nombre != nombreArchivo) {
+    //     while (strcmp(aux->nombre, nombreArchivo) != 0) {
     //         aux = aux->sh;
     //     }
     //     if (aux->escritura == 1) {
@@ -338,7 +349,7 @@ TipoRet DC(Sistema &s, Cadena nombreArchivo, int k) {
     //     aux = aux->ph;
 
     //     // buscamos el nodo a editar,
-    //     while (aux->nombre != nombreArchivo) {
+    //     while (strcmp(aux->nombre, nombreArchivo) != 0) {
     //         aux = aux->sh;
     //     }
 
@@ -370,7 +381,7 @@ TipoRet DF(Sistema &s, Cadena nombreArchivo, int k) {
     //     aux = aux->ph;
 
     //     // buscamos el nodo a editar,
-    //     while (aux->nombre != nombreArchivo) {
+    //     while (strcmp(aux->nombre, nombreArchivo) != 0) {
     //         aux = aux->sh;
     //     }
 
