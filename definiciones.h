@@ -11,6 +11,7 @@
 #define MAX_COMANDO 50
 #define TEXTO_MAX 23
 #define MAX_NOMBRE 16
+#define MAX_EXTENSION 3
 
 // definición de TIPO DE RETORNO.
 enum _retorno { OK,
