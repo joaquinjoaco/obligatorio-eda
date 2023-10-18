@@ -212,6 +212,8 @@ TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo) {
         // No tiene primer hijo
         s->ph = newFile;
     }
+
+    cout << "El archivo '" << nombreArchivo << "' fue creado exitosamente.";
     return OK;
 }
 
@@ -264,10 +266,10 @@ TipoRet ATTRIB(Sistema &s, Cadena nombreArchivo, Cadena parametro) {
 
             if (strcasecmp(parametro, "+W") == 0) {
                 aux->escritura = true;
-                cout << "El permiso de escritura fue agregado exitosamente al archivo." << nombreArchivo;
+                cout << "El permiso de escritura fue agregado exitosamente al archivo '" << nombreArchivo << "'.";
             } else {
                 aux->escritura = false;
-                cout << "El permiso de escritura fue removido exitosamente del archivo." << nombreArchivo;
+                cout << "El permiso de escritura fue removido exitosamente del archivo '" << nombreArchivo << "'.";
             }
 
             return OK;
@@ -306,12 +308,14 @@ TipoRet IC(Sistema &s, Cadena nombreArchivo, Cadena texto) {
                 aux->contenido[TEXTO_MAX] = '\0';
             }
 
+            cout << "Se ha insertado '" << texto << "' al comienzo de '" << nombreArchivo << "' exitosamente.";
             return OK;
         } else {
-            cout << "No tiene permiso de Escritura" << endl;
+            cout << "El archivo '" << nombreArchivo << "' es de solo lectura." << endl;
             return ERROR;
         }
     } else {
+        cout << "El archivo '" << nombreArchivo << "' no existe en el directorio actual" << endl;
         return ERROR;
     }
 }
@@ -338,12 +342,14 @@ TipoRet IF(Sistema &s, Cadena nombreArchivo, Cadena texto) {
                 aux->contenido[TEXTO_MAX] = '\0';
             }
 
+            cout << "Se ha insertado '" << texto << "' al final de '" << nombreArchivo << "' exitosamente.";
             return OK;
         } else {
-            cout << "No tiene permiso de Escritura" << endl;
+            cout << "El archivo '" << nombreArchivo << "' es de solo lectura." << endl;
             return ERROR;
         }
     } else {
+        cout << "El archivo '" << nombreArchivo << "' no existe en el directorio actual" << endl;
         return ERROR;
     }
 }
@@ -351,67 +357,89 @@ TipoRet IF(Sistema &s, Cadena nombreArchivo, Cadena texto) {
 TipoRet DC(Sistema &s, Cadena nombreArchivo, int k) {
     // Elimina los a lo sumo K primeros caracteres del archivo parámetro.
     // Para mas detalles ver letra.
-    // if (arbol_pertenece(s, nombreArchivo)) {
-    //     Sistema aux = s;
-    //     // avanzamos al primer hijo para recorrer los hermanos.
-    //     aux = aux->ph;
+    if (arbol_pertenece(s, nombreArchivo)) {
+        Sistema aux = s;
+        // avanzamos al primer hijo para recorrer los hermanos.
+        aux = aux->ph;
 
-    //     // buscamos el nodo a editar,
-    //     while (strcmp(aux->nombre, nombreArchivo) != 0) {
-    //         aux = aux->sh;
-    //     }
+        // buscamos el nodo a editar,
+        while (strcmp(aux->nombre, nombreArchivo) != 0) {
+            aux = aux->sh;
+        }
 
-    //     if (aux->escritura == 1) {
-    //         // revisamos el largo total del contenido
-    //         int auxNum = aux->contenido.length();
-    //         // almacenamos el nuevo contenido con k caracteres borrados de su
-    //         // inicio
-    //         aux->contenido = aux->contenido.substr(k, auxNum);
+        if (aux->escritura == 1) {
+            // revisamos el largo total del contenido
+            string S_Aux = aux->contenido;
+            int auxNum = S_Aux.length();
 
-    //         return OK;
-    //     } else {
-    //         cout << "No tiene permiso de Escritura";
-    //         return ERROR;
-    //     }
-    // } else {
-    //     return ERROR;
-    // }
+            if (k > strlen(aux->contenido)) {
+                // Si el 'k' dado se excede del largo total
+                // de la cadena de contenido tomaremos un nuevo
+                // entero con el largo total de la cadena.
+                int largoTotal = strlen(aux->contenido);
 
-    return NO_IMPLEMENTADA;
+                // almacenamos el nuevo contenido
+                // con k caracteres borrados de su inicio.
+                S_Aux = S_Aux.substr(largoTotal, auxNum);
+                strcpy(aux->contenido, S_Aux.c_str());
+            } else {
+                // Si el 'k' dado no se excede, podemos borrar 'k' caracteres tranquilamente.
+                S_Aux = S_Aux.substr(k, auxNum);
+                strcpy(aux->contenido, S_Aux.c_str());
+            }
+
+            cout << "Se han eliminado los primeros '" << k << "' caracteres del archivo '" << nombreArchivo << "' exitosamente.";
+            return OK;
+        } else {
+            cout << "El archivo '" << nombreArchivo << "' es de solo lectura." << endl;
+            return ERROR;
+        }
+    } else {
+        cout << "El archivo '" << nombreArchivo << "' no existe en el directorio actual" << endl;
+        return ERROR;
+    }
 }
 
 TipoRet DF(Sistema &s, Cadena nombreArchivo, int k) {
     // Elimina los a lo sumo K últimos caracteres del archivo parámetro.
     // Para mas detalles ver letra.
-    // if (arbol_pertenece(s, nombreArchivo)) {
-    //     Sistema aux = s;
-    //     // avanzamos al primer hijo para recorrer los hermanos.
-    //     aux = aux->ph;
+    if (arbol_pertenece(s, nombreArchivo)) {
+        Sistema aux = s;
+        // avanzamos al primer hijo para recorrer los hermanos.
+        aux = aux->ph;
 
-    //     // buscamos el nodo a editar,
-    //     while (strcmp(aux->nombre, nombreArchivo) != 0) {
-    //         aux = aux->sh;
-    //     }
+        //     // buscamos el nodo a editar,
+        while (strcmp(aux->nombre, nombreArchivo) != 0) {
+            aux = aux->sh;
+        }
 
-    //     if (aux->escritura == 1) {
-    //         int auxNum = aux->contenido.length();
-    //         int limite = auxNum - k;
+        if (aux->escritura == 1) {
+            string S_Aux = aux->contenido;
+            int auxNum = S_Aux.length();
 
-    //         // almacenamos el nuevo contenido con k caracteres borrados de su
-    //         // final.
-    //         aux->contenido = aux->contenido.substr(0, limite);
+            if (k > strlen(aux->contenido)) {
+                // almacenamos el nuevo contenido con k caracteres borrados de su final.
+                S_Aux = S_Aux.substr(0, 0);
+                strcpy(aux->contenido, S_Aux.c_str());
 
-    //         return OK;
-    //     } else {
-    //         cout << "No tiene permiso de Escritura";
-    //         return ERROR;
-    //     }
+            } else {
+                int limite = auxNum - k;
+                // almacenamos el nuevo contenido con k caracteres borrados de su final.
+                S_Aux = S_Aux.substr(0, limite);
+                strcpy(aux->contenido, S_Aux.c_str());
+            }
 
-    // } else {
-    //     return ERROR;
-    // }
+            cout << "Se han eliminado los ultimos '" << k << "' caracteres del archivo '" << nombreArchivo << "' exitosamente.";
+            return OK;
+        } else {
+            cout << "El archivo '" << nombreArchivo << "' es de solo lectura." << endl;
+            return ERROR;
+        }
 
-    return NO_IMPLEMENTADA;
+    } else {
+        cout << "El archivo '" << nombreArchivo << "' no existe en el directorio actual" << endl;
+        return ERROR;
+    }
 }
 
 TipoRet TYPE(Sistema &s, Cadena nombreArchivo) {
@@ -420,6 +448,7 @@ TipoRet TYPE(Sistema &s, Cadena nombreArchivo) {
 
     // Verificar si el archivo existe en el directorio actual.
     if (!arbol_pertenece(s, nombreArchivo)) {
+        cout << "El archivo '" << nombreArchivo << "' no existe en el directorio actual" << endl;
         return ERROR;
     }
 
@@ -442,6 +471,7 @@ TipoRet SEARCH(Sistema &s, Cadena nombreArchivo, Cadena texto) {
 
     // Chequea si el archivo existe
     if (!arbol_pertenece(s, nombreArchivo)) {
+        cout << "El archivo '" << nombreArchivo << "' no existe en el directorio actual" << endl;
         return ERROR;
     }
 

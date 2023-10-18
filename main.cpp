@@ -5,16 +5,6 @@
 // main.c
 // Consola para ingreso de datos.
 
-// -------------------------------------------------------------------------------------
-// Con esto desaparece el error de las líneas con strcasecmp(), que parece que
-// es POSIX.
-// https://pubs.opengroup.org/onlinepubs/009696799/functions/strcasecmp.html
-// #ifdef _MSC_VER
-// #define strncasecmp _strnicmp
-// #define strcasecmp _stricmp
-// #endif
-// -------------------------------------------------------------------------------------
-
 #include <string.h>
 
 #include <iostream>
@@ -27,7 +17,7 @@ using namespace std;
 int main() {
     Sistema s;
     CREARSISTEMA(s);
-    char* comando = new (char[MAX_NOMBRE]);
+    char* comando = new (char[MAX_COMANDO]);
     char *pch, *pch1, *pch2, *pch3;
     TipoRet ret;
     bool ejecutado = false;
