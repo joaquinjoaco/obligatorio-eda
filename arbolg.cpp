@@ -3,7 +3,7 @@
 //
 // Trabajo Obligatorio
 // sistema.c
-// Modulo de Implementacion de funciones auxiliares.
+// Modulo de Implementacion de funciones relacionadas a arbol general.
 
 #include "arbolg.h"
 
@@ -42,7 +42,8 @@ struct _sistema {
     // -----------------------
 };
 
-Sistema crear_raiz() {
+Sistema
+crear_raiz() {
     // crea un directorio vacío.
 
     Sistema raiz = new (_sistema);
@@ -95,6 +96,11 @@ Cadena arbol_nombre(Sistema s) {
 Cadena arbol_contenido(Sistema s) {
     // retorna el valor del contenido.
     return s->contenido;
+}
+
+TipoNodo arbol_tipo(Sistema s) {
+    // retorna el tipo del nodo.
+    return s->tipo;
 }
 
 bool arbol_escritura(Sistema s) {

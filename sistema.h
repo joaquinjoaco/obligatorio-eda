@@ -9,6 +9,7 @@
 // Modulo de Definición del File System.
 
 #include "arbolg.h"
+#include "lista.h"
 
 TipoRet CREARSISTEMA(Sistema &s);
 // Inicializa el sistema para que contenga únicamente al directorio RAIZ, sin

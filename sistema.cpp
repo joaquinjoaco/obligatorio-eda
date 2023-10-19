@@ -11,6 +11,8 @@
 
 #include <iostream>
 
+#include "lista.h"
+
 using namespace std;
 
 TipoRet CREARSISTEMA(Sistema &s) {
@@ -55,10 +57,26 @@ TipoRet MOVE(Sistema &s, Cadena nombre, Cadena directorioDestino) {
 TipoRet DIR(Sistema &s, Cadena parametro) {
     // Muestra el contenido del directorio actual.
     // Para mas detalles ver letra.
-    for (int i = 0; i < arbol_profunidad(s); i++) {
-        imprimir_nivel(s, i);
-        cout << "\n";
+
+    // creamos una lista para insertar los archivos de manera alfabeticamente ordenada.
+    Lista archivos_ordenados = crear();
+    Sistema aux = s;
+    // bajamos al primer nivel.
+    aux = arbol_ph(aux);
+
+    // insertamos todos los archivos del primer nivel en la lista.
+    while (aux != NULL) {
+        archivos_ordenados = insertar(aux, archivos_ordenados);
+        aux = arbol_sh(aux);
     }
+
+    // imprimimos la lista que creamos.
+    lista_imprimir(archivos_ordenados);
+
+    // for (int i = 0; i < arbol_profunidad(s); i++) {
+    //     imprimir_nivel(s, i);
+    //     cout << "\n";
+    // }
 
     return OK;
 }

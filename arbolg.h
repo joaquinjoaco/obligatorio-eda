@@ -40,6 +40,10 @@ void modificar_escritura(Sistema &s, bool valor);
 // modifica el valor del permiso de escritura.
 
 Cadena arbol_contenido(Sistema s);
+// retorna el valor del contenido.
+
+TipoNodo arbol_tipo(Sistema s);
+// retorna el tipo del nodo.
 
 Sistema arbol_insertar(Sistema &s, Sistema newFile);
 // inserta un nodo como ultimo sigiente hermano en el primer nivel del arbol.
