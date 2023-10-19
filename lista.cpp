@@ -64,7 +64,7 @@ Lista insertar(Sistema ar, Lista l) {
     if (isEmpty(l))
         // caso que la lista es vacia.
         return cons(ar, NULL);
-    else if (strcmp(arbol_nombre(archivo(l)), arbol_nombre(ar)) < 0)
+    else if (strcasecmp(arbol_nombre(archivo(l)), arbol_nombre(ar)) < 0)
         // caso que el archivo actual sea menor alfabeticamente que el que se quiere insertar.
         return cons(archivo(l), insertar(ar, tail(l)));
     else if (isEmpty(tail(l)))
