@@ -8,6 +8,7 @@
 // definiciones.h
 // Definiciones generales del proyecto (constantes, etc).
 
+#define NOMBRE_RAIZ "RAIZ"
 #define MAX_COMANDO 50
 #define TEXTO_MAX 23
 #define MAX_NOMBRE 16

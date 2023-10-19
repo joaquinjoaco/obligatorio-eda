@@ -48,7 +48,7 @@ crear_raiz() {
 
     Sistema raiz = new (_sistema);
     raiz->tipo = _tipo(0);
-    strcpy(raiz->nombre, "RAIZ");
+    strcpy(raiz->nombre, NOMBRE_RAIZ);
     raiz->ph = NULL;
     raiz->sh = NULL;
     strcpy(raiz->contenido, "");
