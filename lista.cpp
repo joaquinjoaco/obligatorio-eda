@@ -62,13 +62,16 @@ Lista insertar(Sistema ar, Lista l) {
     // lista ordenada l. l no comparte memoria con la lista resultado.
 
     if (isEmpty(l))
-        // caso que la lista es vacia.
+        // caso que la lista es vacía.
         return cons(ar, NULL);
+    else if (strcasecmp(arbol_nombre(archivo(l)), arbol_nombre(ar)) == 0)
+        // caso en el que el archivo ya existe en la lista.
+        return l;
     else if (strcasecmp(arbol_nombre(archivo(l)), arbol_nombre(ar)) < 0)
-        // caso que el archivo actual sea menor alfabeticamente que el que se quiere insertar.
+        // caso que el archivo actual sea menor alfabéticamente que el que se quiere insertar.
         return cons(archivo(l), insertar(ar, tail(l)));
     else if (isEmpty(tail(l)))
-        // caso que llegamos al ultimo elemento de l
+        // caso que llegamos al último elemento de l
         return cons(ar, cons(archivo(l), NULL));
     else
         return cons(ar, cons(archivo(l), insertar(archivo(tail(l)), tail(l))));
