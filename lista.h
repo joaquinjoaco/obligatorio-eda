@@ -36,7 +36,7 @@ Lista insertar(Sistema archivo, Lista l);
 // Retorna la lista fruto de insertar ordenadamente el elemento x en la lista ordenada l.
 // l no comparte memoria con la lista resultado.
 
-void lista_imprimir(Lista l);
+void imprimir_lista(Lista l);
 // Imprime los elementos de la lista.
 
 #endif

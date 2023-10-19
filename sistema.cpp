@@ -61,6 +61,7 @@ TipoRet DIR(Sistema &s, Cadena parametro) {
     // creamos una lista para insertar los archivos de manera alfabeticamente ordenada.
     Lista archivos_ordenados = crear();
     Sistema aux = s;
+    cout << "RAIZ" << endl << endl;
     // bajamos al primer nivel.
     aux = arbol_ph(aux);
 
@@ -71,7 +72,7 @@ TipoRet DIR(Sistema &s, Cadena parametro) {
     }
 
     // imprimimos la lista que creamos.
-    lista_imprimir(archivos_ordenados);
+    imprimir_lista(archivos_ordenados);
 
     // for (int i = 0; i < arbol_profunidad(s); i++) {
     //     imprimir_nivel(s, i);
