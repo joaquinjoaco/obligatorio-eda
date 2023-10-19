@@ -61,8 +61,7 @@ TipoRet DIR(Sistema &s, Cadena parametro) {
     // creamos una lista para insertar los archivos de manera alfabeticamente ordenada.
     Lista archivos_ordenados = crear();
     Sistema aux = s;
-    cout << NOMBRE_RAIZ << endl << endl;
-    
+
     // bajamos al primer nivel.
     aux = arbol_ph(aux);
 
