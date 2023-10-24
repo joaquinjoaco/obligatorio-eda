@@ -10,6 +10,7 @@
 #include <string.h>
 
 #include <iostream>
+#include <ctype.h>
 
 #include "arbolg.h"
 #include "definiciones.h"
@@ -64,17 +65,24 @@ Lista insertar(Sistema ar, Lista l) {
     if (isEmpty(l))
         // caso que la lista es vacía.
         return cons(ar, NULL);
-    else if (strcasecmp(arbol_nombre(archivo(l)), arbol_nombre(ar)) == 0)
+    else if (strcmp(arbol_nombre(archivo(l)), arbol_nombre(ar)) == 0)
         // caso en el que el archivo ya existe en la lista.
         return l;
-    else if (strcasecmp(arbol_nombre(archivo(l)), arbol_nombre(ar)) < 0)
+    else if (strcmp(arbol_nombre(archivo(l)), arbol_nombre(ar)) < 0)
         // caso que el archivo actual sea menor alfabéticamente que el que se quiere insertar.
         return cons(archivo(l), insertar(ar, tail(l)));
     else if (isEmpty(tail(l)))
         // caso que llegamos al último elemento de l
         return cons(ar, cons(archivo(l), NULL));
-    else
-        return cons(ar, cons(archivo(l), insertar(archivo(tail(l)), tail(l))));
+    else {
+        char nombreArchivoActual = tolower(arbol_nombre(archivo(l))[0]);
+        char nombreArchivoNuevo = tolower(arbol_nombre(ar)[0]);
+        if (nombreArchivoActual == nombreArchivoNuevo) {
+            return cons(ar, cons(archivo(l), tail(l)));
+        } else {
+            return cons(ar, cons(archivo(l), insertar(archivo(tail(l)), tail(l))));
+        }
+    }
 }
 
 void imprimir_lista(Lista l) {
