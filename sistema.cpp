@@ -364,8 +364,7 @@ TipoRet TYPE(Sistema &s, Cadena nombreArchivo) {
 
     // Verificar si el archivo existe en el directorio actual.
     if (!arbol_pertenece(s, nombreArchivo)) {
-        cout << "El archivo '" << nombreArchivo
-             << "' no existe en el directorio actual" << endl;
+        cout << "El archivo '" << nombreArchivo << "' no existe en el directorio actual" << endl;
         return ERROR;
     }
 
@@ -373,13 +372,19 @@ TipoRet TYPE(Sistema &s, Cadena nombreArchivo) {
     Sistema archivo = arbol_ph(s);
 
     while (archivo != NULL && strcmp(arbol_nombre(archivo), nombreArchivo) != 0) {
-        archivo = arbol_ph(archivo);
+        archivo = arbol_sh(archivo);    
     }
 
-    cout << "Contenido de " << nombreArchivo << ":" << endl;
-    cout << arbol_contenido(archivo) << endl;
+    string contenido = arbol_contenido(archivo);
 
-    return OK;
+    if (contenido.empty()) {
+        cout << "El archivo " << nombreArchivo << " no tiene contenido" << endl;
+        return OK;
+    } else {
+        cout << "Contenido de " << nombreArchivo << ":" << endl;
+        cout << arbol_contenido(archivo) << endl;
+        return OK;
+    }
 }
 
 TipoRet SEARCH(Sistema &s, Cadena nombreArchivo, Cadena texto) {
