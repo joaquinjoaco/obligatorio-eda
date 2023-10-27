@@ -18,6 +18,7 @@ using namespace std;
 TipoRet CREARSISTEMA(Sistema &s) {
     // Inicializa el sistema para que contenga únicamente al directorio RAIZ,
     // sin subdirectorios ni archivos. Para mas detalles ver letra.
+    // Pre: No debe exisitr un sistema previamente creado.
 
     s = crear_raiz();
     return OK;
@@ -26,6 +27,8 @@ TipoRet CREARSISTEMA(Sistema &s) {
 TipoRet DESTRUIRSISTEMA(Sistema &s) {
     // Destruye el sistema, liberando la memoria asignada a las estructuras que
     // datos que constituyen el file system. Para mas detalles ver letra.
+    // Pre: El sistema debe haber sido creado previamente.
+
     destruir_arbol(s);
     return OK;
 }
@@ -57,6 +60,7 @@ TipoRet MOVE(Sistema &s, Cadena nombre, Cadena directorioDestino) {
 TipoRet DIR(Sistema &s, Cadena parametro) {
     // Muestra el contenido del directorio actual.
     // Para mas detalles ver letra.
+    // Pre: El sistema debe haber sido creado.
 
     // creamos una lista para insertar los archivos de manera alfabeticamente ordenada.
     Lista archivos_ordenados = crear();
@@ -74,17 +78,14 @@ TipoRet DIR(Sistema &s, Cadena parametro) {
     // imprimimos la lista que creamos.
     imprimir_lista(archivos_ordenados);
 
-    // for (int i = 0; i < arbol_profunidad(s); i++) {
-    //     imprimir_nivel(s, i);
-    //     cout << "\n";
-    // }
-
     return OK;
 }
 
 TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo) {
     // Crea un nuevo archivo en el directorio actual.
     // Para mas detalles ver letra.
+    // Pre: el nombre del archivo no debe ser vacio.
+    // Pre: el nombre no debe superar los 15 caracteres.
 
     Cadena extension;
     Cadena auxiliar = new (char[MAX_COMANDO]);
@@ -93,12 +94,10 @@ TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo) {
     extension = strtok(auxiliar, "(.)\n");
     extension = strtok(NULL, "(.)\n");
     if (extension == NULL) {
-        cout << "El archivo debe tener una extensión entre 1 y 3 caracteres."
-             << endl;
+        cout << "El archivo debe tener una extensión entre 1 y 3 caracteres." << endl;
         return ERROR;
     } else if (strlen(extension) > MAX_EXTENSION) {
-        cout << "La extensión del archivo no puede superar los 3 caracteres."
-             << endl;
+        cout << "La extensión del archivo no puede superar los 3 caracteres." << endl;
         return ERROR;
     } else {
         // Si pasó las validaciones, se le asigna nombre al archivo y se lo
@@ -120,17 +119,16 @@ TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo) {
 TipoRet DELETE(Sistema &s, Cadena nombreArchivo) {
     // Elimina un archivo del directorio actual, siempre y cuando no sea de sólo
     // lectura. Para mas detalles ver letra.
+
     if (!arbol_pertenece(s, nombreArchivo)) {
-        cout << "El archivo '" << nombreArchivo
-             << "' no existe en el directorio actual.";
+        cout << "El archivo '" << nombreArchivo << "' no existe en el directorio actual.";
         return ERROR;  // El archivo no existe en el directorio actual
     }
 
     // Encontrar el archivo
     Sistema archivo = arbol_ph(s);
     Sistema archivoAnterior = NULL;
-    while (archivo != NULL &&
-           strcmp(arbol_nombre(archivo), nombreArchivo) != 0) {
+    while (archivo != NULL && strcmp(arbol_nombre(archivo), nombreArchivo) != 0) {
         archivoAnterior = archivo;
         archivo = arbol_sh(archivo);
     }
@@ -147,9 +145,11 @@ TipoRet DELETE(Sistema &s, Cadena nombreArchivo) {
 }
 
 TipoRet ATTRIB(Sistema &s, Cadena nombreArchivo, Cadena parametro) {
+    // Agrega un texto al comienzo del archivo NombreArchivo.
+    // Para mas detalles ver letra.
+
     if (arbol_pertenece(s, nombreArchivo)) {
-        if ((strcasecmp(parametro, "+W") == 0 ||
-             strcasecmp(parametro, "-W") == 0)) {
+        if ((strcasecmp(parametro, "+W") == 0 || strcasecmp(parametro, "-W") == 0)) {
             Sistema aux = s;
             // avanzamos al primer hijo para recorrer los hermanos.
             aux = arbol_ph(aux);
@@ -161,14 +161,10 @@ TipoRet ATTRIB(Sistema &s, Cadena nombreArchivo, Cadena parametro) {
 
             if (strcasecmp(parametro, "+W") == 0) {
                 modificar_escritura(aux, true);
-                cout << "El permiso de escritura fue agregado exitosamente al "
-                        "archivo '"
-                     << nombreArchivo << "'.";
+                cout << "El permiso de escritura fue agregado exitosamente al " "archivo '" << nombreArchivo << "'.";
             } else {
                 modificar_escritura(aux, false);
-                cout << "El permiso de escritura fue removido exitosamente del "
-                        "archivo '"
-                     << nombreArchivo << "'.";
+                cout << "El permiso de escritura fue removido exitosamente del " "archivo '" << nombreArchivo << "'.";
             }
 
             return OK;
@@ -207,17 +203,14 @@ TipoRet IC(Sistema &s, Cadena nombreArchivo, Cadena texto) {
                 arbol_contenido(aux)[TEXTO_MAX] = '\0';
             }
 
-            cout << "Se ha insertado '" << texto << "' al comienzo de '"
-                 << nombreArchivo << "' exitosamente.";
+            cout << "Se ha insertado '" << texto << "' al comienzo de '" << nombreArchivo << "' exitosamente.";
             return OK;
         } else {
-            cout << "El archivo '" << nombreArchivo << "' es de solo lectura."
-                 << endl;
+            cout << "El archivo '" << nombreArchivo << "' es de solo lectura." << endl;
             return ERROR;
         }
     } else {
-        cout << "El archivo '" << nombreArchivo
-             << "' no existe en el directorio actual" << endl;
+        cout << "El archivo '" << nombreArchivo << "' no existe en el directorio actual" << endl;
         return ERROR;
     }
 }
@@ -236,25 +229,21 @@ TipoRet IF(Sistema &s, Cadena nombreArchivo, Cadena texto) {
             aux = arbol_sh(aux);
         }
         if (arbol_escritura(aux)) {
-            // agregamos al contenido el texto ingresado en la cadena (al final
-            // en este caso)
+            // agregamos al contenido el texto ingresado en la cadena (al final en este caso)
             strcat(arbol_contenido(aux), texto);
             // Se limita el contenido a 22 caracteres
             if (strlen(arbol_contenido(aux)) > TEXTO_MAX) {
                 arbol_contenido(aux)[TEXTO_MAX] = '\0';
             }
 
-            cout << "Se ha insertado '" << texto << "' al final de '"
-                 << nombreArchivo << "' exitosamente.";
+            cout << "Se ha insertado '" << texto << "' al final de '" << nombreArchivo << "' exitosamente.";
             return OK;
         } else {
-            cout << "El archivo '" << nombreArchivo << "' es de solo lectura."
-                 << endl;
+            cout << "El archivo '" << nombreArchivo << "' es de solo lectura." << endl;
             return ERROR;
         }
     } else {
-        cout << "El archivo '" << nombreArchivo
-             << "' no existe en el directorio actual" << endl;
+        cout << "El archivo '" << nombreArchivo << "' no existe en el directorio actual" << endl;
         return ERROR;
     }
 }
@@ -262,6 +251,7 @@ TipoRet IF(Sistema &s, Cadena nombreArchivo, Cadena texto) {
 TipoRet DC(Sistema &s, Cadena nombreArchivo, int k) {
     // Elimina los a lo sumo K primeros caracteres del archivo parámetro.
     // Para mas detalles ver letra.
+
     if (arbol_pertenece(s, nombreArchivo)) {
         Sistema aux = s;
         // avanzamos al primer hijo para recorrer los hermanos.
@@ -278,34 +268,26 @@ TipoRet DC(Sistema &s, Cadena nombreArchivo, int k) {
             int auxNum = S_Aux.length();
 
             if (k > strlen(arbol_contenido(aux))) {
-                // Si el 'k' dado se excede del largo total
-                // de la cadena de contenido tomaremos un nuevo
-                // entero con el largo total de la cadena.
+                // Si el 'k' dado se excede del largo total de la cadena de contenido tomaremos un nuevo entero con el largo total de la cadena.
                 int largoTotal = strlen(arbol_contenido(aux));
 
-                // almacenamos el nuevo contenido
-                // con k caracteres borrados de su inicio.
+                // almacenamos el nuevo contenido con k caracteres borrados de su inicio.
                 S_Aux = S_Aux.substr(largoTotal, auxNum);
                 strcpy(arbol_contenido(aux), S_Aux.c_str());
             } else {
-                // Si el 'k' dado no se excede, podemos borrar 'k' caracteres
-                // tranquilamente.
+                // Si el 'k' dado no se excede, podemos borrar 'k' caracteres.
                 S_Aux = S_Aux.substr(k, auxNum);
                 strcpy(arbol_contenido(aux), S_Aux.c_str());
             }
 
-            cout << "Se han eliminado los primeros '" << k
-                 << "' caracteres del archivo '" << nombreArchivo
-                 << "' exitosamente.";
+            cout << "Se han eliminado los primeros '" << k << "' caracteres del archivo '" << nombreArchivo << "' exitosamente.";
             return OK;
         } else {
-            cout << "El archivo '" << nombreArchivo << "' es de solo lectura."
-                 << endl;
+            cout << "El archivo '" << nombreArchivo << "' es de solo lectura." << endl;
             return ERROR;
         }
     } else {
-        cout << "El archivo '" << nombreArchivo
-             << "' no existe en el directorio actual" << endl;
+        cout << "El archivo '" << nombreArchivo << "' no existe en el directorio actual" << endl;
         return ERROR;
     }
 }
@@ -313,12 +295,13 @@ TipoRet DC(Sistema &s, Cadena nombreArchivo, int k) {
 TipoRet DF(Sistema &s, Cadena nombreArchivo, int k) {
     // Elimina los a lo sumo K últimos caracteres del archivo parámetro.
     // Para mas detalles ver letra.
+
     if (arbol_pertenece(s, nombreArchivo)) {
         Sistema aux = s;
         // avanzamos al primer hijo para recorrer los hermanos.
         aux = arbol_ph(aux);
 
-        //     // buscamos el nodo a editar,
+        // buscamos el nodo a editar,
         while (strcmp(arbol_nombre(aux), nombreArchivo) != 0) {
             aux = arbol_sh(aux);
         }
@@ -328,32 +311,25 @@ TipoRet DF(Sistema &s, Cadena nombreArchivo, int k) {
             int auxNum = S_Aux.length();
 
             if (k > strlen(arbol_contenido(aux))) {
-                // almacenamos el nuevo contenido con k caracteres borrados de
-                // su final.
+                // almacenamos el nuevo contenido con k caracteres borrados de su final.
                 S_Aux = S_Aux.substr(0, 0);
                 strcpy(arbol_contenido(aux), S_Aux.c_str());
-
             } else {
                 int limite = auxNum - k;
-                // almacenamos el nuevo contenido con k caracteres borrados de
-                // su final.
+                // almacenamos el nuevo contenido con k caracteres borrados de su final.
                 S_Aux = S_Aux.substr(0, limite);
                 strcpy(arbol_contenido(aux), S_Aux.c_str());
             }
 
-            cout << "Se han eliminado los ultimos '" << k
-                 << "' caracteres del archivo '" << nombreArchivo
-                 << "' exitosamente.";
+            cout << "Se han eliminado los ultimos '" << k << "' caracteres del archivo '" << nombreArchivo << "' exitosamente.";
             return OK;
         } else {
-            cout << "El archivo '" << nombreArchivo << "' es de solo lectura."
-                 << endl;
+            cout << "El archivo '" << nombreArchivo << "' es de solo lectura." << endl;
             return ERROR;
         }
 
     } else {
-        cout << "El archivo '" << nombreArchivo
-             << "' no existe en el directorio actual" << endl;
+        cout << "El archivo '" << nombreArchivo << "' no existe en el directorio actual" << endl;
         return ERROR;
     }
 }
@@ -381,20 +357,18 @@ TipoRet TYPE(Sistema &s, Cadena nombreArchivo) {
         cout << "El archivo " << nombreArchivo << " no tiene contenido" << endl;
         return OK;
     } else {
-        cout << "Contenido de " << nombreArchivo << ":" << endl;
-        cout << arbol_contenido(archivo) << endl;
+        cout << "Contenido de " << nombreArchivo << ":" << endl; cout << arbol_contenido(archivo) << endl;
         return OK;
     }
 }
 
 TipoRet SEARCH(Sistema &s, Cadena nombreArchivo, Cadena texto) {
-    // Busca dentro del archivo la existencia del texto.
+    // Busca dentro del archivo la existencia del texto y devuelve la posición en que lo encuentra.
     // Para mas detalles ver letra.
 
     // Chequea si el archivo existe
     if (!arbol_pertenece(s, nombreArchivo)) {
-        cout << "El archivo '" << nombreArchivo
-             << "' no existe en el directorio actual" << endl;
+        cout << "El archivo '" << nombreArchivo << "' no existe en el directorio actual" << endl;
         return ERROR;
     }
 

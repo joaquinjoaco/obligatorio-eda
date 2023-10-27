@@ -42,8 +42,7 @@ struct _sistema {
     // -----------------------
 };
 
-Sistema
-crear_raiz() {
+Sistema crear_raiz() {
     // crea un directorio vacío.
 
     Sistema raiz = new (_sistema);
