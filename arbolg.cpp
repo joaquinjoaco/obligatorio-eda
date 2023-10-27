@@ -80,36 +80,43 @@ bool vacio(Sistema s) {
 
 Sistema arbol_ph(Sistema s) {
     // retorna el primer hijo.
+    // Pre: s no vacio.
     return s->ph;
 }
 
 Sistema arbol_sh(Sistema s) {
     // retorna el siguiente hermano.
+    // Pre: s no vacio.
     return s->sh;
 }
 
 Cadena arbol_nombre(Sistema s) {
     // retorna el nombre del archivo.
+    // Pre: s no vacio.
     return s->nombre;
 }
 
 Cadena arbol_contenido(Sistema s) {
     // retorna el valor del contenido.
+    // Pre: s no vacio.
     return s->contenido;
 }
 
 TipoNodo arbol_tipo(Sistema s) {
     // retorna el tipo del nodo.
+    // Pre: s no vacio.
     return s->tipo;
 }
 
 bool arbol_escritura(Sistema s) {
     // retorna el valor del permiso de escritura.
+    // Pre: s no vacio.
     return s->escritura;
 }
 
 void modificar_escritura(Sistema &s, bool valor) {
     // modifica el valor del permiso de escritura.
+    // Pre: s no vacio.
     s->escritura = valor;
 }
 
@@ -210,9 +217,6 @@ bool arbol_pertenece(Sistema &s, Cadena nombre) {
 
     if (s == NULL) {
         return false;
-        // } else if (s->nombre == nombre) {
-        // no es case sensitive, permite la
-        // creacion de 'Hola.mp3' y 'hola.mp3'.
     } else if (strcmp(s->nombre, nombre) == 0) {
         return true;
     } else {

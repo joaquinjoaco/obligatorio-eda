@@ -7,10 +7,10 @@
 
 #include "lista.h"
 
+#include <ctype.h>
 #include <string.h>
 
 #include <iostream>
-#include <ctype.h>
 
 #include "arbolg.h"
 #include "definiciones.h"
@@ -44,6 +44,7 @@ bool isEmpty(Lista l) {
 
 Sistema archivo(Lista l) {
     // Retorna el archivo del primer elemento de la lista.
+    // Pre: l no vacia.
     return l->archivo;
 }
 
@@ -88,7 +89,8 @@ Lista insertar(Sistema ar, Lista l) {
 void imprimir_lista(Lista l) {
     // Imprime l en la salida estandar.
 
-    cout << NOMBRE_RAIZ << endl << endl;
+    cout << NOMBRE_RAIZ << endl
+         << endl;
 
     while (!isEmpty(l)) {
         cout << arbol_nombre(archivo(l)) << "   ";
