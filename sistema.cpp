@@ -92,7 +92,6 @@ TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo) {
     extension = strtok(auxiliar, "(.)\n");  // se queda con nombre.
     extension = strtok(NULL, "(.)\n");      // se queda con la extension.
     strcpy(nombre, auxiliar);
-    cout << "cout: " << nombre << endl;
 
     if (extension == NULL) {
         cout << "El archivo debe tener una extensión entre 1 y 3 caracteres." << endl;
