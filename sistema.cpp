@@ -111,13 +111,13 @@ TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo) {
         Sistema newFile = crear_archivo(nombreArchivo);
 
         if (arbol_pertenece(s, nombreArchivo)) {
-            cout << "El archivo '" << nombreArchivo << "' ya existe.";
+            cout << "El archivo '" << nombreArchivo << "' ya existe." << endl;
             delete auxiliar;
             return ERROR;
         } else {
             // insertamos el nuevo archivo como ultimo hermano.
             arbol_insertar(s, newFile);
-            cout << "El archivo '" << nombreArchivo << "' fue creado exitosamente.";
+            cout << "El archivo '" << nombreArchivo << "' fue creado exitosamente." << endl;
             delete auxiliar;
             return OK;
         }
@@ -129,7 +129,7 @@ TipoRet DELETE(Sistema &s, Cadena nombreArchivo) {
     // lectura.
 
     if (!arbol_pertenece(s, nombreArchivo)) {
-        cout << "El archivo '" << nombreArchivo << "' no existe en el directorio actual.";
+        cout << "El archivo '" << nombreArchivo << "' no existe en el directorio actual." << endl;
         return ERROR;  // El archivo no existe en el directorio actual
     }
 
@@ -143,12 +143,12 @@ TipoRet DELETE(Sistema &s, Cadena nombreArchivo) {
 
     // Verificar si el archivo es de solo lectura, en este caso no se elimina
     if (arbol_escritura(archivo) == false) {
-        cout << "El archivo '" << nombreArchivo << "' no se puede eliminar.";
+        cout << "El archivo '" << nombreArchivo << "' no se puede eliminar, no se tiene permiso de escritura sobre el archivo." << endl;
         return ERROR;
     }
 
     arbol_eliminar(s, archivo, archivoAnterior);
-    cout << "El archivo '" << nombreArchivo << "' fue eliminado exitosamente.";
+    cout << "El archivo '" << nombreArchivo << "' fue eliminado exitosamente." << endl;
     return OK;
 }
 
@@ -168,23 +168,19 @@ TipoRet ATTRIB(Sistema &s, Cadena nombreArchivo, Cadena parametro) {
 
             if (strcasecmp(parametro, "+W") == 0) {
                 modificar_escritura(aux, true);
-                cout << "El permiso de escritura fue agregado exitosamente al "
-                        "archivo '"
-                     << nombreArchivo << "'.";
+                cout << "El permiso de escritura fue agregado exitosamente al archivo '" << nombreArchivo << "'." << endl;
             } else {
                 modificar_escritura(aux, false);
-                cout << "El permiso de escritura fue removido exitosamente del "
-                        "archivo '"
-                     << nombreArchivo << "'.";
+                cout << "El permiso de escritura fue removido exitosamente del archivo '" << nombreArchivo << "'." << endl;
             }
-
             return OK;
+
         } else {
-            cout << "Parametro incorrecto, usar -W o +W.";
+            cout << "Parametro incorrecto, usar -W o +W." << endl;
             return ERROR;
         }
     } else {
-        cout << "El archivo '" << nombreArchivo << "' No existe.";
+        cout << "El archivo '" << nombreArchivo << "' No existe." << endl;
         return ERROR;
     }
 }
@@ -213,7 +209,7 @@ TipoRet IC(Sistema &s, Cadena nombreArchivo, Cadena texto) {
                 arbol_contenido(aux)[TEXTO_MAX] = '\0';
             }
 
-            cout << "Se ha insertado '" << texto << "' al comienzo de '" << nombreArchivo << "' exitosamente.";
+            cout << "Se ha insertado '" << texto << "' al comienzo de '" << nombreArchivo << "' exitosamente." << endl;
             return OK;
         } else {
             cout << "El archivo '" << nombreArchivo << "' es de solo lectura." << endl;
@@ -245,7 +241,7 @@ TipoRet IF(Sistema &s, Cadena nombreArchivo, Cadena texto) {
                 arbol_contenido(aux)[TEXTO_MAX] = '\0';
             }
 
-            cout << "Se ha insertado '" << texto << "' al final de '" << nombreArchivo << "' exitosamente.";
+            cout << "Se ha insertado '" << texto << "' al final de '" << nombreArchivo << "' exitosamente." << endl;
             return OK;
         } else {
             cout << "El archivo '" << nombreArchivo << "' es de solo lectura." << endl;
@@ -288,7 +284,7 @@ TipoRet DC(Sistema &s, Cadena nombreArchivo, int k) {
                 strcpy(arbol_contenido(aux), S_Aux.c_str());
             }
 
-            cout << "Se han eliminado los primeros '" << k << "' caracteres del archivo '" << nombreArchivo << "' exitosamente.";
+            cout << "Se han eliminado los primeros '" << k << "' caracteres del archivo '" << nombreArchivo << "' exitosamente." << endl;
             return OK;
         } else {
             cout << "El archivo '" << nombreArchivo << "' es de solo lectura." << endl;
@@ -328,7 +324,7 @@ TipoRet DF(Sistema &s, Cadena nombreArchivo, int k) {
                 strcpy(arbol_contenido(aux), S_Aux.c_str());
             }
 
-            cout << "Se han eliminado los ultimos '" << k << "' caracteres del archivo '" << nombreArchivo << "' exitosamente.";
+            cout << "Se han eliminado los ultimos '" << k << "' caracteres del archivo '" << nombreArchivo << "' exitosamente." << endl;
             return OK;
         } else {
             cout << "El archivo '" << nombreArchivo << "' es de solo lectura." << endl;
