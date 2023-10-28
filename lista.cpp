@@ -1,13 +1,14 @@
 // Estructuras de Datos y Algoritmos - Curso 2023
 // Tecnologo en Informatica FIng - DGETP - UTEC
 //
+// Autores: Fabricio Garcia (5.473.797-0), Juan Garcia (5.282.647-8), Joaquin Gomez (5.398.934-6).
+//
 // Trabajo Obligatorio
 // lista.c
 // Modulo de Implementacion de funciones relacionadas a lista simple.
 
 #include "lista.h"
 
-#include <ctype.h>
 #include <string.h>
 
 #include <iostream>
@@ -21,7 +22,6 @@ using namespace std;
 struct _nodo_lista {
     Sistema archivo;
     Lista sig;
-    // no hace falta lectura.
 };
 
 Lista crear() {

@@ -4,6 +4,8 @@
 // Estructuras de Datos y Algoritmos - Curso 2023
 // Tecnologo en Informatica FIng - DGETP - UTEC
 //
+// Autores: Fabricio Garcia (5.473.797-0), Juan Garcia (5.282.647-8), Joaquin Gomez (5.398.934-6).
+//
 // Trabajo Obligatorio
 // definiciones.h
 // Definiciones generales del proyecto (constantes, etc).

@@ -1,6 +1,8 @@
 // Estructuras de Datos y Algoritmos - Curso 2023
 // Tecnologo en Informatica FIng - DGETP - UTEC
 //
+// Autores: Fabricio Garcia (5.473.797-0), Juan Garcia (5.282.647-8), Joaquin Gomez (5.398.934-6).
+//
 // Trabajo Obligatorio
 // sistema.c
 // Modulo de Implementacion de funciones relacionadas a arbol general.

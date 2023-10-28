@@ -4,6 +4,8 @@
 // Estructuras de Datos y Algoritmos - Curso 2023
 // Tecnologo en Informatica FIng - DGETP - UTEC
 //
+// Autores: Fabricio Garcia (5.473.797-0), Juan Garcia (5.282.647-8), Joaquin Gomez (5.398.934-6).
+//
 // Trabajo Obligatorio
 // sistema.h
 // Modulo de Definición del File System.
@@ -12,12 +14,12 @@
 #include "lista.h"
 
 TipoRet CREARSISTEMA(Sistema &s);
-// Inicializa el sistema para que contenga únicamente al directorio RAIZ, sin
-// subdirectorios ni archivos. Para mas detalles ver letra.
+// Inicializa el sistema para que contenga únicamente al directorio RAIZ, sin subdirectorios ni archivos.
+// Pre: No debe exisitr un sistema previamente creado.
 
 TipoRet DESTRUIRSISTEMA(Sistema &s);
-// Destruye el sistema, liberando la memoria asignada a las estructuras que
-// datos que constituyen el file system. Para mas detalles ver letra.
+// Destruye el sistema, liberando la memoria asignada a las estructuras que datos que constituyen el file system.
+// Pre: El sistema debe haber sido creado previamente.
 
 TipoRet CD(Sistema &s, Cadena nombreDirectorio);
 // Cambia directorio.
@@ -33,17 +35,20 @@ TipoRet MOVE(Sistema &s, Cadena nombre, Cadena directorioDestino);
 
 TipoRet DIR(Sistema &s, Cadena parametro);
 // Muestra el contenido del directorio actual.
+// Pre: El sistema debe haber sido creado.
 
 TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo);
 // Crea un nuevo archivo en el directorio actual.
+// Pre: el nombre del archivo no debe ser vacio.
 
 TipoRet DELETE(Sistema &s, Cadena nombreArchivo);
-// Elimina un archivo del directorio actual, siempre y cuando no sea de sólo
+// Elimina un archivo del directorio actual, siempre y cuando no sea de sólo lectura.
 
 TipoRet ATTRIB(Sistema &s, Cadena nombreArchivo, Cadena parametro);
 // Agrega un texto al comienzo del archivo NombreArchivo.
 
 TipoRet IC(Sistema &s, Cadena nombreArchivo, Cadena texto);
+// Agrega un texto al principio del archivo NombreArchivo.
 
 TipoRet IF(Sistema &s, Cadena nombreArchivo, Cadena texto);
 // Agrega un texto al final del archivo NombreArchivo.
@@ -58,7 +63,7 @@ TipoRet TYPE(Sistema &s, Cadena nombreArchivo);
 // Imprime el contenido del archivo parámetro.
 
 TipoRet SEARCH(Sistema &s, Cadena nombreArchivo, Cadena texto);
-// Busca dentro del archivo la existencia del texto.
+// Busca dentro del archivo la existencia del texto y devuelve la posición en que lo encuentra.
 
 TipoRet REPLACE(Sistema &s, Cadena nombreArchivo, Cadena texto1, Cadena texto2);
 // Busca y reemplaza dentro del archivo la existencia del texto1 por el texto2.

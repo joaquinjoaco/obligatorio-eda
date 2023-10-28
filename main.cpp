@@ -1,6 +1,8 @@
 // Estructuras de Datos y Algoritmos - Curso 2023
 // Tecnologo en Informatica FIng - DGETP - UTEC
 //
+// Autores: Fabricio Garcia (5.473.797-0), Juan Garcia (5.282.647-8), Joaquin Gomez (5.398.934-6).
+//
 // Trabajo Obligatorio
 // main.c
 // Consola para ingreso de datos.
@@ -24,10 +26,10 @@ int main() {
 
     bool salir = false;
 
-    // cout << "\tCD nombreDirectorio\n";
-    // cout << "\tMKDIR nombreDirectorio\n";
-    // cout << "\tRMDIR nombreDirectorio\n";
-    // cout << "\tMOVE nombre directorioDestino\n";
+    cout << "\tCD nombreDirectorio\n";
+    cout << "\tMKDIR nombreDirectorio\n";
+    cout << "\tRMDIR nombreDirectorio\n";
+    cout << "\tMOVE nombre directorioDestino\n";
     cout << "\tDIR parametro\n";
     cout << "\tCREATEFILE nombreArchivo\n";
     cout << "\tDELETE nombreArchivo\n";
@@ -38,7 +40,7 @@ int main() {
     cout << "\tDF nombreArchivo k\n";
     cout << "\tTYPE nombreArchivo\n";
     cout << "\tSEARCH nombreArchivo texto\n";
-    // cout << "\tREPLACE nombreArchivo texto1 texto2\n";
+    cout << "\tREPLACE nombreArchivo texto1 texto2\n";
     cout << "\tSALIR\n\n";
 
     do {

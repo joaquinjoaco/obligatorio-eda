@@ -1,6 +1,8 @@
 // Estructuras de Datos y Algoritmos - Curso 2023
 // Tecnologo en Informatica FIng - DGETP - UTEC
 //
+// Autores: Fabricio Garcia (5.473.797-0), Juan Garcia (5.282.647-8), Joaquin Gomez (5.398.934-6).
+//
 // Trabajo Obligatorio
 // sistema.c
 // Modulo de Implementacion del File System.
@@ -17,7 +19,7 @@ using namespace std;
 
 TipoRet CREARSISTEMA(Sistema &s) {
     // Inicializa el sistema para que contenga únicamente al directorio RAIZ,
-    // sin subdirectorios ni archivos. Para mas detalles ver letra.
+    // sin subdirectorios ni archivos.
     // Pre: No debe exisitr un sistema previamente creado.
 
     s = crear_raiz();
@@ -26,7 +28,7 @@ TipoRet CREARSISTEMA(Sistema &s) {
 
 TipoRet DESTRUIRSISTEMA(Sistema &s) {
     // Destruye el sistema, liberando la memoria asignada a las estructuras que
-    // datos que constituyen el file system. Para mas detalles ver letra.
+    // datos que constituyen el file system.
     // Pre: El sistema debe haber sido creado previamente.
 
     destruir_arbol(s);
@@ -35,31 +37,27 @@ TipoRet DESTRUIRSISTEMA(Sistema &s) {
 
 TipoRet CD(Sistema &s, Cadena nombreDirectorio) {
     // Cambia directorio.
-    // Para mas detalles ver letra.
     return NO_IMPLEMENTADA;
 }
 
 TipoRet MKDIR(Sistema &s, Cadena nombreDirectorio) {
     // Crea un nuevo directorio.
-    // Para mas detalles ver letra.
     return NO_IMPLEMENTADA;
 }
 
 TipoRet RMDIR(Sistema &s, Cadena nombreDirectorio) {
     // Elimina un directorio.
-    // Para mas detalles ver letra.
     return NO_IMPLEMENTADA;
 }
 
 TipoRet MOVE(Sistema &s, Cadena nombre, Cadena directorioDestino) {
     // mueve un directorio o archivo desde su directorio origen hacia un nuevo
-    // directorio destino. Para mas detalles ver letra.
+    // directorio destino.
     return NO_IMPLEMENTADA;
 }
 
 TipoRet DIR(Sistema &s, Cadena parametro) {
     // Muestra el contenido del directorio actual.
-    // Para mas detalles ver letra.
     // Pre: El sistema debe haber sido creado.
 
     // creamos una lista para insertar los archivos de manera alfabeticamente ordenada.
@@ -83,21 +81,30 @@ TipoRet DIR(Sistema &s, Cadena parametro) {
 
 TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo) {
     // Crea un nuevo archivo en el directorio actual.
-    // Para mas detalles ver letra.
     // Pre: el nombre del archivo no debe ser vacio.
-    // Pre: el nombre no debe superar los 15 caracteres.
 
+    // Auxiliar para extension.
     Cadena extension;
+    Cadena nombre;
     Cadena auxiliar = new (char[MAX_COMANDO]);
     strcpy(auxiliar, nombreArchivo);
 
-    extension = strtok(auxiliar, "(.)\n");
-    extension = strtok(NULL, "(.)\n");
+    extension = strtok(auxiliar, "(.)\n");  // se queda con nombre.
+    extension = strtok(NULL, "(.)\n");      // se queda con la extension.
+    strcpy(nombre, auxiliar);
+    cout << "cout: " << nombre << endl;
+
     if (extension == NULL) {
         cout << "El archivo debe tener una extensión entre 1 y 3 caracteres." << endl;
+        delete auxiliar;
         return ERROR;
     } else if (strlen(extension) > MAX_EXTENSION) {
         cout << "La extensión del archivo no puede superar los 3 caracteres." << endl;
+        delete auxiliar;
+        return ERROR;
+    } else if (strlen(nombre) >= MAX_NOMBRE) {
+        cout << "El nombre del archivo no puede superar los 15 caracteres." << endl;
+        delete auxiliar;
         return ERROR;
     } else {
         // Si pasó las validaciones, se le asigna nombre al archivo y se lo
@@ -106,11 +113,13 @@ TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo) {
 
         if (arbol_pertenece(s, nombreArchivo)) {
             cout << "El archivo '" << nombreArchivo << "' ya existe.";
+            delete auxiliar;
             return ERROR;
         } else {
             // insertamos el nuevo archivo como ultimo hermano.
             arbol_insertar(s, newFile);
             cout << "El archivo '" << nombreArchivo << "' fue creado exitosamente.";
+            delete auxiliar;
             return OK;
         }
     }
@@ -118,7 +127,7 @@ TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo) {
 
 TipoRet DELETE(Sistema &s, Cadena nombreArchivo) {
     // Elimina un archivo del directorio actual, siempre y cuando no sea de sólo
-    // lectura. Para mas detalles ver letra.
+    // lectura.
 
     if (!arbol_pertenece(s, nombreArchivo)) {
         cout << "El archivo '" << nombreArchivo << "' no existe en el directorio actual.";
@@ -146,7 +155,6 @@ TipoRet DELETE(Sistema &s, Cadena nombreArchivo) {
 
 TipoRet ATTRIB(Sistema &s, Cadena nombreArchivo, Cadena parametro) {
     // Agrega un texto al comienzo del archivo NombreArchivo.
-    // Para mas detalles ver letra.
 
     if (arbol_pertenece(s, nombreArchivo)) {
         if ((strcasecmp(parametro, "+W") == 0 || strcasecmp(parametro, "-W") == 0)) {
@@ -161,10 +169,14 @@ TipoRet ATTRIB(Sistema &s, Cadena nombreArchivo, Cadena parametro) {
 
             if (strcasecmp(parametro, "+W") == 0) {
                 modificar_escritura(aux, true);
-                cout << "El permiso de escritura fue agregado exitosamente al " "archivo '" << nombreArchivo << "'.";
+                cout << "El permiso de escritura fue agregado exitosamente al "
+                        "archivo '"
+                     << nombreArchivo << "'.";
             } else {
                 modificar_escritura(aux, false);
-                cout << "El permiso de escritura fue removido exitosamente del " "archivo '" << nombreArchivo << "'.";
+                cout << "El permiso de escritura fue removido exitosamente del "
+                        "archivo '"
+                     << nombreArchivo << "'.";
             }
 
             return OK;
@@ -180,7 +192,6 @@ TipoRet ATTRIB(Sistema &s, Cadena nombreArchivo, Cadena parametro) {
 
 TipoRet IC(Sistema &s, Cadena nombreArchivo, Cadena texto) {
     // Agrega un texto al principio del archivo NombreArchivo.
-    // Para mas detalles ver letra.
 
     if (arbol_pertenece(s, nombreArchivo)) {
         Sistema aux = s;
@@ -217,7 +228,6 @@ TipoRet IC(Sistema &s, Cadena nombreArchivo, Cadena texto) {
 
 TipoRet IF(Sistema &s, Cadena nombreArchivo, Cadena texto) {
     // Agrega un texto al final del archivo NombreArchivo.
-    // Para mas detalles ver letra.
 
     if (arbol_pertenece(s, nombreArchivo)) {
         Sistema aux = s;
@@ -250,7 +260,6 @@ TipoRet IF(Sistema &s, Cadena nombreArchivo, Cadena texto) {
 
 TipoRet DC(Sistema &s, Cadena nombreArchivo, int k) {
     // Elimina los a lo sumo K primeros caracteres del archivo parámetro.
-    // Para mas detalles ver letra.
 
     if (arbol_pertenece(s, nombreArchivo)) {
         Sistema aux = s;
@@ -294,7 +303,6 @@ TipoRet DC(Sistema &s, Cadena nombreArchivo, int k) {
 
 TipoRet DF(Sistema &s, Cadena nombreArchivo, int k) {
     // Elimina los a lo sumo K últimos caracteres del archivo parámetro.
-    // Para mas detalles ver letra.
 
     if (arbol_pertenece(s, nombreArchivo)) {
         Sistema aux = s;
@@ -336,7 +344,6 @@ TipoRet DF(Sistema &s, Cadena nombreArchivo, int k) {
 
 TipoRet TYPE(Sistema &s, Cadena nombreArchivo) {
     // Imprime el contenido del archivo parámetro.
-    // Para mas detalles ver letra.
 
     // Verificar si el archivo existe en el directorio actual.
     if (!arbol_pertenece(s, nombreArchivo)) {
@@ -348,7 +355,7 @@ TipoRet TYPE(Sistema &s, Cadena nombreArchivo) {
     Sistema archivo = arbol_ph(s);
 
     while (archivo != NULL && strcmp(arbol_nombre(archivo), nombreArchivo) != 0) {
-        archivo = arbol_sh(archivo);    
+        archivo = arbol_sh(archivo);
     }
 
     string contenido = arbol_contenido(archivo);
@@ -357,14 +364,14 @@ TipoRet TYPE(Sistema &s, Cadena nombreArchivo) {
         cout << "El archivo " << nombreArchivo << " no tiene contenido" << endl;
         return OK;
     } else {
-        cout << "Contenido de " << nombreArchivo << ":" << endl; cout << arbol_contenido(archivo) << endl;
+        cout << "Contenido de " << nombreArchivo << ":" << endl;
+        cout << arbol_contenido(archivo) << endl;
         return OK;
     }
 }
 
 TipoRet SEARCH(Sistema &s, Cadena nombreArchivo, Cadena texto) {
     // Busca dentro del archivo la existencia del texto y devuelve la posición en que lo encuentra.
-    // Para mas detalles ver letra.
 
     // Chequea si el archivo existe
     if (!arbol_pertenece(s, nombreArchivo)) {
@@ -394,9 +401,7 @@ TipoRet SEARCH(Sistema &s, Cadena nombreArchivo, Cadena texto) {
     }
 }
 
-TipoRet REPLACE(Sistema &s, Cadena nombreArchivo, Cadena texto1,
-                Cadena texto2) {
-    // Busca y reemplaza dentro del archivo la existencia del texto1 por el
-    // texto2. Para mas detalles ver letra.
+TipoRet REPLACE(Sistema &s, Cadena nombreArchivo, Cadena texto1, Cadena texto2) {
+    // Busca y reemplaza dentro del archivo la existencia del texto1 por el texto2.
     return NO_IMPLEMENTADA;
 }
