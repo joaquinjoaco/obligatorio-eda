@@ -20,6 +20,9 @@ Sistema crear_raiz();
 Sistema crear_archivo(Cadena nombreArchivo);
 // crea un archivo.
 
+Sistema crear_directorio(Cadena nombreDirectorio);
+// crea un directorio.
+
 void destruir_arbol(Sistema &s);
 // destruye el arbol dado.
 
@@ -32,6 +35,9 @@ Sistema arbol_ph(Sistema s);
 Sistema arbol_sh(Sistema s);
 // retorna el siguiente hermano.
 
+Sistema arbol_actual(Sistema s);
+// retorna el actual.
+
 Cadena arbol_nombre(Sistema s);
 // retorna el nombre del archivo.
 
@@ -40,6 +46,9 @@ bool arbol_escritura(Sistema s);
 
 void modificar_escritura(Sistema &s, bool valor);
 // modifica el valor del permiso de escritura.
+
+void modificar_actual(Sistema &s, Sistema actual);
+// cambia el directorio actual.
 
 Cadena arbol_contenido(Sistema s);
 // retorna el valor del contenido.
@@ -66,5 +75,8 @@ void imprimir_nivel(Sistema &s, int nivel);
 
 bool arbol_pertenece(Sistema &s, Cadena nombre);
 // retorna true si 'e' pertenece al arbol 'a'.
+
+bool arbol_pertenece_un_nivel(Sistema &s, Cadena nombre);
+// Retorna true si 'nombre' pertenece al nivel actual del árbol 's'.
 
 #endif

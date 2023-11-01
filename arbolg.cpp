@@ -37,6 +37,9 @@ struct _sistema {
     Sistema sh;
     // -----------------------------------------------
 
+    // directorio actual.
+    Sistema actual;
+    
     // Atributos para archivos
     Cadena contenido = new (char[TEXTO_MAX]);
     bool lectura;
@@ -50,8 +53,10 @@ Sistema crear_raiz() {
     Sistema raiz = new (_sistema);
     raiz->tipo = _tipo(0);
     strcpy(raiz->nombre, NOMBRE_RAIZ);
+
     raiz->ph = NULL;
     raiz->sh = NULL;
+    raiz->actual = raiz;
     strcpy(raiz->contenido, "");
     raiz->lectura = true;
     raiz->escritura = true;
@@ -74,6 +79,20 @@ Sistema crear_archivo(Cadena nombreArchivo) {
     return newFile;
 }
 
+Sistema crear_directorio(Cadena nombreDirectorio) {
+    // crea un directorio.
+
+    Sistema newDir = new (_sistema);
+    strcpy(newDir->nombre, nombreDirectorio);
+    newDir->tipo = _tipo(0);
+    newDir->ph = NULL;
+    newDir->sh = NULL;
+    newDir->escritura = false;
+    newDir->lectura = false;
+
+    return newDir;
+}
+
 bool vacio(Sistema s) {
     // retorna true si el arbol es vacío, false en caso contrario.
     return (s == NULL);
@@ -89,6 +108,12 @@ Sistema arbol_sh(Sistema s) {
     // retorna el siguiente hermano.
     // Pre: s no vacio.
     return s->sh;
+}
+
+Sistema arbol_actual(Sistema s) {
+    // retorna el directorio actual.
+    // Pre: s no vacío.
+    return s->actual;
 }
 
 Cadena arbol_nombre(Sistema s) {
@@ -120,6 +145,13 @@ void modificar_escritura(Sistema &s, bool valor) {
     // Pre: s no vacio.
     s->escritura = valor;
 }
+
+void modificar_actual(Sistema &s, Sistema actual) {
+    // modifica el directorio actual.
+    // Pre: s no vacío.
+    s->actual = actual;
+}
+
 
 Sistema arbol_insertar(Sistema &s, Sistema newFile) {
     // inserta un nodo como ultimo sigiente
@@ -223,4 +255,16 @@ bool arbol_pertenece(Sistema &s, Cadena nombre) {
     } else {
         return arbol_pertenece(s->ph, nombre) || arbol_pertenece(s->sh, nombre);
     }
+}
+
+bool arbol_pertenece_un_nivel(Sistema &s, Cadena nombre) {
+    // Retorna true si 'nombre' pertenece al nivel actual del árbol 's'.
+    s=s->ph;
+    while (s != NULL) {
+        if (strcmp(s->nombre, nombre) == 0) {
+            return true;
+        }
+        s = s->sh;
+    }
+    return false;
 }

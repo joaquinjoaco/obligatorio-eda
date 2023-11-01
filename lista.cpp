@@ -89,9 +89,6 @@ Lista insertar(Sistema ar, Lista l) {
 void imprimir_lista(Lista l) {
     // Imprime l en la salida estandar.
 
-    cout << NOMBRE_RAIZ << endl
-         << endl;
-
     while (!isEmpty(l)) {
         cout << arbol_nombre(archivo(l)) << "   ";
         // Si es un archivo mostramos sus permisos.

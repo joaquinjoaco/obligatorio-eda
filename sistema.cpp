@@ -37,17 +37,85 @@ TipoRet DESTRUIRSISTEMA(Sistema &s) {
 
 TipoRet CD(Sistema &s, Cadena nombreDirectorio) {
     // Cambia directorio.
-    return NO_IMPLEMENTADA;
+    if (strcmp(arbol_nombre(s), NOMBRE_RAIZ) == 0 && strcmp(nombreDirectorio, "..") == 0) {
+        cout << "Se encuentra en el directorio raíz." << endl;
+        return ERROR;
+    }
+
+    if (strcmp(nombreDirectorio, NOMBRE_RAIZ) == 0) {
+        modificar_actual(s, s);
+        return OK;
+    }
+
+    Sistema directorio = arbol_ph(s); // baja un nivel.
+    Sistema directorioAnterior = NULL;
+    while (directorio != NULL && strcmp(arbol_nombre(directorio), nombreDirectorio) != 0) {
+        directorioAnterior = directorio;
+        directorio = arbol_sh(directorio);
+    }
+
+    // Puede que el directorio exista pero que no se encuentre en el nivel de los hijos.
+    if (directorio == NULL) {
+        cout << "No se encontró el directorio'" << nombreDirectorio << "'." << endl;
+        return ERROR;
+    }
+
+    // Encontró el directorio en el nivel, y vamos a él.
+    modificar_actual(s, directorio);
+    return OK;
 }
 
 TipoRet MKDIR(Sistema &s, Cadena nombreDirectorio) {
     // Crea un nuevo directorio.
-    return NO_IMPLEMENTADA;
+    if (strlen(nombreDirectorio) >= MAX_NOMBRE) {
+        cout << "El nombre del directorio no puede superar los 15 caracteres." << endl;
+        return ERROR;
+    } else {
+        // Si pasó las validaciones, se le asigna nombre al directorio y se lo
+        // sigue creando.
+        Sistema newDir = crear_directorio(nombreDirectorio);
+        Sistema actual = arbol_actual(s);
+
+        // CAMBIAR ARBOL_PERTENECE POR UNA FUNCION QUE BUSQUE EN UN SOLO NIVEL, YA QUE SE PERMITEN NOMBRES IGUALES EN DISTINTOS NIVELES. 
+        if (arbol_pertenece_un_nivel(actual, nombreDirectorio)) {
+            cout << "El directorio'" << nombreDirectorio << "' ya existe." << endl;
+            return ERROR;
+        } else {
+            // insertamos el nuevo directorio como ultimo hermano.
+            arbol_insertar(s, newDir);
+            cout << "El directorio '" << nombreDirectorio << "' fue creado exitosamente." << endl;
+            return OK;
+        }
+    }
+
 }
 
 TipoRet RMDIR(Sistema &s, Cadena nombreDirectorio) {
     // Elimina un directorio.
-    return NO_IMPLEMENTADA;
+
+    //TODO: QUE SEA RECURSIVO (O SEA QUE BORRE TODO PARA ADENTRO DEL DIRECTORIO).
+
+  if (!arbol_pertenece(s, nombreDirectorio)) {
+        cout << "El directorio '" << nombreDirectorio << "' no existe en el directorio actual." << endl;
+        return ERROR;  // El directorio no existe en el directorio actual.
+    }
+
+    // Encontrar el archivo
+    Sistema directorio = arbol_ph(s); // baja un nivel.
+    Sistema directorioAnterior = NULL;
+    while (directorio != NULL && strcmp(arbol_nombre(directorio), nombreDirectorio) != 0) {
+        directorioAnterior = directorio;
+        directorio = arbol_sh(directorio);
+    }
+
+    if (arbol_tipo(directorio) == 1){
+        cout << "El '" << nombreDirectorio << "' es un archivo, pruebe usar 'DELETE'." << endl;
+        return ERROR;
+    } 
+
+    arbol_eliminar(s, directorio, directorioAnterior);
+    cout << "El directorio '" << nombreDirectorio << "' fue eliminado exitosamente." << endl;
+    return OK;
 }
 
 TipoRet MOVE(Sistema &s, Cadena nombre, Cadena directorioDestino) {
@@ -74,7 +142,26 @@ TipoRet DIR(Sistema &s, Cadena parametro) {
     }
 
     // imprimimos la lista que creamos.
+    if (s == arbol_actual(s)) { 
+        // Caso en el que el directorio actual sea la RAIZ.
+        cout << NOMBRE_RAIZ << endl;
+        cout << endl;
+    } 
+    
+    // else {
+    //    // Caso en el que el directorio actual NO sea la RAIZ.
+    //       FUNCION QUE AGARRE EL CAMINO Y META ESE CAMINO EN MEDIO DE LA RAIZ Y EL DIRECTORIO ACTUAL.
+    //       O SEA DIGAMOS RAIZ/PELADO/SINFONIAS/UTU/CIRCO
+    //     cout << NOMBRE_RAIZ << endl;
+    //     cout << endl; 
+    // }
+    
     imprimir_lista(archivos_ordenados);
+
+    // for (int i = 0; i < arbol_profunidad(s); i++) {
+    //     imprimir_nivel(s, i);
+    //     cout << "\n";
+    // }
 
     return OK;
 }
@@ -85,7 +172,7 @@ TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo) {
 
     // Auxiliar para extension.
     Cadena extension;
-    Cadena nombre;
+    Cadena nombre = new (char[MAX_NOMBRE]);
     Cadena auxiliar = new (char[MAX_COMANDO]);
     strcpy(auxiliar, nombreArchivo);
 
@@ -141,8 +228,12 @@ TipoRet DELETE(Sistema &s, Cadena nombreArchivo) {
         archivo = arbol_sh(archivo);
     }
 
-    // Verificar si el archivo es de solo lectura, en este caso no se elimina
-    if (arbol_escritura(archivo) == false) {
+
+    // Verificar si el archivo es de solo lectura, en este caso no se elimina. O si se está intentando borrar un directorio.
+   if(arbol_tipo(archivo) == 0){
+        cout << "El '" << nombreArchivo << "' es un directorio, pruebe usar 'RMDIR'." << endl;
+        return ERROR;
+   } else if (arbol_escritura(archivo) == false) {
         cout << "El archivo '" << nombreArchivo << "' no se puede eliminar, no se tiene permiso de escritura sobre el archivo." << endl;
         return ERROR;
     }
