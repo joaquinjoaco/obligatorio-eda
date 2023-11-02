@@ -148,7 +148,6 @@ TipoRet MOVE(Sistema &s, Cadena nombre, Cadena directorioDestino) {
 TipoRet DIR(Sistema &s, Cadena parametro) {
     // Muestra el contenido del directorio actual.
     // Pre: El sistema debe haber sido creado.
-    cout << "HOLA SOY EL ACTUAL: " << arbol_nombre(arbol_actual(s)) << endl;
     // creamos una lista para insertar los archivos de manera alfabeticamente ordenada.
     Lista archivos_ordenados = crear();
     Lista archivos_ordenados2 = crear();
