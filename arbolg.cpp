@@ -208,7 +208,7 @@ int mayor(int a, int b) {
     }
 }
 
-int arbol_profunidad(Sistema &s) {
+int arbol_profunidad(Sistema s) {
     // retorna la profundidad del arbol (para el caso de arboles generales
     // calculamos la profunidad como la cantidad de niveles). El primer nodo es
     // el nivel 1.
@@ -220,7 +220,7 @@ int arbol_profunidad(Sistema &s) {
     }
 }
 
-void imprimir_nivel(Sistema &s, int nivel) {
+void imprimir_nivel(Sistema s, int nivel) {
     // imprime el nivel dado del arbol general.
     if (s != NULL) {
         if (nivel != 0) {
@@ -245,7 +245,7 @@ void imprimir_nivel(Sistema &s, int nivel) {
     }
 }
 
-bool arbol_pertenece(Sistema &s, Cadena nombre) {
+bool arbol_pertenece(Sistema s, Cadena nombre) {
     // retorna true si 'e' pertenece al arbol 'a'.
 
     if (s == NULL) {
@@ -257,7 +257,7 @@ bool arbol_pertenece(Sistema &s, Cadena nombre) {
     }
 }
 
-bool arbol_pertenece_un_nivel(Sistema &s, Cadena nombre) {
+bool arbol_pertenece_un_nivel(Sistema s, Cadena nombre) {
     // Retorna true si 'nombre' pertenece al nivel actual del árbol 's'.
     s=s->ph;
     while (s != NULL) {

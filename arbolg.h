@@ -65,18 +65,18 @@ Sistema arbol_eliminar(Sistema &s, Sistema &archivo, Sistema &archivoAnterior);
 int mayor(int a, int b);
 // retorna el mayor de dos enteros.
 
-int arbol_profunidad(Sistema &s);
+int arbol_profunidad(Sistema s);
 // retorna la profundidad del arbol (para el caso de arboles generales
 // calculamos la profunidad como la cantidad de niveles). El primer nodo es el
 // nivel 1.
 
-void imprimir_nivel(Sistema &s, int nivel);
+void imprimir_nivel(Sistema s, int nivel);
 // imprime el nivel dado del arbol general.
 
-bool arbol_pertenece(Sistema &s, Cadena nombre);
+bool arbol_pertenece(Sistema s, Cadena nombre);
 // retorna true si 'e' pertenece al arbol 'a'.
 
-bool arbol_pertenece_un_nivel(Sistema &s, Cadena nombre);
+bool arbol_pertenece_un_nivel(Sistema s, Cadena nombre);
 // Retorna true si 'nombre' pertenece al nivel actual del árbol 's'.
 
 #endif

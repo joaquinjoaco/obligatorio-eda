@@ -37,9 +37,23 @@ TipoRet DESTRUIRSISTEMA(Sistema &s) {
 
 TipoRet CD(Sistema &s, Cadena nombreDirectorio) {
     // Cambia directorio.
-    if (strcmp(arbol_nombre(s), NOMBRE_RAIZ) == 0 && strcmp(nombreDirectorio, "..") == 0) {
+    if (strcmp(arbol_nombre(arbol_actual(s)), NOMBRE_RAIZ) == 0 && strcmp(nombreDirectorio, "..") == 0) {
         cout << "Se encuentra en el directorio raíz." << endl;
         return ERROR;
+    }
+
+    if (strcmp(nombreDirectorio, "..") == 0) {
+        if (strcmp(arbol_nombre(arbol_actual(s)), NOMBRE_RAIZ) == 0) {
+        }
+        Sistema directorio = arbol_ph(s);  // baja un nivel.
+        Sistema directorioAnterior = NULL;
+        while (directorio != NULL && strcmp(arbol_nombre(directorio), nombreDirectorio) != 0) {
+            directorioAnterior = directorio;
+            directorio = arbol_sh(directorio);
+        }
+        cout << "asdadasd" << arbol_nombre(directorioAnterior) << endl;
+        modificar_actual(s, directorioAnterior);
+        return OK;
     }
 
     if (strcmp(nombreDirectorio, NOMBRE_RAIZ) == 0) {
@@ -47,7 +61,7 @@ TipoRet CD(Sistema &s, Cadena nombreDirectorio) {
         return OK;
     }
 
-    Sistema directorio = arbol_ph(s);  // baja un nivel.
+    Sistema directorio = arbol_ph(arbol_actual(s));  // baja un nivel.
     Sistema directorioAnterior = NULL;
     while (directorio != NULL && strcmp(arbol_nombre(directorio), nombreDirectorio) != 0) {
         directorioAnterior = directorio;
@@ -82,7 +96,7 @@ TipoRet MKDIR(Sistema &s, Cadena nombreDirectorio) {
             return ERROR;
         } else {
             // insertamos el nuevo directorio como ultimo hermano.
-            arbol_insertar(s, newDir);
+            arbol_insertar(actual, newDir);
             cout << "El directorio '" << nombreDirectorio << "' fue creado exitosamente." << endl;
             return OK;
         }
@@ -94,7 +108,7 @@ TipoRet RMDIR(Sistema &s, Cadena nombreDirectorio) {
 
     // TODO: QUE SEA RECURSIVO (O SEA QUE BORRE TODO PARA ADENTRO DEL DIRECTORIO).
 
-    if (!arbol_pertenece(s, nombreDirectorio)) {
+    if (!arbol_pertenece_un_nivel(s, nombreDirectorio)) {
         cout << "El directorio '" << nombreDirectorio << "' no existe en el directorio actual." << endl;
         return ERROR;  // El directorio no existe en el directorio actual.
     }
