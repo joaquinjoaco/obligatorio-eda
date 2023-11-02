@@ -172,7 +172,7 @@ TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo) {
 
     // Auxiliar para extension.
     Cadena extension;
-    Cadena nombre = new (char[MAX_NOMBRE]);
+    Cadena nombre;
     Cadena auxiliar = new (char[MAX_COMANDO]);
     strcpy(auxiliar, nombreArchivo);
 
@@ -288,6 +288,10 @@ TipoRet IC(Sistema &s, Cadena nombreArchivo, Cadena texto) {
         while (strcmp(arbol_nombre(aux), nombreArchivo) != 0) {
             aux = arbol_sh(aux);
         }
+        if(arbol_tipo(aux) == 0) {
+            cout << "No se puede aplicar este comando sobre un directorio" << "." << endl;
+            return ERROR;
+        }
         if (arbol_escritura(aux)) {
             // Agregar texto al principio del contenido del archivo
             char temp[TEXTO_MAX];
@@ -324,6 +328,10 @@ TipoRet IF(Sistema &s, Cadena nombreArchivo, Cadena texto) {
         while (strcmp(arbol_nombre(aux), nombreArchivo) != 0) {
             aux = arbol_sh(aux);
         }
+        if(arbol_tipo(aux) == 0) {
+            cout << "No se puede aplicar este comando sobre un directorio" << "." << endl;
+            return ERROR;
+        }
         if (arbol_escritura(aux)) {
             // agregamos al contenido el texto ingresado en la cadena (al final en este caso)
             strcat(arbol_contenido(aux), texto);
@@ -356,7 +364,10 @@ TipoRet DC(Sistema &s, Cadena nombreArchivo, int k) {
         while (strcmp(arbol_nombre(aux), nombreArchivo) != 0) {
             aux = arbol_sh(aux);
         }
-
+        if(arbol_tipo(aux) == 0) {
+            cout << "No se puede aplicar este comando sobre un directorio" << "." << endl;
+            return ERROR;
+        }
         if (arbol_escritura(aux) == 1) {
             // revisamos el largo total del contenido
             string S_Aux = arbol_contenido(aux);
@@ -399,7 +410,10 @@ TipoRet DF(Sistema &s, Cadena nombreArchivo, int k) {
         while (strcmp(arbol_nombre(aux), nombreArchivo) != 0) {
             aux = arbol_sh(aux);
         }
-
+        if(arbol_tipo(aux) == 0) {
+            cout << "No se puede aplicar este comando sobre un directorio" << "." << endl;
+            return ERROR;
+        }
         if (arbol_escritura(aux) == 1) {
             string S_Aux = arbol_contenido(aux);
             int auxNum = S_Aux.length();
