@@ -31,30 +31,47 @@ bool vacio(Sistema s);
 
 Sistema arbol_ph(Sistema s);
 // retorna el primer hijo.
+// Pre: s no vacío.
 
 Sistema arbol_sh(Sistema s);
 // retorna el siguiente hermano.
+// Pre: s no vacío.
 
 Sistema arbol_actual(Sistema s);
 // retorna el actual.
+// Pre: s no vacío.
+
+Sistema arbol_anterior(Sistema s);
+// retorna el anterior.
+// Pre: s no vacío.
 
 Cadena arbol_nombre(Sistema s);
 // retorna el nombre del archivo.
+// Pre: s no vacío.
 
 bool arbol_escritura(Sistema s);
 // retorna el valor del permiso de escritura.
+// Pre: s no vacío.
 
 void modificar_escritura(Sistema &s, bool valor);
 // modifica el valor del permiso de escritura.
+// Pre: s no vacío.
 
 void modificar_actual(Sistema &s, Sistema actual);
 // cambia el directorio actual.
+// Pre: s no vacío.
+
+void modificar_anterior(Sistema &s, Sistema anterior);
+// cambia el directorio anterior.
+// Pre: s no vacío.
 
 Cadena arbol_contenido(Sistema s);
 // retorna el valor del contenido.
+// Pre: s no vacío.
 
 TipoNodo arbol_tipo(Sistema s);
 // retorna el tipo del nodo.
+// Pre: s no vacío.
 
 Sistema arbol_insertar(Sistema &s, Sistema newFile);
 // inserta un nodo como ultimo sigiente hermano en el primer nivel del arbol.

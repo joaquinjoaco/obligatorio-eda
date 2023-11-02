@@ -94,11 +94,12 @@ void imprimir_lista(Lista l) {
         // Si es un archivo mostramos sus permisos.
         if (arbol_tipo(archivo(l)) == 1) {
             if (arbol_escritura(archivo(l))) {
-                cout << "Lectura/Escritura" << endl;
+                cout << "Lectura/Escritura";
             } else {
-                cout << "Lectura" << endl;
+                cout << "Lectura";
             }
         }
+        cout << endl;
         l = tail(l);
     }
     cout << endl;

@@ -37,34 +37,29 @@ TipoRet DESTRUIRSISTEMA(Sistema &s) {
 
 TipoRet CD(Sistema &s, Cadena nombreDirectorio) {
     // Cambia directorio.
+
+    // -------------- VALIDACIONES --------------
+    // CASO "CD .." y nos encontramos en raiz.
     if (strcmp(arbol_nombre(arbol_actual(s)), NOMBRE_RAIZ) == 0 && strcmp(nombreDirectorio, "..") == 0) {
         cout << "Se encuentra en el directorio raíz." << endl;
         return ERROR;
     }
-
+    // CASO "CD ..".
     if (strcmp(nombreDirectorio, "..") == 0) {
-        if (strcmp(arbol_nombre(arbol_actual(s)), NOMBRE_RAIZ) == 0) {
-        }
-        Sistema directorio = arbol_ph(s);  // baja un nivel.
-        Sistema directorioAnterior = NULL;
-        while (directorio != NULL && strcmp(arbol_nombre(directorio), nombreDirectorio) != 0) {
-            directorioAnterior = directorio;
-            directorio = arbol_sh(directorio);
-        }
-        cout << "asdadasd" << arbol_nombre(directorioAnterior) << endl;
-        modificar_actual(s, directorioAnterior);
+        modificar_actual(s, arbol_anterior(s));
         return OK;
     }
-
+    // CASO "CD RAIZ".
     if (strcmp(nombreDirectorio, NOMBRE_RAIZ) == 0) {
         modificar_actual(s, s);
         return OK;
     }
+    // -------------------------------------------------
 
-    Sistema directorio = arbol_ph(arbol_actual(s));  // baja un nivel.
-    Sistema directorioAnterior = NULL;
+    // Guardamos su padre (el directorio anterior).
+    // por si el anterior era la raiz.
+    Sistema directorio = arbol_ph(arbol_actual(s));  // baja un nivel desde el actual.
     while (directorio != NULL && strcmp(arbol_nombre(directorio), nombreDirectorio) != 0) {
-        directorioAnterior = directorio;
         directorio = arbol_sh(directorio);
     }
 
@@ -74,7 +69,8 @@ TipoRet CD(Sistema &s, Cadena nombreDirectorio) {
         return ERROR;
     }
 
-    // Encontró el directorio en el nivel, y vamos a él.
+    // Encontró el directorio en el nivel, vamos a él y guardamos el "actual" como el nuevo anterior.
+    modificar_anterior(s, arbol_actual(s));
     modificar_actual(s, directorio);
     return OK;
 }
@@ -113,7 +109,7 @@ TipoRet RMDIR(Sistema &s, Cadena nombreDirectorio) {
         return ERROR;  // El directorio no existe en el directorio actual.
     }
 
-    // Encontrar el archivo
+    // Encontrar el directorio
     Sistema directorio = arbol_ph(s);  // baja un nivel.
     Sistema directorioAnterior = NULL;
     while (directorio != NULL && strcmp(arbol_nombre(directorio), nombreDirectorio) != 0) {
@@ -140,26 +136,46 @@ TipoRet MOVE(Sistema &s, Cadena nombre, Cadena directorioDestino) {
 TipoRet DIR(Sistema &s, Cadena parametro) {
     // Muestra el contenido del directorio actual.
     // Pre: El sistema debe haber sido creado.
-
+    cout << "HOLA SOY EL ACTUAL: " << arbol_nombre(arbol_actual(s)) << endl;
     // creamos una lista para insertar los archivos de manera alfabeticamente ordenada.
     Lista archivos_ordenados = crear();
-    Sistema aux = s;
-
-    // bajamos al primer nivel.
-    aux = arbol_ph(aux);
-
-    // insertamos todos los archivos del primer nivel en la lista.
-    while (aux != NULL) {
-        archivos_ordenados = insertar(aux, archivos_ordenados);
-        aux = arbol_sh(aux);
-    }
+    Lista archivos_ordenados2 = crear();
 
     // imprimimos la lista que creamos.
     if (s == arbol_actual(s)) {
         // Caso en el que el directorio actual sea la RAIZ.
+        // bajamos al primer nivel.
+        Sistema aux = s;
+        aux = arbol_ph(aux);
+
+        // insertamos todos los archivos del primer nivel en la lista.
+        while (aux != NULL) {
+            archivos_ordenados = insertar(aux, archivos_ordenados);
+            aux = arbol_sh(aux);
+        }
+
+        // Imprimimos el nombre del directorio.
         cout << NOMBRE_RAIZ << endl;
         cout << endl;
+        imprimir_lista(archivos_ordenados);
+
+    } else {
+        // Encontrar el directorio actual
+        Sistema auxActual = arbol_actual(s);
+        auxActual = arbol_ph(auxActual);  // bajamos un nivel desde el "actual".
+        // insertamos todos los archivos del primer nivel del directorio "actual" en la lista.
+        while (auxActual != NULL) {
+            archivos_ordenados = insertar(auxActual, archivos_ordenados);
+            auxActual = arbol_sh(auxActual);
+        }
+
+        // Imprimimos el nombre del directorio.
+        cout << arbol_nombre(arbol_actual(s)) << endl;
+        cout << endl;
+        imprimir_lista(archivos_ordenados);
     }
+
+    return OK;
 
     // else {
     //    // Caso en el que el directorio actual NO sea la RAIZ.
@@ -169,14 +185,10 @@ TipoRet DIR(Sistema &s, Cadena parametro) {
     //     cout << endl;
     // }
 
-    imprimir_lista(archivos_ordenados);
-
     // for (int i = 0; i < arbol_profunidad(s); i++) {
     //     imprimir_nivel(s, i);
     //     cout << "\n";
     // }
-
-    return OK;
 }
 
 TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo) {
@@ -185,7 +197,7 @@ TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo) {
 
     // Auxiliar para extension.
     Cadena extension;
-    Cadena nombre;
+    Cadena nombre = new (char[MAX_NOMBRE]);
     Cadena auxiliar = new (char[MAX_COMANDO]);
     strcpy(auxiliar, nombreArchivo);
 
@@ -210,13 +222,14 @@ TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo) {
         // sigue creando.
         Sistema newFile = crear_archivo(nombreArchivo);
 
-        if (arbol_pertenece(s, nombreArchivo)) {
+        if (arbol_pertenece_un_nivel(arbol_actual(s), nombreArchivo)) {
             cout << "El archivo '" << nombreArchivo << "' ya existe." << endl;
             delete auxiliar;
             return ERROR;
         } else {
             // insertamos el nuevo archivo como ultimo hermano.
-            arbol_insertar(s, newFile);
+            Sistema actual = arbol_actual(s);
+            arbol_insertar(actual, newFile);
             cout << "El archivo '" << nombreArchivo << "' fue creado exitosamente." << endl;
             delete auxiliar;
             return OK;

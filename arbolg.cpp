@@ -39,7 +39,9 @@ struct _sistema {
 
     // directorio actual.
     Sistema actual;
-    
+    // directorio anterior.
+    Sistema anterior;
+
     // Atributos para archivos
     Cadena contenido = new (char[TEXTO_MAX]);
     bool lectura;
@@ -57,6 +59,7 @@ Sistema crear_raiz() {
     raiz->ph = NULL;
     raiz->sh = NULL;
     raiz->actual = raiz;
+    raiz->anterior = NULL;
     strcpy(raiz->contenido, "");
     raiz->lectura = true;
     raiz->escritura = true;
@@ -116,6 +119,12 @@ Sistema arbol_actual(Sistema s) {
     return s->actual;
 }
 
+Sistema arbol_anterior(Sistema s) {
+    // retorna el directorio actual.
+    // Pre: s no vacío.
+    return s->anterior;
+}
+
 Cadena arbol_nombre(Sistema s) {
     // retorna el nombre del archivo.
     // Pre: s no vacio.
@@ -152,6 +161,11 @@ void modificar_actual(Sistema &s, Sistema actual) {
     s->actual = actual;
 }
 
+void modificar_anterior(Sistema &s, Sistema anterior) {
+    // cambia el directorio anterior.
+    // Pre: s no vacío.
+    s->anterior = anterior;
+}
 
 Sistema arbol_insertar(Sistema &s, Sistema newFile) {
     // inserta un nodo como ultimo sigiente
@@ -197,6 +211,8 @@ void destruir_arbol(Sistema &s) {
         destruir_arbol(s->sh);
         delete s;
     }
+
+    s = NULL;
 }
 
 int mayor(int a, int b) {
@@ -259,7 +275,7 @@ bool arbol_pertenece(Sistema s, Cadena nombre) {
 
 bool arbol_pertenece_un_nivel(Sistema s, Cadena nombre) {
     // Retorna true si 'nombre' pertenece al nivel actual del árbol 's'.
-    s=s->ph;
+    s = s->ph;
     while (s != NULL) {
         if (strcmp(s->nombre, nombre) == 0) {
             return true;
