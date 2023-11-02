@@ -54,6 +54,11 @@ TipoRet CD(Sistema &s, Cadena nombreDirectorio) {
         modificar_actual(s, s);
         return OK;
     }
+
+    if (arbol_tipo(arbol_actual(s)) == 0) {
+        cout << "El '" << arbol_nombre(arbol_actual(s)) << "' es un archivo, no se puede cambiar el directorio." << endl;
+        return ERROR;
+    }
     // -------------------------------------------------
 
     // Guardamos su padre (el directorio anterior).
@@ -77,6 +82,13 @@ TipoRet CD(Sistema &s, Cadena nombreDirectorio) {
 
 TipoRet MKDIR(Sistema &s, Cadena nombreDirectorio) {
     // Crea un nuevo directorio.
+
+    Cadena extension = strtok(nombreDirectorio, ".");
+    if (extension != NULL) {
+        cout << "El nombre del directorio no puede contener una extensión." << endl;
+        return ERROR;
+    }
+
     if (strlen(nombreDirectorio) >= MAX_NOMBRE) {
         cout << "El nombre del directorio no puede superar los 15 caracteres." << endl;
         return ERROR;
