@@ -54,11 +54,6 @@ TipoRet CD(Sistema &s, Cadena nombreDirectorio) {
         modificar_actual(s, s);
         return OK;
     }
-
-    if (arbol_tipo(arbol_actual(s)) == 0) {
-        cout << "El '" << arbol_nombre(arbol_actual(s)) << "' es un archivo, no se puede cambiar el directorio." << endl;
-        return ERROR;
-    }
     // -------------------------------------------------
 
     // Guardamos su padre (el directorio anterior).
@@ -83,14 +78,23 @@ TipoRet CD(Sistema &s, Cadena nombreDirectorio) {
 TipoRet MKDIR(Sistema &s, Cadena nombreDirectorio) {
     // Crea un nuevo directorio.
 
-    Cadena extension = strtok(nombreDirectorio, ".");
+    Cadena auxiliar = new char[MAX_NOMBRE];
+    strcpy(auxiliar, nombreDirectorio);
+
+    // Utilizar strtok para separar el nombre y la extensión
+    Cadena nombre = strtok(auxiliar, ".");
+    Cadena extension = strtok(NULL, ".");
+
+    // Verificar si se encontró una extensión
     if (extension != NULL) {
         cout << "El nombre del directorio no puede contener una extensión." << endl;
+        delete auxiliar;
         return ERROR;
     }
 
     if (strlen(nombreDirectorio) >= MAX_NOMBRE) {
         cout << "El nombre del directorio no puede superar los 15 caracteres." << endl;
+        delete auxiliar;
         return ERROR;
     } else {
         // Si pasó las validaciones, se le asigna nombre al directorio y se lo
@@ -98,14 +102,16 @@ TipoRet MKDIR(Sistema &s, Cadena nombreDirectorio) {
         Sistema newDir = crear_directorio(nombreDirectorio);
         Sistema actual = arbol_actual(s);
 
-        // CAMBIAR ARBOL_PERTENECE POR UNA FUNCION QUE BUSQUE EN UN SOLO NIVEL, YA QUE SE PERMITEN NOMBRES IGUALES EN DISTINTOS NIVELES.
+        // Cambiar ARBOL_PERTENECE por una función que busque en un solo nivel, ya que se permiten nombres iguales en distintos niveles.
         if (arbol_pertenece_un_nivel(actual, nombreDirectorio)) {
             cout << "El directorio'" << nombreDirectorio << "' ya existe." << endl;
+            delete auxiliar;
             return ERROR;
         } else {
-            // insertamos el nuevo directorio como ultimo hermano.
+            // Insertamos el nuevo directorio como último hermano.
             arbol_insertar(actual, newDir);
             cout << "El directorio '" << nombreDirectorio << "' fue creado exitosamente." << endl;
+            delete auxiliar;
             return OK;
         }
     }
