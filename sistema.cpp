@@ -47,7 +47,7 @@ TipoRet CD(Sistema &s, Cadena nombreDirectorio) {
         return OK;
     }
 
-    Sistema directorio = arbol_ph(s); // baja un nivel.
+    Sistema directorio = arbol_ph(s);  // baja un nivel.
     Sistema directorioAnterior = NULL;
     while (directorio != NULL && strcmp(arbol_nombre(directorio), nombreDirectorio) != 0) {
         directorioAnterior = directorio;
@@ -76,7 +76,7 @@ TipoRet MKDIR(Sistema &s, Cadena nombreDirectorio) {
         Sistema newDir = crear_directorio(nombreDirectorio);
         Sistema actual = arbol_actual(s);
 
-        // CAMBIAR ARBOL_PERTENECE POR UNA FUNCION QUE BUSQUE EN UN SOLO NIVEL, YA QUE SE PERMITEN NOMBRES IGUALES EN DISTINTOS NIVELES. 
+        // CAMBIAR ARBOL_PERTENECE POR UNA FUNCION QUE BUSQUE EN UN SOLO NIVEL, YA QUE SE PERMITEN NOMBRES IGUALES EN DISTINTOS NIVELES.
         if (arbol_pertenece_un_nivel(actual, nombreDirectorio)) {
             cout << "El directorio'" << nombreDirectorio << "' ya existe." << endl;
             return ERROR;
@@ -87,31 +87,30 @@ TipoRet MKDIR(Sistema &s, Cadena nombreDirectorio) {
             return OK;
         }
     }
-
 }
 
 TipoRet RMDIR(Sistema &s, Cadena nombreDirectorio) {
     // Elimina un directorio.
 
-    //TODO: QUE SEA RECURSIVO (O SEA QUE BORRE TODO PARA ADENTRO DEL DIRECTORIO).
+    // TODO: QUE SEA RECURSIVO (O SEA QUE BORRE TODO PARA ADENTRO DEL DIRECTORIO).
 
-  if (!arbol_pertenece(s, nombreDirectorio)) {
+    if (!arbol_pertenece(s, nombreDirectorio)) {
         cout << "El directorio '" << nombreDirectorio << "' no existe en el directorio actual." << endl;
         return ERROR;  // El directorio no existe en el directorio actual.
     }
 
     // Encontrar el archivo
-    Sistema directorio = arbol_ph(s); // baja un nivel.
+    Sistema directorio = arbol_ph(s);  // baja un nivel.
     Sistema directorioAnterior = NULL;
     while (directorio != NULL && strcmp(arbol_nombre(directorio), nombreDirectorio) != 0) {
         directorioAnterior = directorio;
         directorio = arbol_sh(directorio);
     }
 
-    if (arbol_tipo(directorio) == 1){
+    if (arbol_tipo(directorio) == 1) {
         cout << "El '" << nombreDirectorio << "' es un archivo, pruebe usar 'DELETE'." << endl;
         return ERROR;
-    } 
+    }
 
     arbol_eliminar(s, directorio, directorioAnterior);
     cout << "El directorio '" << nombreDirectorio << "' fue eliminado exitosamente." << endl;
@@ -142,20 +141,20 @@ TipoRet DIR(Sistema &s, Cadena parametro) {
     }
 
     // imprimimos la lista que creamos.
-    if (s == arbol_actual(s)) { 
+    if (s == arbol_actual(s)) {
         // Caso en el que el directorio actual sea la RAIZ.
         cout << NOMBRE_RAIZ << endl;
         cout << endl;
-    } 
-    
+    }
+
     // else {
     //    // Caso en el que el directorio actual NO sea la RAIZ.
     //       FUNCION QUE AGARRE EL CAMINO Y META ESE CAMINO EN MEDIO DE LA RAIZ Y EL DIRECTORIO ACTUAL.
     //       O SEA DIGAMOS RAIZ/PELADO/SINFONIAS/UTU/CIRCO
     //     cout << NOMBRE_RAIZ << endl;
-    //     cout << endl; 
+    //     cout << endl;
     // }
-    
+
     imprimir_lista(archivos_ordenados);
 
     // for (int i = 0; i < arbol_profunidad(s); i++) {
@@ -228,12 +227,11 @@ TipoRet DELETE(Sistema &s, Cadena nombreArchivo) {
         archivo = arbol_sh(archivo);
     }
 
-
     // Verificar si el archivo es de solo lectura, en este caso no se elimina. O si se está intentando borrar un directorio.
-   if(arbol_tipo(archivo) == 0){
+    if (arbol_tipo(archivo) == 0) {
         cout << "El '" << nombreArchivo << "' es un directorio, pruebe usar 'RMDIR'." << endl;
         return ERROR;
-   } else if (arbol_escritura(archivo) == false) {
+    } else if (arbol_escritura(archivo) == false) {
         cout << "El archivo '" << nombreArchivo << "' no se puede eliminar, no se tiene permiso de escritura sobre el archivo." << endl;
         return ERROR;
     }
@@ -288,8 +286,9 @@ TipoRet IC(Sistema &s, Cadena nombreArchivo, Cadena texto) {
         while (strcmp(arbol_nombre(aux), nombreArchivo) != 0) {
             aux = arbol_sh(aux);
         }
-        if(arbol_tipo(aux) == 0) {
-            cout << "No se puede aplicar este comando sobre un directorio" << "." << endl;
+        if (arbol_tipo(aux) == 0) {
+            cout << "No se puede aplicar este comando sobre un directorio"
+                 << "." << endl;
             return ERROR;
         }
         if (arbol_escritura(aux)) {
@@ -328,8 +327,9 @@ TipoRet IF(Sistema &s, Cadena nombreArchivo, Cadena texto) {
         while (strcmp(arbol_nombre(aux), nombreArchivo) != 0) {
             aux = arbol_sh(aux);
         }
-        if(arbol_tipo(aux) == 0) {
-            cout << "No se puede aplicar este comando sobre un directorio" << "." << endl;
+        if (arbol_tipo(aux) == 0) {
+            cout << "No se puede aplicar este comando sobre un directorio"
+                 << "." << endl;
             return ERROR;
         }
         if (arbol_escritura(aux)) {
@@ -364,8 +364,9 @@ TipoRet DC(Sistema &s, Cadena nombreArchivo, int k) {
         while (strcmp(arbol_nombre(aux), nombreArchivo) != 0) {
             aux = arbol_sh(aux);
         }
-        if(arbol_tipo(aux) == 0) {
-            cout << "No se puede aplicar este comando sobre un directorio" << "." << endl;
+        if (arbol_tipo(aux) == 0) {
+            cout << "No se puede aplicar este comando sobre un directorio"
+                 << "." << endl;
             return ERROR;
         }
         if (arbol_escritura(aux) == 1) {
@@ -410,8 +411,9 @@ TipoRet DF(Sistema &s, Cadena nombreArchivo, int k) {
         while (strcmp(arbol_nombre(aux), nombreArchivo) != 0) {
             aux = arbol_sh(aux);
         }
-        if(arbol_tipo(aux) == 0) {
-            cout << "No se puede aplicar este comando sobre un directorio" << "." << endl;
+        if (arbol_tipo(aux) == 0) {
+            cout << "No se puede aplicar este comando sobre un directorio"
+                 << "." << endl;
             return ERROR;
         }
         if (arbol_escritura(aux) == 1) {
