@@ -82,7 +82,7 @@ Sistema crear_archivo(Cadena nombreArchivo) {
     return newFile;
 }
 
-Sistema crear_directorio(Cadena nombreDirectorio) {
+Sistema crear_directorio(Cadena nombreDirectorio, Sistema directorioActual) {
     // crea un directorio.
 
     Sistema newDir = new (_sistema);
@@ -90,6 +90,7 @@ Sistema crear_directorio(Cadena nombreDirectorio) {
     newDir->tipo = _tipo(0);
     newDir->ph = NULL;
     newDir->sh = NULL;
+    newDir->anterior = directorioActual;
     newDir->escritura = false;
     newDir->lectura = false;
 

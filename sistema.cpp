@@ -47,6 +47,7 @@ TipoRet CD(Sistema &s, Cadena nombreDirectorio) {
     // CASO "CD ..".
     if (strcmp(nombreDirectorio, "..") == 0) {
         modificar_actual(s, arbol_anterior(s));
+        modificar_anterior(s, arbol_anterior(arbol_anterior(s)));  // Establecer el directorio anterior al anterior del anterior.
         return OK;
     }
     // CASO "CD RAIZ".
@@ -54,12 +55,13 @@ TipoRet CD(Sistema &s, Cadena nombreDirectorio) {
         modificar_actual(s, s);
         return OK;
     }
+
     // -------------------------------------------------
 
     // Guardamos su padre (el directorio anterior).
     // por si el anterior era la raiz.
     Sistema directorio = arbol_ph(arbol_actual(s));  // baja un nivel desde el actual.
-    while (directorio != NULL && strcmp(arbol_nombre(directorio), nombreDirectorio) != 0) {
+    while (directorio != NULL && (strcmp(arbol_nombre(directorio), nombreDirectorio) != 0 || arbol_tipo(directorio) == 1)) {
         directorio = arbol_sh(directorio);
     }
 
@@ -72,6 +74,7 @@ TipoRet CD(Sistema &s, Cadena nombreDirectorio) {
     // Encontró el directorio en el nivel, vamos a él y guardamos el "actual" como el nuevo anterior.
     modificar_anterior(s, arbol_actual(s));
     modificar_actual(s, directorio);
+
     return OK;
 }
 
@@ -99,7 +102,7 @@ TipoRet MKDIR(Sistema &s, Cadena nombreDirectorio) {
     } else {
         // Si pasó las validaciones, se le asigna nombre al directorio y se lo
         // sigue creando.
-        Sistema newDir = crear_directorio(nombreDirectorio);
+        Sistema newDir = crear_directorio(nombreDirectorio, arbol_actual(s));
         Sistema actual = arbol_actual(s);
 
         // Cambiar ARBOL_PERTENECE por una función que busque en un solo nivel, ya que se permiten nombres iguales en distintos niveles.

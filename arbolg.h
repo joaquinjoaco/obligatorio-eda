@@ -20,7 +20,7 @@ Sistema crear_raiz();
 Sistema crear_archivo(Cadena nombreArchivo);
 // crea un archivo.
 
-Sistema crear_directorio(Cadena nombreDirectorio);
+Sistema crear_directorio(Cadena nombreDirectorio, Sistema directorioActual);
 // crea un directorio.
 
 void destruir_arbol(Sistema &s);
