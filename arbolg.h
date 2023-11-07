@@ -80,7 +80,7 @@ TipoNodo arbol_tipo(Sistema s);
 Sistema arbol_insertar(Sistema &s, Sistema newFile);
 // inserta un nodo como ultimo sigiente hermano en el primer nivel del arbol.
 
-Sistema arbol_eliminar(Sistema &s, Sistema &archivo, Sistema &archivoAnterior);
+void arbol_eliminar(Sistema &s, Sistema &archivo, Sistema &archivoAnterior);
 // Elimina un archivo de un arbol.
 
 int mayor(int a, int b);

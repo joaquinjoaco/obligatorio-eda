@@ -198,26 +198,24 @@ Sistema arbol_insertar(Sistema &s, Sistema newFile) {
     return s;
 }
 
-Sistema arbol_eliminar(Sistema &s, Sistema &archivo, Sistema &archivoAnterior) {
+void arbol_eliminar(Sistema &s, Sistema &archivo, Sistema &archivoAnterior) {
     // Elimina un archivo de un árbol.
     // Eliminar el archivo del directorio actual
 
     if (archivoAnterior == NULL) {
         s->ph = archivo->sh;  // Actualiza el puntero del primer hijo del directorio
     } else {
-        if (arbol_tipo(archivo) == 0) {
-            destruir_arbol(archivo->ph);  // Borra el subárbol del directorio
-            delete archivo;
-        }
         archivoAnterior->sh = archivo->sh;  // Actualiza el puntero del nodo anterior
     }
 
     if (arbol_tipo(archivo) == 1) {
         // El nodo es un archivo
         delete archivo;  // Libera la memoria del archivo
+    } else {
+        // El nodo es un directorio
+        destruir_arbol(archivo->ph);  // Elimina los subdirectorios
+        delete archivo;               // Libera la memoria del directorio
     }
-
-    return s;
 }
 
 void destruir_arbol(Sistema &s) {
