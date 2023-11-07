@@ -37,6 +37,7 @@ struct _sistema {
     Sistema sh;
     // -----------------------------------------------
 
+    // SOLO LA RAIZ
     // directorio actual.
     Sistema actual;
     // directorio anterior.
@@ -168,6 +169,12 @@ void modificar_anterior(Sistema &s, Sistema anterior) {
     s->anterior = anterior;
 }
 
+void modificar_ph(Sistema &s, Sistema q) {
+    // modifica el puntero primer hijo del nodo dado.
+    // Pre: s no vacío.
+    s->ph = q;
+}
+
 Sistema arbol_insertar(Sistema &s, Sistema newFile) {
     // inserta un nodo como ultimo sigiente
     // hermano en el primer nivel del arbol.
@@ -192,21 +199,29 @@ Sistema arbol_insertar(Sistema &s, Sistema newFile) {
 }
 
 Sistema arbol_eliminar(Sistema &s, Sistema &archivo, Sistema &archivoAnterior) {
-    // Elimina un archivo de un arbol.
+    // Elimina un archivo de un árbol.
     // Eliminar el archivo del directorio actual
+
     if (archivoAnterior == NULL) {
-        s->ph = archivo->sh;  // El archivo es el primer hijo del directorio
+        s->ph = archivo->sh;  // Actualiza el puntero del primer hijo del directorio
     } else {
-        archivoAnterior->sh = archivo->sh;  // El archivo no es el primer hijo
+        if (arbol_tipo(archivo) == 0) {
+            destruir_arbol(archivo->ph);  // Borra el subárbol del directorio
+            delete archivo;
+        }
+        archivoAnterior->sh = archivo->sh;  // Actualiza el puntero del nodo anterior
     }
 
-    delete archivo;  // Liberar memoria del archivo
+    if (arbol_tipo(archivo) == 1) {
+        // El nodo es un archivo
+        delete archivo;  // Libera la memoria del archivo
+    }
+
     return s;
 }
 
 void destruir_arbol(Sistema &s) {
     // destruye el arbol dado.
-
     if (!vacio(s)) {
         destruir_arbol(s->ph);
         destruir_arbol(s->sh);

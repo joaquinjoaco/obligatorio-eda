@@ -65,6 +65,10 @@ void modificar_anterior(Sistema &s, Sistema anterior);
 // cambia el directorio anterior.
 // Pre: s no vacío.
 
+void modificar_ph(Sistema &s, Sistema q);
+// modifica el puntero primer hijo del nodo dado.
+// Pre: s no vacío.
+
 Cadena arbol_contenido(Sistema s);
 // retorna el valor del contenido.
 // Pre: s no vacío.
