@@ -199,41 +199,72 @@ TipoRet DIR(Sistema &s, Cadena parametro) {
     // creamos una lista para insertar los archivos de manera alfabeticamente
     // ordenada.
     Lista archivos_ordenados = crear();
-    // Lista archivos_ordenados2 = crear();
+    Lista directorios_ordenados = crear();
 
     // imprimimos la lista que creamos.
     if (s == arbol_actual(s)) {
         // Caso en el que el directorio actual sea la RAIZ.
-        // bajamos al primer nivel.
-        Sistema aux = s;
-        aux = arbol_ph(aux);
+        Sistema auxArchivos = s;
+        auxArchivos = arbol_ph(auxArchivos);
+        Sistema auxDirectorios = s;
+        auxDirectorios = arbol_ph(auxDirectorios);
 
         // insertamos todos los archivos del primer nivel en la lista.
-        while (aux != NULL) {
-            archivos_ordenados = insertar(aux, archivos_ordenados);
-            aux = arbol_sh(aux);
+        while (auxArchivos != NULL) {
+            if (arbol_tipo(auxArchivos) == 1) {
+                // si el nodo es un archivo, lo insertamos en la lista de archivos.
+                archivos_ordenados = insertar(auxArchivos, archivos_ordenados);
+            }
+            auxArchivos = arbol_sh(auxArchivos);
+        }
+
+        // insertamos todos los directorios del primer nivel en la lista.
+        while (auxDirectorios != NULL) {
+            if (arbol_tipo(auxDirectorios) == 0) {
+                // si el nodo es un directorio, lo insertamos en la lista de directorios.
+                directorios_ordenados = insertar(auxDirectorios, directorios_ordenados);
+            }
+            auxDirectorios = arbol_sh(auxDirectorios);
         }
 
         // Imprimimos el nombre del directorio.
         cout << NOMBRE_RAIZ << endl;
         cout << endl;
+        // Luego se imprimen los archivos ordenados alfabeticamente, seguido de los directorios ordenados de igual manera.
         imprimir_lista(archivos_ordenados);
+        imprimir_lista(directorios_ordenados);
 
     } else {
         // Encontrar el directorio actual
-        Sistema auxActual = arbol_actual(s);
-        auxActual = arbol_ph(auxActual);  // bajamos un nivel desde el "actual".
+        Sistema auxArchivos = arbol_actual(s);
+        auxArchivos = arbol_ph(auxArchivos);  // bajamos un nivel desde el "actual".
+        Sistema auxDirectorios = arbol_actual(s);
+        auxDirectorios = arbol_ph(auxDirectorios);
+
         // insertamos todos los archivos del primer nivel del directorio
         // "actual" en la lista.
-        while (auxActual != NULL) {
-            archivos_ordenados = insertar(auxActual, archivos_ordenados);
-            auxActual = arbol_sh(auxActual);
+        while (auxArchivos != NULL) {
+            if (arbol_tipo(auxArchivos) == 1) {
+                // si el nodo es un archivo, lo insertamos en la lista de archivos.
+                archivos_ordenados = insertar(auxArchivos, archivos_ordenados);
+            }
+            auxArchivos = arbol_sh(auxArchivos);
         }
 
+        // insertamos todos los directorios del primer nivel en la lista.
+        while (auxDirectorios != NULL) {
+            if (arbol_tipo(auxDirectorios) == 0) {
+                // si el nodo es un directorio, lo insertamos en la lista de directorios.
+                directorios_ordenados = insertar(auxDirectorios, directorios_ordenados);
+            }
+            auxDirectorios = arbol_sh(auxDirectorios);
+        }
         // Imprimimos el nombre del directorio.
         cout << arbol_nombre(arbol_actual(s)) << endl;
         cout << endl;
+        // Luego se imprimen los archivos ordenados alfabeticamente, seguido de los directorios ordenados de igual manera.
         imprimir_lista(archivos_ordenados);
+        imprimir_lista(directorios_ordenados);
     }
 
     return OK;

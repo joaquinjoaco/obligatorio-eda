@@ -60,7 +60,8 @@ Lista tail(Lista l) {
 }
 
 Lista insertar(Sistema ar, Lista l) {
-    // Retorna la lista fruto de insertar ordenadamente datos del archivo 'ar' en la
+    // Retorna la lista fruto de insertar ordenadamente datos del nodo 'ar' en la
+    // El nodo puede ser tanto un directorio como un archivo.
     // lista ordenada l. l no comparte memoria con la lista resultado.
 
     if (isEmpty(l))
