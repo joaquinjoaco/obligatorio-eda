@@ -203,7 +203,7 @@ TipoRet DIR(Sistema &s, Cadena parametro) {
 
     // imprimimos la lista que creamos.
     if (s == arbol_actual(s)) {
-        // Caso en el que el directorio actual sea la RAIZ.
+        // Caso en el que el directorio actual sea la RAIZ y no se uso el parametro '/s'.
         Sistema auxArchivos = s;
         auxArchivos = arbol_ph(auxArchivos);
         Sistema auxDirectorios = s;
@@ -233,9 +233,9 @@ TipoRet DIR(Sistema &s, Cadena parametro) {
         // Luego se imprimen los archivos ordenados alfabeticamente, seguido de los directorios ordenados de igual manera.
         imprimir_lista(archivos_ordenados);
         imprimir_lista(directorios_ordenados);
-
     } else {
-        // Encontrar el directorio actual
+        // Caso donde nos encontramos en un subdirectorio.
+        // Encontrar el directorio actual.
         Sistema auxArchivos = arbol_actual(s);
         auxArchivos = arbol_ph(auxArchivos);  // bajamos un nivel desde el "actual".
         Sistema auxDirectorios = arbol_actual(s);
@@ -259,9 +259,16 @@ TipoRet DIR(Sistema &s, Cadena parametro) {
             }
             auxDirectorios = arbol_sh(auxDirectorios);
         }
-        // Imprimimos el nombre del directorio.
+
+        // Imprimimos el path del subdirectorio.
+        // Cadena path = new (char[64]);
+        // FUNCION QUE AGARRE EL CAMINO Y META ESE CAMINO EN MEDIO DE LA RAIZ
+        // strcpy(path, "RAIZ/PELADO/peladin/peladon/pelo");
+        // cout << path << endl;
+
         cout << arbol_nombre(arbol_actual(s)) << endl;
         cout << endl;
+
         // Luego se imprimen los archivos ordenados alfabeticamente, seguido de los directorios ordenados de igual manera.
         imprimir_lista(archivos_ordenados);
         imprimir_lista(directorios_ordenados);
@@ -269,18 +276,13 @@ TipoRet DIR(Sistema &s, Cadena parametro) {
 
     return OK;
 
-    // else {
-    //    // Caso en el que el directorio actual NO sea la RAIZ.
-    //       FUNCION QUE AGARRE EL CAMINO Y META ESE CAMINO EN MEDIO DE LA RAIZ
-    //       Y EL DIRECTORIO ACTUAL. O SEA DIGAMOS
-    //       RAIZ/PELADO/SINFONIAS/UTU/CIRCO
-    //     cout << NOMBRE_RAIZ << endl;
-    //     cout << endl;
-    // }
-
-    // for (int i = 0; i < arbol_profunidad(s); i++) {
-    //     imprimir_nivel(s, i);
-    //     cout << "\n";
+    // // cosa del /s
+    // if (parametro != NULL && strcasecmp(parametro, "/s") != 0) {
+    //     cout << "Parametro: " << parametro << endl;
+    //     for (int i = 0; i < arbol_profunidad(s); i++) {
+    //         imprimir_nivel(s, i);
+    //         cout << "\n";
+    //     }
     // }
 }
 
