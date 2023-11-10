@@ -688,7 +688,97 @@ TipoRet SEARCH(Sistema &s, Cadena nombreArchivo, Cadena texto) {
 }
 
 TipoRet REPLACE(Sistema &s, Cadena nombreArchivo, Cadena texto1,Cadena texto2) {
+  // Chequea si el archivo existe
+  if (!arbol_pertenece_un_nivel(arbol_actual(s), nombreArchivo)) {
+    cout << "El archivo '" << nombreArchivo
+         << "' no existe en el directorio actual" << endl;
+    return ERROR;
+  }
+  // Encontrar el archivo
+      Sistema archivo =
+        arbol_ph(arbol_actual(s));  // bajamos un nivel desde el actual
+    Sistema archivoAnterior = NULL;
+    while (archivo != NULL && strcmp(arbol_nombre(archivo), nombreArchivo) != 0) {
+      archivoAnterior = archivo;  
+      archivo = arbol_sh(archivo);
+    }
+    if (arbol_tipo(archivo) == 0) {
+      cout << "No se puede aplicar este comando sobre un directorio"
+           << "." << endl;
+      return ERROR;
+    }
+
+  // Realiza la búsqueda del texto dentro del archivo
+  string contenidoArchivo = arbol_contenido(archivo);
+
+  // Encuentra la primera ocurrencia del texto en el contenido del archivo
+  size_t posicion = contenidoArchivo.find(texto1);
+
+    // Verificamos permisos de escritura
+   if (arbol_escritura(archivo)) {
+    // Buscamos la posicion de la cadena texto1
+     if (posicion != string::npos) {
   
-return NO_IMPLEMENTADA;
+      // Declaramos Cadenas auxiliares
+      Cadena temp = new char[TEXTO_MAX];
+      Cadena temp2 = new char[TEXTO_MAX];
+      Cadena temp3 = new char[TEXTO_MAX];
+      Cadena aux = new char[TEXTO_MAX];
+      
+      // Calculamos en que posicion culimina el texto a reemplazar
+      int lugar_aux = static_cast<int>(posicion);
+      int lugar = static_cast<int>(posicion)+strlen(texto1);
+      
+      // Calculamos cuantos caracteres hay desde donde termina la cadena a reemplazar hasta el final del contenido
+      int temp3_length_aux = strlen(arbol_contenido(archivo));
+      int temp3_length = temp3_length_aux-lugar;
+
+      // Almacenamos la cadena a reemplazar
+      strncpy(temp, arbol_contenido(archivo) + posicion, strlen(texto1));
+      temp[strlen(texto1)] = '\0';
+      // Almacenamos el contenido desde el comienzo del contenido hasta el comienzo de la cadena a reemplazar
+      strncpy(temp2, arbol_contenido(archivo) + 0, posicion);
+      temp2[posicion] = '\0';
+      // Almacenamos el contenido desde que culmina la cadena a reemplazar hasta que culmina el contenido del archivo
+      strncpy(temp3, arbol_contenido(archivo) + lugar, temp3_length);
+      temp3[temp3_length] = '\0';
+
+      // Sumamos las cadenas de forma ordenada
+      strcat(aux, temp2);
+      strcat(aux, texto2);
+      strcat(aux, temp3);
+
+        // Usando una cadena auxiliar verificamos que el reemplazo de la cadena previa por la nueva no sobrepase el limite del contenido
+          if(strlen(aux) > TEXTO_MAX) {
+          cout << "El texto ingresado hace que el archivo supere su limite de contenido" << endl;
+          return ERROR;
+      } else { 
+        
+        // Vaciamos el contenido original para poder ingresar el reemplazo
+        string Archivo_Aux = arbol_contenido(archivo);
+        Archivo_Aux = Archivo_Aux.substr(0,0);
+        strcpy(arbol_contenido(archivo), Archivo_Aux.c_str());
+
+      //Ingresamos el contenido modificado al archivo
+      strcat(arbol_contenido(archivo), temp2);
+      strcat(arbol_contenido(archivo), texto2);
+      strcat(arbol_contenido(archivo), temp3);
+
+      // Liberamos las Cadenas auxiliares
+      delete[] temp;
+      delete[] temp2;
+      delete[] temp3;
+      delete[] aux;
+      };
+    return OK;
+  } else {
+    cout << "Texto no encontrado en el archivo." << endl;
+    return ERROR;
+  }
+    } else {
+      cout << "El archivo '" << nombreArchivo << "' es de solo lectura."
+           << endl;
+      return ERROR;
 }
+    } 
 
