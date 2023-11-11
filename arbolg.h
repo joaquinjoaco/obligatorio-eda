@@ -69,6 +69,14 @@ void modificar_ph(Sistema &s, Sistema q);
 // modifica el puntero primer hijo del nodo dado.
 // Pre: s no vacío.
 
+void sumar_path(Sistema &s, Cadena subdirectorio);
+// modifica el path, concatenándole un nuevo nombre de subdirectorio.
+// Pre: s no vacío.
+
+void restar_path(Sistema &s);
+// modifica el path, removiéndole un nombre de subdirectorio.
+// Pre: s no vacío.
+
 Cadena arbol_contenido(Sistema s);
 // retorna el valor del contenido.
 // Pre: s no vacío.
@@ -76,6 +84,10 @@ Cadena arbol_contenido(Sistema s);
 TipoNodo arbol_tipo(Sistema s);
 // retorna el tipo del nodo.
 // Pre: s no vacío.
+
+Cadena arbol_path(Sistema s);
+// retorna el path actual.
+// Pre: s no vacio.
 
 Sistema arbol_insertar(Sistema &s, Sistema newFile);
 // inserta un nodo como ultimo sigiente hermano en el primer nivel del arbol.
@@ -99,5 +111,7 @@ bool arbol_pertenece(Sistema s, Cadena nombre);
 
 bool arbol_pertenece_un_nivel(Sistema s, Cadena nombre);
 // Retorna true si 'nombre' pertenece al nivel actual del árbol 's'.
+
+void mostrar_estructura_recursiva(Sistema s, Cadena path, bool esNivelSuperior = true);
 
 #endif
