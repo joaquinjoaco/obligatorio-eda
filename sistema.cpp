@@ -167,11 +167,13 @@ TipoRet RMDIR(Sistema &s, Cadena nombreDirectorio) {
              << "' es un archivo, pruebe usar 'DELETE'." << endl;
         return ERROR;
     }
+
     // Eliminamos el nodo.
     Sistema actual = arbol_actual(s);
     arbol_eliminar(actual, directorio, directorioAnterior);
     cout << "El directorio '" << nombreDirectorio
          << "' fue eliminado exitosamente." << endl;
+
     return OK;
 }
 
@@ -287,8 +289,6 @@ TipoRet MOVE(Sistema &s, Cadena nombre, Cadena directorioDestino) {
 
         return OK;
     }
-
-    return NO_IMPLEMENTADA;
 }
 
 TipoRet DIR(Sistema &s, Cadena parametro) {
