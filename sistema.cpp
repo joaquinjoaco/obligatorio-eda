@@ -151,44 +151,143 @@ TipoRet RMDIR(Sistema &s, Cadena nombreDirectorio) {
     // Encontrar el directorio
     Sistema directorio = arbol_ph(arbol_actual(s));  // baja un nivel.
     Sistema directorioAnterior = NULL;
-    while (directorio != NULL && strcmp(arbol_nombre(directorio), nombreDirectorio) != 0) {
+    while (directorio != NULL &&
+           strcmp(arbol_nombre(directorio), nombreDirectorio) != 0) {
         directorioAnterior = directorio;
         directorio = arbol_sh(directorio);  // nuestro nodo a eliminar
     }
 
-    // Puede que el directorio exista pero que no se encuentre en el nivel de
-    // los hijos.
+    // No se encontró el directorio en el nivel.
     if (directorio == NULL) {
-        cout << "No se encontró el directorio' " << nombreDirectorio << "'."
+        cout << "No existe el directorio '" << nombreDirectorio << "'."
              << endl;
         return ERROR;
-    }
-
-    if (arbol_tipo(directorio) == 1) {
+    } else if (arbol_tipo(directorio) == 1) {
         cout << "El '" << nombreDirectorio
              << "' es un archivo, pruebe usar 'DELETE'." << endl;
         return ERROR;
     }
-
-    // // modificamos los punteros para que el actual apunte al siguiente
-    // hermano Sistema actual = arbol_actual(s); modificar_ph(actual, NULL);
-
+    // Eliminamos el nodo.
     Sistema actual = arbol_actual(s);
     arbol_eliminar(actual, directorio, directorioAnterior);
-
-    // destruir_arbol(directorio);
     cout << "El directorio '" << nombreDirectorio
          << "' fue eliminado exitosamente." << endl;
-
-    // Sistema troll = arbol_actual(s);
-    // cout << arbol_nombre(troll) << endl;
-
     return OK;
 }
 
 TipoRet MOVE(Sistema &s, Cadena nombre, Cadena directorioDestino) {
     // mueve un directorio o archivo desde su directorio origen hacia un nuevo
     // directorio destino.
+    // Es decir, tomamos un primer hijo o siguiente hermano del nivel, y lo insertamos en 'directorioDestino' como ultimo hermano (para facilitar el codigo).
+
+    Sistema origen = arbol_actual(s);  // El origen siempre es el directorio actual.
+
+    // Buscamos el nodo (archivo o directorio).
+    Sistema mover = arbol_ph(origen);  // bajamos al primer hijo del directorio origen para comenzar a buscar.
+    Sistema moverAnterior = NULL;
+
+    while (mover != NULL && strcmp(arbol_nombre(mover), nombre) != 0) {
+        moverAnterior = mover;
+        mover = arbol_sh(mover);  // el nodo a mover.
+    }
+
+    // No se encontró el nodo.
+    if (mover == NULL) {
+        cout << "No existe '" << nombre << "'." << endl;
+        return ERROR;
+    }
+
+    // Validación (Caso directorio origen == "RAIZ" && destino == "RAIZ").
+    if (strcmp(arbol_nombre(origen), NOMBRE_RAIZ) == 0 && strcmp(directorioDestino, NOMBRE_RAIZ) == 0) {
+        cout << "El directorio destino no puede ser igual al directorio de origen." << endl;
+        return ERROR;
+    }
+
+    // Si encontramos el nodo que queremos mover, buscamos ahora el directorio destino.
+    // Iremos tomando tokens con delimitador '/' iterativamente e ir avanzando por dichos nodos.
+    // En cada iteracion buscamos el directorio destino al que debemos ir y nos quedamos con el nodo.
+    Cadena path = new (char[MAX_COMANDO]);
+    strcpy(path, directorioDestino);
+
+    Cadena pathToken = strtok(path, "/");  // Usaremos pathToken para ir tomando los nombres de los directorios.
+    pathToken = strtok(NULL, "/");         // Nos salteamos la raiz.
+
+    Sistema cursorDestino = s;  // Comenzaremos a buscar desde la raiz.
+
+    while (pathToken != NULL) {
+        // Validación (nombre del directorio destino debe ser distinto del directorio de origen, exceptuando el caso RAIZ que lo validamos arriba).
+        if (strcmp(arbol_nombre(cursorDestino), arbol_nombre(origen)) == 0 && strcmp(arbol_nombre(cursorDestino), NOMBRE_RAIZ) != 0) {
+            cout << "El directorio destino no puede ser igual al directorio de origen, o un subdirectorio del mismo." << endl;
+            return ERROR;
+        }
+
+        cursorDestino = arbol_ph(cursorDestino);  // bajamos al primer hijo.
+        // buscamos el directorio destino del path.
+        while (cursorDestino != NULL && strcmp(arbol_nombre(cursorDestino), pathToken) != 0) {
+            cursorDestino = arbol_sh(cursorDestino);
+        }
+
+        // No se encontró el directorio en el nivel.
+        if (cursorDestino == NULL || arbol_tipo(cursorDestino) == 1) {
+            cout << "No existe el directorio destino '" << pathToken << "'."
+                 << endl;
+            return ERROR;
+        }
+
+        // Tomamos el siguiente destino en el path.
+        pathToken = strtok(NULL, "/");
+    }
+
+    // Se encontró el directorio destino.
+
+    Sistema comparador = arbol_ph(cursorDestino);  // bajamos al primer hijo del directorio destino para comenzar a comparar.
+    Sistema comparadorAnterior = NULL;
+    while (comparador != NULL && strcmp(arbol_nombre(comparador), arbol_nombre(mover)) != 0) {
+        comparadorAnterior = comparador;
+        comparador = arbol_sh(comparador);  // el nodo a comparar.
+    }
+
+    if (comparador == NULL) {
+        // 1. Caso donde directorio destino NO cuenta con un directorio/archivo con el mismo nombre que el que queremos mover.
+        // Lo insertaremos como ultimo siguiente hermano de sus hijos.
+        // No hace falta sobrescribir, por lo tanto solo lo insertamos.
+
+        Sistema insertar = copiar_nodo(mover);
+        // Como se insertara como ultimo hermano, modificamos su puntero sh a NULL.
+        arbol_insertar(cursorDestino, insertar);
+        modificar_sh(insertar, NULL);
+
+        // Eliminamos el nodo que se encontraba en origen porque insertamos una copia igual que no comparte memoria.
+        eliminar_nodo(mover);  // no usamos arbol eliminar ya que si se trataba de un directorio perderiamos todo su contenido.
+
+        return OK;
+
+    } else if (comparador != NULL) {
+        // 2. Caso donde directorio destino SI cuenta con un directorio/archivo con el mismo nombre que el que queremos mover.
+        // Se 'sobreescribe' el archivo/directorio con el mismo nombre.
+        // Debemos arreglar los punteros, quitamos el nodo a sobreescribir e insertamos el nuevo como ultimo hermano.
+
+        Sistema insertar = copiar_nodo(mover);
+
+        // Ajustamos los punteros:
+        if (comparadorAnterior != NULL) {
+            // El nodo que estabamos sobreescribiendo NO era primer hijo.
+            modificar_sh(comparadorAnterior, arbol_sh(comparador));
+        } else {
+            // El nodo que estabamos sobreescribiendo era el primer hijo.
+            modificar_ph(cursorDestino, arbol_sh(comparador));
+        }
+
+        // Eliminamos el comparador (el nodo que estamos sobreescribiendo).
+        arbol_eliminar(cursorDestino, comparador, comparadorAnterior);
+        // Eliminamos el nodo que se encontraba en origen porque insertamos una copia igual que no comparte memoria.
+        eliminar_nodo(mover);  // no usamos arbol eliminar ya que si se trataba de un directorio perderiamos todo su contenido.
+        // Por ultimo insertamos el nodo que queriamos mover.
+        arbol_insertar(cursorDestino, insertar);
+
+        return OK;
+    }
+
     return NO_IMPLEMENTADA;
 }
 
@@ -376,7 +475,7 @@ TipoRet DELETE(Sistema &s, Cadena nombreArchivo) {
 }
 
 TipoRet ATTRIB(Sistema &s, Cadena nombreArchivo, Cadena parametro) {
-    //
+    // Agrega un texto al comienzo del archivo NombreArchivo.
 
     if (arbol_pertenece_un_nivel(arbol_actual(s), nombreArchivo)) {
         if ((strcasecmp(parametro, "+W") == 0 ||

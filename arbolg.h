@@ -23,8 +23,9 @@ Sistema crear_archivo(Cadena nombreArchivo);
 Sistema crear_directorio(Cadena nombreDirectorio, Sistema directorioActual);
 // crea un directorio.
 
-void destruir_arbol(Sistema &s);
-// destruye el arbol dado.
+Sistema copiar_nodo(Sistema &copiar);
+// Retorna un nodo que no comparte memoria con el que recibe y tiene los mismos datos.
+// Pre: nodo 'copiar' no vacio.
 
 bool vacio(Sistema s);
 // retorna true si el arbol es vacío, false en caso contrario.
@@ -69,6 +70,10 @@ void modificar_ph(Sistema &s, Sistema q);
 // modifica el puntero primer hijo del nodo dado.
 // Pre: s no vacío.
 
+void modificar_sh(Sistema &s, Sistema q);
+// modifica el puntero siguiente hermano del nodo dado.
+// Pre: s no vacío.
+
 void sumar_path(Sistema &s, Cadena subdirectorio);
 // modifica el path, concatenándole un nuevo nombre de subdirectorio.
 // Pre: s no vacío.
@@ -89,11 +94,17 @@ Cadena arbol_path(Sistema s);
 // retorna el path actual.
 // Pre: s no vacio.
 
-Sistema arbol_insertar(Sistema &s, Sistema newFile);
+Sistema arbol_insertar(Sistema &s, Sistema nodo);
 // inserta un nodo como ultimo sigiente hermano en el primer nivel del arbol.
 
-void arbol_eliminar(Sistema &s, Sistema &archivo, Sistema &archivoAnterior);
-// Elimina un archivo de un arbol.
+void arbol_eliminar(Sistema &s, Sistema &nodo, Sistema &nodoAnterior);
+// Elimina un archivo o directorio del árbol en el directorio actual.
+
+void destruir_arbol(Sistema &s);
+// destruye el arbol dado.
+
+void eliminar_nodo(Sistema &s);
+// Elimina un nodo cualquiera dado, sin condiciones, ni cambios en punteros.
 
 int mayor(int a, int b);
 // retorna el mayor de dos enteros.

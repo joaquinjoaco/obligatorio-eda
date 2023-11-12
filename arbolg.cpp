@@ -101,6 +101,20 @@ Sistema crear_directorio(Cadena nombreDirectorio, Sistema directorioActual) {
     return newDir;
 }
 
+Sistema copiar_nodo(Sistema &copiar) {
+    // Retorna un nodo que no comparte memoria con el que recibe y tiene los mismos datos.
+    // Pre: nodo 'copiar' no vacio.
+    Sistema nodo = new (_sistema);
+    strcpy(nodo->nombre, copiar->nombre);
+    nodo->tipo = copiar->tipo;
+    strcpy(nodo->contenido, copiar->contenido);
+    nodo->ph = copiar->ph;
+    nodo->sh = copiar->sh;
+    nodo->escritura = copiar->escritura;
+    nodo->lectura = copiar->lectura;
+    return nodo;
+}
+
 bool vacio(Sistema s) {
     // retorna true si el arbol es vacío, false en caso contrario.
     return (s == NULL);
@@ -183,6 +197,12 @@ void modificar_ph(Sistema &s, Sistema q) {
     s->ph = q;
 }
 
+void modificar_sh(Sistema &s, Sistema q) {
+    // modifica el puntero siguiente hermano del nodo dado.
+    // Pre: s no vacío.
+    s->sh = q;
+}
+
 void sumar_path(Sistema &s, Cadena subdirectorio) {
     // modifica el path, concatenándole un nuevo nombre de subdirectorio.
     // Pre: s no vacío.
@@ -218,7 +238,7 @@ void restar_path(Sistema &s) {
     delete dest;
 }
 
-Sistema arbol_insertar(Sistema &s, Sistema newFile) {
+Sistema arbol_insertar(Sistema &s, Sistema nuevoNodo) {
     // inserta un nodo como ultimo sigiente
     // hermano en el primer nivel del arbol.
     if (!vacio(arbol_ph(s))) {
@@ -232,32 +252,31 @@ Sistema arbol_insertar(Sistema &s, Sistema newFile) {
         }
 
         // apuntamos el ultimo hermano al nuevo archivo
-        aux->sh = newFile;
+        aux->sh = nuevoNodo;
 
     } else {
         // No tiene primer hijo
-        s->ph = newFile;
+        s->ph = nuevoNodo;
     }
     return s;
 }
 
-void arbol_eliminar(Sistema &s, Sistema &archivo, Sistema &archivoAnterior) {
-    // Elimina un archivo de un árbol.
-    // Eliminar el archivo del directorio actual
+void arbol_eliminar(Sistema &s, Sistema &nodo, Sistema &nodoAnterior) {
+    // Elimina un archivo o directorio del árbol en el directorio actual.
 
-    if (archivoAnterior == NULL) {
-        s->ph = archivo->sh;  // Actualiza el puntero del primer hijo del directorio
+    if (nodoAnterior == NULL) {
+        s->ph = nodo->sh;  // Actualiza el puntero del primer hijo del directorio
     } else {
-        archivoAnterior->sh = archivo->sh;  // Actualiza el puntero del nodo anterior
+        nodoAnterior->sh = nodo->sh;  // Actualiza el puntero del nodo anterior (el archivo )
     }
 
-    if (arbol_tipo(archivo) == 1) {
+    if (arbol_tipo(nodo) == 1) {
         // El nodo es un archivo
-        delete archivo;  // Libera la memoria del archivo
+        delete nodo;  // Libera la memoria del archivo
     } else {
         // El nodo es un directorio
-        destruir_arbol(archivo->ph);  // Elimina los subdirectorios
-        delete archivo;               // Libera la memoria del directorio
+        destruir_arbol(nodo->ph);  // Elimina los subdirectorios
+        delete nodo;               // Libera la memoria del directorio
     }
 }
 
@@ -269,6 +288,12 @@ void destruir_arbol(Sistema &s) {
         delete s;
     }
 
+    s = NULL;
+}
+
+void eliminar_nodo(Sistema &s) {
+    // Elimina un nodo cualquiera dado, sin condiciones, ni cambios en punteros.
+    delete s;
     s = NULL;
 }
 
