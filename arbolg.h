@@ -123,6 +123,6 @@ bool arbol_pertenece(Sistema s, Cadena nombre);
 bool arbol_pertenece_un_nivel(Sistema s, Cadena nombre);
 // Retorna true si 'nombre' pertenece al nivel actual del árbol 's'.
 
-void mostrar_estructura_recursiva(Sistema s, Cadena path, bool esNivelSuperior = true);
+void mostrar_estructura_recursiva(Sistema s, Cadena path);
 
 #endif

@@ -367,67 +367,62 @@ bool arbol_pertenece_un_nivel(Sistema s, Cadena nombre) {
     return false;
 }
 
-void mostrar_estructura_recursiva(Sistema s, Cadena path, bool esNivelSuperior) {
+void mostrar_estructura_recursiva(Sistema s, Cadena path) {
     // Se muestra en pantalla la estructura de los archivos y directorios desde cualquier lugar del sistema de manera recursiva
     // Mostrando al principio los archivos del directorio y luego los subdirectorios del mismo.
 
-    if (s != NULL) {
-        if (esNivelSuperior) {
-            // Muestra el path completo del directorio que estoy parado
-            cout << path << endl;
+    // Almacenar nombres de archivos y directorios en arreglos
+    Cadena archivos[MAX_NOMBRE];
+    Cadena directorios[MAX_NOMBRE];
+
+    int numArchivos = 0;
+    int numDirectorios = 0;
+
+    // Procesar los hijos del directorio actual
+    Sistema subdirectorio = arbol_ph(s);
+    while (subdirectorio != NULL) {
+        if (arbol_tipo(subdirectorio) == 1) {
+            // Es un archivo, almacenar su nombre
+            archivos[numArchivos] = arbol_nombre(subdirectorio);
+            numArchivos++;
+        } else {
+            // Es un directorio, almacenar su nombre
+            directorios[numDirectorios] = arbol_nombre(subdirectorio);
+            numDirectorios++;
         }
 
-        // Almacenar nombres de archivos y directorios en arreglos
-        Cadena archivos[MAX_NOMBRE];
-        Cadena directorios[MAX_NOMBRE];
+        // Avanzar al siguiente subdirectorio
+        subdirectorio = arbol_sh(subdirectorio);
+    }
 
-        int numArchivos = 0;
-        int numDirectorios = 0;
+    // Mostrar primero los archivos y luego los directorios
+    for (int i = 0; i < numArchivos; i++) {
+        // Construir la ruta completa del archivo
+        Cadena aux_path = new char[strlen(path) + strlen("/") + strlen(archivos[i]) + 1];
+        strcpy(aux_path, path);
+        strcat(aux_path, "/");
+        strcat(aux_path, archivos[i]);
+        cout << aux_path << endl;
+        delete[] aux_path;
+    }
 
-        // Procesar los hijos del directorio actual
-        Sistema subdirectorio = arbol_ph(s);
-        while (subdirectorio != NULL) {
-            if (arbol_tipo(subdirectorio) == 1) {
-                // Es un archivo, almacenar su nombre
-                archivos[numArchivos++] = arbol_nombre(subdirectorio);
-            } else {
-                // Es un directorio, almacenar su nombre
-                directorios[numDirectorios++] = arbol_nombre(subdirectorio);
+    for (int i = 0; i < numDirectorios; i++) {
+        // Construir la ruta completa del subdirectorio
+        Cadena aux_path = new char[strlen(path) + strlen("/") + strlen(directorios[i]) + 1];
+        strcpy(aux_path, path);
+        strcat(aux_path, "/");
+        strcat(aux_path, directorios[i]);
+        cout << aux_path << endl;
+
+        // Llamada recursiva con la ruta del subdirectorio
+        Sistema subdir = arbol_ph(s);
+        while (subdir != NULL) {
+            if (strcmp(arbol_nombre(subdir), directorios[i]) == 0) {
+                mostrar_estructura_recursiva(subdir, aux_path);
             }
-
-            // Avanzar al siguiente subdirectorio
-            subdirectorio = arbol_sh(subdirectorio);
+            subdir = arbol_sh(subdir);
         }
 
-        // Mostrar primero los archivos y luego los directorios
-        for (int i = 0; i < numArchivos; ++i) {
-            // Construir la ruta completa del archivo
-            Cadena aux_path = new char[strlen(path) + strlen("/") + strlen(archivos[i]) + 1];
-            strcpy(aux_path, path);
-            strcat(aux_path, "/");
-            strcat(aux_path, archivos[i]);
-            cout << aux_path << endl;
-            delete[] aux_path;
-        }
-
-        for (int i = 0; i < numDirectorios; ++i) {
-            // Construir la ruta completa del subdirectorio
-            Cadena aux_path = new char[strlen(path) + strlen("/") + strlen(directorios[i]) + 1];
-            strcpy(aux_path, path);
-            strcat(aux_path, "/");
-            strcat(aux_path, directorios[i]);
-            cout << aux_path << endl;
-
-            // Llamada recursiva con la ruta del subdirectorio
-            Sistema subdir = arbol_ph(s);
-            while (subdir != NULL) {
-                if (strcmp(arbol_nombre(subdir), directorios[i]) == 0) {
-                    mostrar_estructura_recursiva(subdir, aux_path, false);
-                }
-                subdir = arbol_sh(subdir);
-            }
-
-            delete[] aux_path;
-        }
+        delete[] aux_path;
     }
 }
