@@ -14,15 +14,17 @@
 #include "lista.h"
 
 TipoRet CREARSISTEMA(Sistema &s);
-// Inicializa el sistema para que contenga únicamente al directorio RAIZ, sin subdirectorios ni archivos.
+// Inicializa el sistema para que contenga únicamente al directorio RAIZ,
+// sin subdirectorios ni archivos.
 // Pre: No debe exisitr un sistema previamente creado.
 
 TipoRet DESTRUIRSISTEMA(Sistema &s);
-// Destruye el sistema, liberando la memoria asignada a las estructuras que datos que constituyen el file system.
+// Destruye el sistema, liberando la memoria asignada a las estructuras de
+// datos que constituyen el file system.
 // Pre: El sistema debe haber sido creado previamente.
 
 TipoRet CD(Sistema &s, Cadena nombreDirectorio);
-// Cambia directorio.
+// Cambia de directorio.
 
 TipoRet MKDIR(Sistema &s, Cadena nombreDirectorio);
 // Crea un nuevo directorio.
@@ -31,7 +33,7 @@ TipoRet RMDIR(Sistema &s, Cadena nombreDirectorio);
 // Elimina un directorio.
 
 TipoRet MOVE(Sistema &s, Cadena nombre, Cadena directorioDestino);
-// mueve un directorio o archivo desde su directorio origen hacia un nuevo directorio destino.
+// Mueve un directorio o archivo desde su directorio origen hacia un nuevo directorio destino.
 
 TipoRet DIR(Sistema &s, Cadena parametro);
 // Muestra el contenido del directorio actual.

@@ -16,13 +16,13 @@
 #define MAX_NOMBRE 16
 #define MAX_EXTENSION 3
 
-// definición de TIPO DE RETORNO.
+// Definición de TIPO DE RETORNO.
 enum _retorno { OK,
                 ERROR,
                 NO_IMPLEMENTADA };
 typedef enum _retorno TipoRet;
 
-// definición de dato para identificar un nodo como ARCHIVO o DIRECTORIO.
+// Definición de dato para identificar un nodo como ARCHIVO o DIRECTORIO.
 enum _tipo { DIRECTORIO,
              ARCHIVO };
 typedef enum _tipo TipoNodo;

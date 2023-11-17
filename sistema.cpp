@@ -27,7 +27,7 @@ TipoRet CREARSISTEMA(Sistema &s) {
 }
 
 TipoRet DESTRUIRSISTEMA(Sistema &s) {
-    // Destruye el sistema, liberando la memoria asignada a las estructuras que
+    // Destruye el sistema, liberando la memoria asignada a las estructuras de
     // datos que constituyen el file system.
     // Pre: El sistema debe haber sido creado previamente.
 
@@ -36,7 +36,7 @@ TipoRet DESTRUIRSISTEMA(Sistema &s) {
 }
 
 TipoRet CD(Sistema &s, Cadena nombreDirectorio) {
-    // Cambia directorio.
+    // Cambia de directorio.
 
     // -------------- VALIDACIONES --------------
     // CASO "CD .." y nos encontramos en raiz.
@@ -93,11 +93,11 @@ TipoRet MKDIR(Sistema &s, Cadena nombreDirectorio) {
     Cadena auxiliar = new char[MAX_NOMBRE];
     strcpy(auxiliar, nombreDirectorio);
 
-    // Utilizar strtok para separar el nombre y la extensión
+    // Separamos nombre y extensión con strtok().
     Cadena nombre = strtok(auxiliar, ".");
     Cadena extension = strtok(NULL, ".");
 
-    // Verificar si se encontró una extensión
+    // Verificamos si se encontró una extensión
     if (extension != NULL) {
         cout << "El nombre del directorio no puede contener una extensión." << endl;
         delete auxiliar;
@@ -114,8 +114,7 @@ TipoRet MKDIR(Sistema &s, Cadena nombreDirectorio) {
         Sistema newDir = crear_directorio(nombreDirectorio, arbol_actual(s));
         Sistema actual = arbol_actual(s);
 
-        // Cambiar ARBOL_PERTENECE por una función que busque en un solo nivel,
-        // ya que se permiten nombres iguales en distintos niveles.
+        // Chequeamos que no pertenezca.
         if (arbol_pertenece_un_nivel(actual, nombreDirectorio)) {
             cout << "El directorio '" << nombreDirectorio << "' ya existe." << endl;
             delete auxiliar;
@@ -133,15 +132,12 @@ TipoRet MKDIR(Sistema &s, Cadena nombreDirectorio) {
 TipoRet RMDIR(Sistema &s, Cadena nombreDirectorio) {
     // Elimina un directorio.
 
-    // TODO: QUE SEA RECURSIVO (O SEA QUE BORRE TODO PARA ADENTRO DEL
-    // DIRECTORIO).
-
     if (!arbol_pertenece_un_nivel(arbol_actual(s), nombreDirectorio)) {
         cout << "El directorio '" << nombreDirectorio << "' no existe en el directorio actual." << endl;
         return ERROR;  // El directorio no existe en el directorio actual.
     }
 
-    // Encontrar el directorio
+    // Encontrar el directorio.
     Sistema directorio = arbol_ph(arbol_actual(s));  // baja un nivel.
     Sistema directorioAnterior = NULL;
     while (directorio != NULL && strcmp(arbol_nombre(directorio), nombreDirectorio) != 0) {
@@ -167,9 +163,8 @@ TipoRet RMDIR(Sistema &s, Cadena nombreDirectorio) {
 }
 
 TipoRet MOVE(Sistema &s, Cadena nombre, Cadena directorioDestino) {
-    // mueve un directorio o archivo desde su directorio origen hacia un nuevo
+    // Mueve un directorio o archivo desde su directorio origen hacia un nuevo
     // directorio destino.
-    // Es decir, tomamos un primer hijo o siguiente hermano del nivel, y lo insertamos en 'directorioDestino' como ultimo hermano (para facilitar el codigo).
 
     Sistema origen = arbol_actual(s);  // El origen siempre es el directorio actual.
 
@@ -234,6 +229,7 @@ TipoRet MOVE(Sistema &s, Cadena nombre, Cadena directorioDestino) {
         return ERROR;
     }
 
+    // Comparamos que no exista en destino.
     Sistema comparador = arbol_ph(cursorDestino);  // bajamos al primer hijo del directorio destino para comenzar a comparar.
     Sistema comparadorAnterior = NULL;
     while (comparador != NULL && strcmp(arbol_nombre(comparador), arbol_nombre(mover)) != 0) {
@@ -281,14 +277,17 @@ TipoRet MOVE(Sistema &s, Cadena nombre, Cadena directorioDestino) {
 
         return OK;
     }
+
     return ERROR;
 }
 
 TipoRet DIR(Sistema &s, Cadena parametro) {
     // Muestra el contenido del directorio actual.
     // Pre: El sistema debe haber sido creado.
-    // creamos una lista para insertar los archivos de manera alfabeticamente
-    // ordenada.
+
+    // Creamos una lista para insertar los archivos de manera
+    // alfabéticamente ordenada.
+
     Lista archivos_ordenados = crear();
     Lista directorios_ordenados = crear();
     if (parametro != NULL && strcmp(parametro, "/S") == 0) {
@@ -297,8 +296,7 @@ TipoRet DIR(Sistema &s, Cadena parametro) {
     } else {
         // imprimimos la lista que creamos.
         if (s == arbol_actual(s)) {
-            // Caso en el que el directorio actual sea la RAIZ y no se uso el parametro
-            // '/s'.
+            // Caso en el que el directorio actual sea la RAIZ y no se usó el parámetro '/s'.
             Sistema auxArchivos = s;
             auxArchivos = arbol_ph(auxArchivos);
             Sistema auxDirectorios = s;
@@ -326,7 +324,7 @@ TipoRet DIR(Sistema &s, Cadena parametro) {
             // Imprimimos el nombre del directorio.
             cout << NOMBRE_RAIZ << endl;
             cout << endl;
-            // Luego se imprimen los archivos ordenados alfabeticamente, seguido de los
+            // Luego se imprimen los archivos ordenados alfabéticamente, seguido de los
             // directorios ordenados de igual manera.
             imprimir_lista(archivos_ordenados);
             imprimir_lista(directorios_ordenados);
@@ -362,21 +360,14 @@ TipoRet DIR(Sistema &s, Cadena parametro) {
             cout << arbol_path(s) << endl;
             cout << endl;
 
-            // Luego se imprimen los archivos ordenados alfabeticamente, seguido de los
+            // Luego se imprimen los archivos ordenados alfabéticamente, seguido de los
             // directorios ordenados de igual manera.
             imprimir_lista(archivos_ordenados);
             imprimir_lista(directorios_ordenados);
         }
     }
+
     return OK;
-    //   // // cosa del /s
-    //   if (parametro != NULL && strcasecmp(parametro, "/s") != 0) {
-    //       cout << "Parametro: " << parametro << endl;
-    //       for (int i = 0; i < arbol_profunidad(arbol_actual(s)); i++) {
-    //           imprimir_nivel(s, i);
-    //           cout << "\n";
-    //       }
-    //   }
 }
 
 TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo) {
@@ -415,7 +406,7 @@ TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo) {
             delete auxiliar;
             return ERROR;
         } else {
-            // insertamos el nuevo archivo como ultimo hermano.
+            // insertamos el nuevo archivo como último hermano.
             Sistema actual = arbol_actual(s);
             arbol_insertar(actual, newFile);
             cout << "El archivo '" << nombreArchivo << "' fue creado exitosamente."
@@ -664,7 +655,6 @@ TipoRet TYPE(Sistema &s, Cadena nombreArchivo) {
     // Imprime el contenido del archivo parámetro.
 
     // Verificar si el archivo existe en el directorio actual.
-
     if (!arbol_pertenece_un_nivel(arbol_actual(s), nombreArchivo)) {
         cout << "El archivo '" << nombreArchivo << "' no existe en el directorio actual" << endl;
         return ERROR;

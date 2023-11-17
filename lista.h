@@ -18,25 +18,27 @@ typedef struct _nodo_lista *Lista;
 Lista crear();
 // Crea la lista vacía.
 
-Lista cons(Sistema ar, Lista l);
-// Inserta el archivo al principio de la lista l.
+Lista cons(Sistema s, Lista l);
+// Inserta el nodo (archivo o directorio) al inicio de l.
 
 bool isEmpty(Lista l);
 // Retorna true si l es vacía, false en caso contrario.
 
-Sistema archivo(Lista l);
-// Retorna el archivo del primer elemento de la lista.
+Sistema nodo(Lista l);
+// Retorna el nodo (archivo o directorio) del primer elemento de la lista.
+// Pre: l no vacía.
 
 Cadena lista_nombre(Lista l);
 // Retorna la cadena nombre del primer elemento de la lista.
 
 Lista tail(Lista l);
-// Retorna la lista sin su primer elemento.
-// Pre: l no vacía.
+// Retorna el "resto" de la lista.
+// Pre: l no vacia.
 
 Lista insertar(Sistema archivo, Lista l);
-// Retorna la lista fruto de insertar ordenadamente el elemento x en la lista ordenada l.
-// l no comparte memoria con la lista resultado.
+// Retorna la lista fruto de insertar ordenadamente el nodo 'n' en la lista.
+// El nodo puede ser tanto un directorio como un archivo.
+// La lista resultante no comparte memoria con la lista resultado.
 
 void imprimir_lista(Lista l);
 // Imprime los elementos de la lista.

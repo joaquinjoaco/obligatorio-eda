@@ -5,7 +5,7 @@
 //
 // Trabajo Obligatorio
 // sistema.c
-// Modulo de Implementacion de funciones relacionadas a arbol general.
+// Modulo de Implementacion de funciones relacionadas al arbol general (finitario).
 
 #include "arbolg.h"
 
@@ -19,7 +19,7 @@ using namespace std;
 
 struct _sistema {
     // aquí deben figurar los campos que usted considere necesarios para
-    // manipular el sistema de directorios Se deberan crear nuevos modulos
+    // manipular el sistema de directorios. Se deberan crear nuevos modulos.
 
     // LA ESTRUCTURA OPTADA ES LA DE TIPO ARBOL GENERAL
     // Tipo de nodo
@@ -53,7 +53,7 @@ struct _sistema {
 };
 
 Sistema crear_raiz() {
-    // crea un directorio vacío.
+    // crea la RAIZ vacía.
 
     Sistema raiz = new (_sistema);
     raiz->tipo = _tipo(0);
@@ -72,7 +72,7 @@ Sistema crear_raiz() {
 }
 
 Sistema crear_archivo(Cadena nombreArchivo) {
-    // crea un archivo.
+    // crea un archivo vacío.
 
     Sistema newFile = new (_sistema);
     strcpy(newFile->nombre, nombreArchivo);
@@ -87,7 +87,7 @@ Sistema crear_archivo(Cadena nombreArchivo) {
 }
 
 Sistema crear_directorio(Cadena nombreDirectorio, Sistema directorioActual) {
-    // crea un directorio.
+    // crea un directorio vacío.
 
     Sistema newDir = new (_sistema);
     strcpy(newDir->nombre, nombreDirectorio);
@@ -102,8 +102,9 @@ Sistema crear_directorio(Cadena nombreDirectorio, Sistema directorioActual) {
 }
 
 Sistema copiar_nodo(Sistema &copiar) {
-    // Retorna un nodo que no comparte memoria con el que recibe y tiene los mismos datos.
+    // Retorna un nodo con los mismos datos que el nodo que recibe y no comparte memoria con el mismo.
     // Pre: nodo 'copiar' no vacio.
+
     Sistema nodo = new (_sistema);
     strcpy(nodo->nombre, copiar->nombre);
     nodo->tipo = copiar->tipo;
@@ -180,13 +181,13 @@ void modificar_escritura(Sistema &s, bool valor) {
 }
 
 void modificar_actual(Sistema &s, Sistema actual) {
-    // modifica el directorio actual.
+    // modifica el directorio actual del sistema.
     // Pre: s no vacío.
     s->actual = actual;
 }
 
 void modificar_anterior(Sistema &s, Sistema anterior) {
-    // cambia el directorio anterior.
+    // cambia el directorio anterior del sistema.
     // Pre: s no vacío.
     s->anterior = anterior;
 }
@@ -204,17 +205,15 @@ void modificar_sh(Sistema &s, Sistema q) {
 }
 
 void sumar_path(Sistema &s, Cadena subdirectorio) {
-    // modifica el path, concatenándole un nuevo nombre de subdirectorio.
+    // modifica el path, concatenándole un nuevo nombre de subdirectorio al final.
     // Pre: s no vacío.
     strcat(s->path, "/");
     strcat(s->path, subdirectorio);
 }
 
 void restar_path(Sistema &s) {
-    // modifica el path, removiéndole un nombre de subdirectorio.
+    // modifica el path, removiéndole un nombre de subdirectorio al final.
     // Pre: s no vacío.
-
-    //   s->path = strtok(s->path, "(/)\n");
 
     Cadena src = new (char[64]);
     Cadena dest = new (char[64]);
@@ -239,25 +238,27 @@ void restar_path(Sistema &s) {
 }
 
 Sistema arbol_insertar(Sistema &s, Sistema nuevoNodo) {
-    // inserta un nodo como ultimo sigiente
+    // Inserta un nodo como último sigiente
     // hermano en el primer nivel del arbol.
+
     if (!vacio(arbol_ph(s))) {
         // Tiene un primer hijo
         Sistema aux = s;
         aux = arbol_ph(aux);  // vamos al primer hijo.
 
-        // vamos al ultimo hermano (o ultimo elemento de la lista).
+        // vamos al último hermano (o último elemento de la lista).
         while (!vacio(arbol_sh(aux))) {
             aux = arbol_sh(aux);
         }
 
-        // apuntamos el ultimo hermano al nuevo archivo
+        // apuntamos el último hermano al nuevo archivo
         aux->sh = nuevoNodo;
 
     } else {
         // No tiene primer hijo
         s->ph = nuevoNodo;
     }
+
     return s;
 }
 
@@ -265,23 +266,23 @@ void arbol_eliminar(Sistema &s, Sistema &nodo, Sistema &nodoAnterior) {
     // Elimina un archivo o directorio del árbol en el directorio actual.
 
     if (nodoAnterior == NULL) {
-        s->ph = nodo->sh;  // Actualiza el puntero del primer hijo del directorio
+        s->ph = nodo->sh;  // Actualiza el puntero del primer hijo del directorio.
     } else {
-        nodoAnterior->sh = nodo->sh;  // Actualiza el puntero del nodo anterior (el archivo )
+        nodoAnterior->sh = nodo->sh;  // Actualiza el puntero del nodo anterior.
     }
 
     if (arbol_tipo(nodo) == 1) {
-        // El nodo es un archivo
-        delete nodo;  // Libera la memoria del archivo
+        // El nodo es un archivo.
+        delete nodo;  // Libera la memoria del nodo archivo con delete.
     } else {
-        // El nodo es un directorio
-        destruir_arbol(nodo->ph);  // Elimina los subdirectorios
-        delete nodo;               // Libera la memoria del directorio
+        // El nodo es un directorio,
+        destruir_arbol(nodo->ph);  // Elimina los subdirectorios recursivamente.
+        delete nodo;               // Luego libera la memoria del nodo directorio con delete.
     }
 }
 
 void destruir_arbol(Sistema &s) {
-    // destruye el arbol dado.
+    // Destruye el arbol dado.
     if (!vacio(s)) {
         destruir_arbol(s->ph);
         destruir_arbol(s->sh);
@@ -298,7 +299,7 @@ void eliminar_nodo(Sistema &s) {
 }
 
 int mayor(int a, int b) {
-    // retorna el mayor de dos enteros.
+    // Retorna el mayor de dos enteros.
     if (a > b) {
         return a;
     } else {
@@ -307,9 +308,7 @@ int mayor(int a, int b) {
 }
 
 int arbol_profunidad(Sistema s) {
-    // retorna la profundidad del arbol (para el caso de arboles generales
-    // calculamos la profunidad como la cantidad de niveles). El primer nodo es
-    // el nivel 1.
+    // Retorna la profundidad del árbol.
 
     if (s == NULL) {
         return 0;
@@ -319,10 +318,10 @@ int arbol_profunidad(Sistema s) {
 }
 
 void imprimir_nivel(Sistema s, int nivel) {
-    // imprime el nivel dado del arbol general.
+    // Imprime el nivel dado del arbol general.
     if (s != NULL) {
         if (nivel != 0) {
-            // se va ramificando con las llamadas recursivas.
+            // se va "ramificando" con las llamadas recursivas.
             imprimir_nivel(s->ph, nivel - 1);
             imprimir_nivel(s->sh, nivel);
 
@@ -344,7 +343,7 @@ void imprimir_nivel(Sistema s, int nivel) {
 }
 
 bool arbol_pertenece(Sistema s, Cadena nombre) {
-    // retorna true si 'e' pertenece al arbol 'a'.
+    // Retorna true si la cadena 'nombre' pertenece al arbol 's'.
 
     if (s == NULL) {
         return false;
@@ -356,7 +355,7 @@ bool arbol_pertenece(Sistema s, Cadena nombre) {
 }
 
 bool arbol_pertenece_un_nivel(Sistema s, Cadena nombre) {
-    // Retorna true si 'nombre' pertenece al nivel actual del árbol 's'.
+    // Retorna true si la cadena 'nombre' pertenece al nivel actual del árbol 's'.
     s = s->ph;
     while (s != NULL) {
         if (strcmp(s->nombre, nombre) == 0) {

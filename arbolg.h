@@ -1,30 +1,30 @@
 #ifndef ARBOLG_H
 #define ARBOLG_H
 
-// // Estructuras de Datos y Algoritmos - Curso 2023
-// // Tecnologo en Informatica FIng - DGETP - UTEC
+//  Estructuras de Datos y Algoritmos - Curso 2023
+//  Tecnologo en Informatica FIng - DGETP - UTEC
 //
 // Autores: Fabricio Garcia (5.473.797-0), Juan Garcia (5.282.647-8), Joaquin Gomez (5.398.934-6).
 //
-// // Trabajo Obligatorio
-// // arbolg.h
-// // Definiciones de arbol general.
+//  Trabajo Obligatorio
+//  arbolg.h
+//  Definiciones de arbol general (finitario).
 
 #include "definiciones.h"
 
 typedef struct _sistema *Sistema;
 
 Sistema crear_raiz();
-// crea el directorio raíz.
+// crea la RAIZ vacía.
 
 Sistema crear_archivo(Cadena nombreArchivo);
-// crea un archivo.
+// crea un archivo vacío.
 
 Sistema crear_directorio(Cadena nombreDirectorio, Sistema directorioActual);
-// crea un directorio.
+// crea un directorio vacío.
 
 Sistema copiar_nodo(Sistema &copiar);
-// Retorna un nodo que no comparte memoria con el que recibe y tiene los mismos datos.
+// Retorna un nodo con los mismos datos que el nodo que recibe y no comparte memoria con el mismo.
 // Pre: nodo 'copiar' no vacio.
 
 bool vacio(Sistema s);
@@ -59,11 +59,11 @@ void modificar_escritura(Sistema &s, bool valor);
 // Pre: s no vacío.
 
 void modificar_actual(Sistema &s, Sistema actual);
-// cambia el directorio actual.
+// cambia el directorio actual del sistema.
 // Pre: s no vacío.
 
 void modificar_anterior(Sistema &s, Sistema anterior);
-// cambia el directorio anterior.
+// cambia el directorio anterior del sistema.
 // Pre: s no vacío.
 
 void modificar_ph(Sistema &s, Sistema q);
@@ -75,11 +75,11 @@ void modificar_sh(Sistema &s, Sistema q);
 // Pre: s no vacío.
 
 void sumar_path(Sistema &s, Cadena subdirectorio);
-// modifica el path, concatenándole un nuevo nombre de subdirectorio.
+// modifica el path, concatenándole un nuevo nombre de subdirectorio al final.
 // Pre: s no vacío.
 
 void restar_path(Sistema &s);
-// modifica el path, removiéndole un nombre de subdirectorio.
+// modifica el path, removiéndole un nombre de subdirectorio al final.
 // Pre: s no vacío.
 
 Cadena arbol_contenido(Sistema s);
@@ -95,34 +95,34 @@ Cadena arbol_path(Sistema s);
 // Pre: s no vacio.
 
 Sistema arbol_insertar(Sistema &s, Sistema nodo);
-// inserta un nodo como ultimo sigiente hermano en el primer nivel del arbol.
+// Inserta un nodo como último sigiente hermano en el primer nivel del arbol.
 
 void arbol_eliminar(Sistema &s, Sistema &nodo, Sistema &nodoAnterior);
 // Elimina un archivo o directorio del árbol en el directorio actual.
 
 void destruir_arbol(Sistema &s);
-// destruye el arbol dado.
+// Destruye el arbol dado.
 
 void eliminar_nodo(Sistema &s);
 // Elimina un nodo cualquiera dado, sin condiciones, ni cambios en punteros.
 
 int mayor(int a, int b);
-// retorna el mayor de dos enteros.
+// Retorna el mayor de dos enteros.
 
 int arbol_profunidad(Sistema s);
-// retorna la profundidad del arbol (para el caso de arboles generales
-// calculamos la profunidad como la cantidad de niveles). El primer nodo es el
-// nivel 1.
+// Retorna la profundidad del árbol.
 
 void imprimir_nivel(Sistema s, int nivel);
-// imprime el nivel dado del arbol general.
+// Imprime el nivel dado del arbol general.
 
 bool arbol_pertenece(Sistema s, Cadena nombre);
-// retorna true si 'e' pertenece al arbol 'a'.
+// Retorna true si la cadena 'nombre' pertenece al arbol 's'.
 
 bool arbol_pertenece_un_nivel(Sistema s, Cadena nombre);
 // Retorna true si 'nombre' pertenece al nivel actual del árbol 's'.
 
 void mostrar_estructura_recursiva(Sistema s, Cadena path);
+// Se muestra en pantalla la estructura de los archivos y directorios desde cualquier lugar del sistema de manera recursiva
+// Mostrando al principio los archivos del directorio y luego los subdirectorios del mismo.
 
 #endif

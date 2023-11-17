@@ -20,7 +20,7 @@
 using namespace std;
 
 struct _nodo_lista {
-    Sistema archivo;
+    Sistema nodo;  // archivo o directorio.
     Lista sig;
 };
 
@@ -29,10 +29,10 @@ Lista crear() {
     return NULL;
 }
 
-Lista cons(Sistema ar, Lista l) {
-    // Inserta n al inicio de l.
+Lista cons(Sistema n, Lista l) {
+    // Inserta el nodo (archivo o directorio) al inicio de l.
     Lista aux = new (_nodo_lista);
-    aux->archivo = ar;
+    aux->nodo = n;
     aux->sig = l;
     return aux;
 }
@@ -42,15 +42,15 @@ bool isEmpty(Lista l) {
     return (l == NULL);
 }
 
-Sistema archivo(Lista l) {
-    // Retorna el archivo del primer elemento de la lista.
+Sistema nodo(Lista l) {
+    // Retorna el nodo (archivo o directorio) del primer elemento de la lista.
     // Pre: l no vacia.
-    return l->archivo;
+    return l->nodo;
 }
 
 Cadena lista_nombre(Lista l) {
     // Retorna la cadena nombre del primer elemento de la lista.
-    return arbol_nombre(l->archivo);
+    return arbol_nombre(l->nodo);
 }
 
 Lista tail(Lista l) {
@@ -59,30 +59,30 @@ Lista tail(Lista l) {
     return l->sig;
 }
 
-Lista insertar(Sistema ar, Lista l) {
-    // Retorna la lista fruto de insertar ordenadamente datos del nodo 'ar' en la
+Lista insertar(Sistema n, Lista l) {
+    // Retorna la lista fruto de insertar ordenadamente el nodo 'n' en la lista.
     // El nodo puede ser tanto un directorio como un archivo.
-    // lista ordenada l. l no comparte memoria con la lista resultado.
+    // La lista resultante no comparte memoria con la lista resultado.
 
     if (isEmpty(l))
         // caso que la lista es vacía.
-        return cons(ar, NULL);
-    else if (strcmp(arbol_nombre(archivo(l)), arbol_nombre(ar)) == 0)
-        // caso en el que el archivo ya existe en la lista.
+        return cons(n, NULL);
+    else if (strcmp(arbol_nombre(nodo(l)), arbol_nombre(n)) == 0)
+        // caso en el que el nodo ya existe en la lista.
         return l;
-    else if (strcmp(arbol_nombre(archivo(l)), arbol_nombre(ar)) < 0)
-        // caso que el archivo actual sea menor alfabéticamente que el que se quiere insertar.
-        return cons(archivo(l), insertar(ar, tail(l)));
+    else if (strcmp(arbol_nombre(nodo(l)), arbol_nombre(n)) < 0)
+        // caso que el nombre del nodo de la lista sea menor alfabéticamente que el que se quiere insertar.
+        return cons(nodo(l), insertar(n, tail(l)));
     else if (isEmpty(tail(l)))
-        // caso que llegamos al último elemento de l
-        return cons(ar, cons(archivo(l), NULL));
+        // caso que llegamos al último elemento de la lista.
+        return cons(n, cons(nodo(l), NULL));
     else {
-        char nombreArchivoActual = tolower(arbol_nombre(archivo(l))[0]);
-        char nombreArchivoNuevo = tolower(arbol_nombre(ar)[0]);
+        char nombreArchivoActual = tolower(arbol_nombre(nodo(l))[0]);
+        char nombreArchivoNuevo = tolower(arbol_nombre(n)[0]);
         if (nombreArchivoActual == nombreArchivoNuevo) {
-            return cons(ar, cons(archivo(l), tail(l)));
+            return cons(n, cons(nodo(l), tail(l)));
         } else {
-            return cons(ar, cons(archivo(l), insertar(archivo(tail(l)), tail(l))));
+            return cons(n, cons(nodo(l), insertar(nodo(tail(l)), tail(l))));
         }
     }
 }
@@ -91,10 +91,10 @@ void imprimir_lista(Lista l) {
     // Imprime l en la salida estandar.
 
     while (!isEmpty(l)) {
-        cout << arbol_nombre(archivo(l)) << "   ";
+        cout << arbol_nombre(nodo(l)) << "   ";
         // Si es un archivo mostramos sus permisos.
-        if (arbol_tipo(archivo(l)) == 1) {
-            if (arbol_escritura(archivo(l))) {
+        if (arbol_tipo(nodo(l)) == 1) {
+            if (arbol_escritura(nodo(l))) {
                 cout << "Lectura/Escritura";
             } else {
                 cout << "Lectura";
