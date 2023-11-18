@@ -248,7 +248,7 @@ TipoRet MOVE(Sistema &s, Cadena nombre, Cadena directorioDestino) {
         modificar_sh(insertar, NULL);
 
         // Eliminamos el nodo que se encontraba en origen porque insertamos una copia igual que no comparte memoria.
-        eliminar_nodo(mover);  // no usamos arbol eliminar ya que si se trataba de un directorio perderiamos todo su contenido.
+        eliminar_nodo(origen, mover, moverAnterior);  // no usamos arbol eliminar ya que si se trataba de un directorio perderiamos todo su contenido.
 
         return OK;
 
@@ -271,7 +271,7 @@ TipoRet MOVE(Sistema &s, Cadena nombre, Cadena directorioDestino) {
         // Eliminamos el comparador (el nodo que estamos sobreescribiendo).
         arbol_eliminar(cursorDestino, comparador, comparadorAnterior);
         // Eliminamos el nodo que se encontraba en origen porque insertamos una copia igual que no comparte memoria.
-        eliminar_nodo(mover);  // no usamos arbol eliminar ya que si se trataba de un directorio perderiamos todo su contenido.
+        eliminar_nodo(origen, mover, moverAnterior);  // no usamos arbol eliminar ya que si se trataba de un directorio perderiamos todo su contenido.
         // Por ultimo insertamos el nodo que queriamos mover.
         arbol_insertar(cursorDestino, insertar);
 
@@ -712,7 +712,7 @@ TipoRet SEARCH(Sistema &s, Cadena nombreArchivo, Cadena texto) {
     size_t posicion = contenidoArchivo.find(texto);
 
     if (posicion != string::npos) {
-        cout << "Texto encontrado en la posición: " << posicion << endl;
+        cout << "Texto encontrado en la posición: " << posicion << " (Contando a partir de 0)" << endl;
         return OK;
     } else {
         cout << "Texto no encontrado en el archivo." << endl;

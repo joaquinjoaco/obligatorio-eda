@@ -103,7 +103,7 @@ void arbol_eliminar(Sistema &s, Sistema &nodo, Sistema &nodoAnterior);
 void destruir_arbol(Sistema &s);
 // Destruye el arbol dado.
 
-void eliminar_nodo(Sistema &s);
+void eliminar_nodo(Sistema &s, Sistema &nodo, Sistema &nodoAnterior);
 // Elimina un nodo cualquiera dado, sin condiciones, ni cambios en punteros.
 
 int mayor(int a, int b);

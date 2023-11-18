@@ -292,10 +292,16 @@ void destruir_arbol(Sistema &s) {
     s = NULL;
 }
 
-void eliminar_nodo(Sistema &s) {
+void eliminar_nodo(Sistema &s, Sistema &nodo, Sistema &nodoAnterior) {
     // Elimina un nodo cualquiera dado, sin condiciones, ni cambios en punteros.
-    delete s;
-    s = NULL;
+    if (nodoAnterior == NULL) {
+        s->ph = nodo->sh;  // Actualiza el puntero del primer hijo del directorio
+    } else {
+        nodoAnterior->sh = nodo->sh;  // Actualiza el puntero del nodo anterior (el archivo )
+    }
+
+    delete nodo;
+    nodo = NULL;
 }
 
 int mayor(int a, int b) {
