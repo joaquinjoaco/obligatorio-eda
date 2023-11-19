@@ -183,9 +183,9 @@ int main() {
         } else if (strcasecmp(pch, "REPLACE") == 0) {
             pch = strtok(NULL, "( ,)\n");
             if (pch != NULL) {
-                pch1 = strtok(NULL, "( ,)\n");
+                pch1 = strtok(NULL, "(,)\n");
                 if (pch1 != NULL) {
-                    pch2 = strtok(NULL, "( ,)\n");
+                    pch2 = strtok(NULL, "(,)\n");
                     if (pch2 != NULL) {
                         ret = REPLACE(s, pch, pch1, pch2);
                         ejecutado = true;

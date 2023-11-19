@@ -122,7 +122,7 @@ TipoRet CD(Sistema &s, Cadena nombreDirectorio) {
 
     // -------------------------------------------------
     // Caso donde se da un directorio destino cualquiera un nivel mas abajo, que puede o no existir.
-    // Guardamos su padre (el directorio anterior) por si el anterior era la raiz.
+    // Guardamos su padre (el directorio ante rior) por si el anterior era la raiz.
     Arbolg directorio = arbol_ph(s->actual);  // baja un nivel desde el actual.
     while (directorio != NULL && (strcmp(arbol_nombre(directorio), nombreDirectorio) != 0 || arbol_tipo(directorio) == 1)) {
         directorio = arbol_sh(directorio);  // nuestro nuevo actual
@@ -519,7 +519,10 @@ TipoRet ATTRIB(Sistema &s, Cadena nombreArchivo, Cadena parametro) {
                 archivoAnterior = archivo;
                 archivo = arbol_sh(archivo);
             }
-
+            if(arbol_tipo(archivo) == 0){
+                cout << nombreArchivo << " es un directorio, no se permite usar 'ATTRIB' sobre un directorio." << endl;
+                return ERROR;
+            }
             if (strcasecmp(parametro, "+W") == 0) {
                 modificar_escritura(archivo, true);
                 cout << "El permiso de escritura fue agregado exitosamente al archivo '" << nombreArchivo << "'." << endl;
@@ -534,7 +537,7 @@ TipoRet ATTRIB(Sistema &s, Cadena nombreArchivo, Cadena parametro) {
             return ERROR;
         }
     } else {
-        cout << "El archivo '" << nombreArchivo << "' No existe." << endl;
+        cout << "El archivo '" << nombreArchivo << "' no existe." << endl;
         return ERROR;
     }
 }
