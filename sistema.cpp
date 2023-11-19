@@ -75,8 +75,11 @@ TipoRet CREARSISTEMA(Sistema &s) {
     // sin subdirectorios ni archivos.
     // Pre: No debe exisitr un sistema previamente creado.
 
+    // Asignar memoria para la estructura _sistema
+    s = new (_sistema);
+
     s->arbol = crear_raiz();
-    s->actual = s->arbol;  // El actual pasa a ser la raìz.
+    s->actual = s->arbol;  // El actual pasa a ser la raíz.
     strcpy(s->path, NOMBRE_RAIZ);
     return OK;
 }
