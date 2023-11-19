@@ -12,116 +12,100 @@
 
 #include "definiciones.h"
 
-typedef struct _sistema *Sistema;
+typedef struct _arbolg *Arbolg;
 
-Sistema crear_raiz();
+Arbolg crear_raiz();
 // crea la RAIZ vacía.
 
-Sistema crear_archivo(Cadena nombreArchivo);
+Arbolg crear_archivo(Cadena nombreArchivo);
 // crea un archivo vacío.
 
-Sistema crear_directorio(Cadena nombreDirectorio, Sistema directorioActual);
+Arbolg crear_directorio(Cadena nombreDirectorio, Arbolg directorioActual);
 // crea un directorio vacío.
 
-Sistema copiar_nodo(Sistema &copiar);
+Arbolg copiar_nodo(Arbolg &copiar);
 // Retorna un nodo con los mismos datos que el nodo que recibe y no comparte memoria con el mismo.
 // Pre: nodo 'copiar' no vacio.
 
-bool vacio(Sistema s);
+bool vacio(Arbolg s);
 // retorna true si el arbol es vacío, false en caso contrario.
 
-Sistema arbol_ph(Sistema s);
+Arbolg arbol_ph(Arbolg s);
 // retorna el primer hijo.
 // Pre: s no vacío.
 
-Sistema arbol_sh(Sistema s);
+Arbolg arbol_sh(Arbolg s);
 // retorna el siguiente hermano.
 // Pre: s no vacío.
 
-Sistema arbol_actual(Sistema s);
-// retorna el actual.
-// Pre: s no vacío.
-
-Sistema arbol_anterior(Sistema s);
+Arbolg arbol_anterior(Arbolg s);
 // retorna el anterior.
 // Pre: s no vacío.
 
-Cadena arbol_nombre(Sistema s);
+Cadena arbol_nombre(Arbolg s);
 // retorna el nombre del archivo.
 // Pre: s no vacío.
 
-bool arbol_escritura(Sistema s);
+bool arbol_escritura(Arbolg s);
 // retorna el valor del permiso de escritura.
 // Pre: s no vacío.
 
-void modificar_escritura(Sistema &s, bool valor);
+void modificar_escritura(Arbolg &s, bool valor);
 // modifica el valor del permiso de escritura.
 // Pre: s no vacío.
 
-void modificar_actual(Sistema &s, Sistema actual);
-// cambia el directorio actual del sistema.
-// Pre: s no vacío.
-
-void modificar_anterior(Sistema &s, Sistema anterior);
+void modificar_anterior(Arbolg &s, Arbolg anterior);
 // cambia el directorio anterior del sistema.
 // Pre: s no vacío.
 
-void modificar_ph(Sistema &s, Sistema q);
+void modificar_ph(Arbolg &s, Arbolg q);
 // modifica el puntero primer hijo del nodo dado.
 // Pre: s no vacío.
 
-void modificar_sh(Sistema &s, Sistema q);
+void modificar_sh(Arbolg &s, Arbolg q);
 // modifica el puntero siguiente hermano del nodo dado.
 // Pre: s no vacío.
 
-void sumar_path(Sistema &s, Cadena subdirectorio);
-// modifica el path, concatenándole un nuevo nombre de subdirectorio al final.
-// Pre: s no vacío.
-
-void restar_path(Sistema &s);
-// modifica el path, removiéndole un nombre de subdirectorio al final.
-// Pre: s no vacío.
-
-Cadena arbol_contenido(Sistema s);
+Cadena arbol_contenido(Arbolg s);
 // retorna el valor del contenido.
 // Pre: s no vacío.
 
-TipoNodo arbol_tipo(Sistema s);
+TipoNodo arbol_tipo(Arbolg s);
 // retorna el tipo del nodo.
 // Pre: s no vacío.
 
-Cadena arbol_path(Sistema s);
-// retorna el path actual.
-// Pre: s no vacio.
+// Cadena arbol_path(Sistema s);
+// // retorna el path actual.
+// // Pre: s no vacio.
 
-Sistema arbol_insertar(Sistema &s, Sistema nodo);
+Arbolg arbol_insertar(Arbolg &s, Arbolg nodo);
 // Inserta un nodo como último sigiente hermano en el primer nivel del arbol.
 
-void arbol_eliminar(Sistema &s, Sistema &nodo, Sistema &nodoAnterior);
+void arbol_eliminar(Arbolg &s, Arbolg &nodo, Arbolg &nodoAnterior);
 // Elimina un archivo o directorio del árbol en el directorio actual.
 
-void destruir_arbol(Sistema &s);
+void destruir_arbol(Arbolg &s);
 // Destruye el arbol dado.
 
-void eliminar_nodo(Sistema &s, Sistema &nodo, Sistema &nodoAnterior);
+void eliminar_nodo(Arbolg &s, Arbolg &nodo, Arbolg &nodoAnterior);
 // Elimina un nodo cualquiera dado, sin condiciones, ni cambios en punteros.
 
 int mayor(int a, int b);
 // Retorna el mayor de dos enteros.
 
-int arbol_profunidad(Sistema s);
+int arbol_profunidad(Arbolg s);
 // Retorna la profundidad del árbol.
 
-void imprimir_nivel(Sistema s, int nivel);
+void imprimir_nivel(Arbolg s, int nivel);
 // Imprime el nivel dado del arbol general.
 
-bool arbol_pertenece(Sistema s, Cadena nombre);
+bool arbol_pertenece(Arbolg s, Cadena nombre);
 // Retorna true si la cadena 'nombre' pertenece al arbol 's'.
 
-bool arbol_pertenece_un_nivel(Sistema s, Cadena nombre);
+bool arbol_pertenece_un_nivel(Arbolg s, Cadena nombre);
 // Retorna true si 'nombre' pertenece al nivel actual del árbol 's'.
 
-void mostrar_estructura_recursiva(Sistema s, Cadena path);
+void mostrar_estructura_recursiva(Arbolg s, Cadena path);
 // Se muestra en pantalla la estructura de los archivos y directorios desde cualquier lugar del sistema de manera recursiva
 // Mostrando al principio los archivos del directorio y luego los subdirectorios del mismo.
 

@@ -17,12 +17,67 @@
 
 using namespace std;
 
+struct _sistema {
+    // aquí deben figurar los campos que usted considere necesarios para
+    // manipular el sistema de directorios. Se deberan crear nuevos modulos.
+
+    // Puntero al arbol finitario que contiene todos los nodos y ficheros por niveles.
+    Arbolg arbol;  // Siempre retorna la raíz.
+
+    // directorio actual.
+    Arbolg actual;
+
+    // Cadena para el path.
+    Cadena path = new (char[64]);
+};
+
+void modificar_actual(Sistema &s, Arbolg actual) {
+    // modifica el directorio actual del sistema.
+    // Pre: s no vacío.
+    s->actual = actual;
+}
+
+void sumar_path(Sistema &s, Cadena subdirectorio) {
+    // modifica el path, concatenándole un nuevo nombre de subdirectorio al final.
+    // Pre: s no vacío.
+    strcat(s->path, "/");
+    strcat(s->path, subdirectorio);
+}
+
+void restar_path(Sistema &s) {
+    // modifica el path, removiéndole un nombre de subdirectorio al final.
+    // Pre: s no vacío.
+
+    Cadena src = new (char[64]);
+    Cadena dest = new (char[64]);
+
+    // copiamos el contenido del path actual en 'src'.
+    strcpy(src, s->path);
+    // tomamos el largo de la cadena.
+    int len = strlen(src);
+    // invertimos la cadena para hacer un strtok posteriormente.
+    for (int i = 0; i < len; i++) {
+        dest[len - i - 1] = src[i];
+    }
+    // le hacemos un strtok para quitar el ultimo subdirectorio del path.
+    dest = strtok(dest, "(/)\n");
+    // invertimos la cadena nuevamente para que sea legible.
+    for (int i = 0; i < len; i++) {
+        s->path[len - i - 1] = dest[i];
+    }
+
+    delete src;
+    delete dest;
+}
+
 TipoRet CREARSISTEMA(Sistema &s) {
     // Inicializa el sistema para que contenga únicamente al directorio RAIZ,
     // sin subdirectorios ni archivos.
     // Pre: No debe exisitr un sistema previamente creado.
 
-    s = crear_raiz();
+    s->arbol = crear_raiz();
+    s->actual = s->arbol;  // El actual pasa a ser la raìz.
+    strcpy(s->path, NOMBRE_RAIZ);
     return OK;
 }
 
@@ -31,7 +86,7 @@ TipoRet DESTRUIRSISTEMA(Sistema &s) {
     // datos que constituyen el file system.
     // Pre: El sistema debe haber sido creado previamente.
 
-    destruir_arbol(s);
+    destruir_arbol(s->arbol);
     return OK;
 }
 
@@ -40,7 +95,7 @@ TipoRet CD(Sistema &s, Cadena nombreDirectorio) {
 
     // -------------- VALIDACIONES --------------
     // CASO "CD .." y nos encontramos en raiz.
-    if (strcmp(arbol_nombre(arbol_actual(s)), NOMBRE_RAIZ) == 0 &&
+    if (strcmp(arbol_nombre(s->actual), NOMBRE_RAIZ) == 0 &&
         strcmp(nombreDirectorio, "..") == 0) {
         cout << "Se encuentra en el directorio raíz." << endl;
         return ERROR;
@@ -49,24 +104,23 @@ TipoRet CD(Sistema &s, Cadena nombreDirectorio) {
 
     // CASO "CD ..".
     if (strcmp(nombreDirectorio, "..") == 0) {
-        modificar_actual(s, arbol_anterior(s));
-        modificar_anterior(s, arbol_anterior(arbol_anterior(s)));  // Establecer el directorio anterior al anterior del anterior.
+        modificar_actual(s, arbol_anterior(s->arbol));
+        modificar_anterior(s->arbol, arbol_anterior(arbol_anterior(s->arbol)));  // Establecer el directorio anterior al anterior del anterior.
         restar_path(s);
         return OK;
     }
 
     // CASO "CD RAIZ".
     if (strcmp(nombreDirectorio, NOMBRE_RAIZ) == 0) {
-        modificar_actual(s, s);
-        strcpy(arbol_path(s), NOMBRE_RAIZ);
+        modificar_actual(s, s->arbol);  // vuelve a la raíz.
+        strcpy(s->path, NOMBRE_RAIZ);
         return OK;
     }
 
     // -------------------------------------------------
-
-    // Guardamos su padre (el directorio anterior).
-    // por si el anterior era la raiz.
-    Sistema directorio = arbol_ph(arbol_actual(s));  // baja un nivel desde el actual.
+    // Caso donde se da un directorio destino cualquiera un nivel mas abajo, que puede o no existir.
+    // Guardamos su padre (el directorio anterior) por si el anterior era la raiz.
+    Arbolg directorio = arbol_ph(s->actual);  // baja un nivel desde el actual.
     while (directorio != NULL && (strcmp(arbol_nombre(directorio), nombreDirectorio) != 0 || arbol_tipo(directorio) == 1)) {
         directorio = arbol_sh(directorio);  // nuestro nuevo actual
     }
@@ -78,9 +132,8 @@ TipoRet CD(Sistema &s, Cadena nombreDirectorio) {
         return ERROR;
     }
 
-    // Encontró el directorio en el nivel, vamos a él y guardamos el "actual"
-    // como el nuevo anterior.
-    modificar_anterior(s, arbol_actual(s));
+    // Encontró el directorio en el nivel, vamos a él y guardamos el "actual" como el nuevo anterior.
+    modificar_anterior(s->arbol, s->actual);
     sumar_path(s, arbol_nombre(directorio));
     modificar_actual(s, directorio);
 
@@ -111,8 +164,8 @@ TipoRet MKDIR(Sistema &s, Cadena nombreDirectorio) {
     } else {
         // Si pasó las validaciones, se le asigna nombre al directorio y se lo
         // sigue creando.
-        Sistema newDir = crear_directorio(nombreDirectorio, arbol_actual(s));
-        Sistema actual = arbol_actual(s);
+        Arbolg newDir = crear_directorio(nombreDirectorio, s->actual);
+        Arbolg actual = s->actual;
 
         // Chequeamos que no pertenezca.
         if (arbol_pertenece_un_nivel(actual, nombreDirectorio)) {
@@ -132,14 +185,14 @@ TipoRet MKDIR(Sistema &s, Cadena nombreDirectorio) {
 TipoRet RMDIR(Sistema &s, Cadena nombreDirectorio) {
     // Elimina un directorio.
 
-    if (!arbol_pertenece_un_nivel(arbol_actual(s), nombreDirectorio)) {
+    if (!arbol_pertenece_un_nivel(s->actual, nombreDirectorio)) {
         cout << "El directorio '" << nombreDirectorio << "' no existe en el directorio actual." << endl;
         return ERROR;  // El directorio no existe en el directorio actual.
     }
 
     // Encontrar el directorio.
-    Sistema directorio = arbol_ph(arbol_actual(s));  // baja un nivel.
-    Sistema directorioAnterior = NULL;
+    Arbolg directorio = arbol_ph(s->actual);  // baja un nivel.
+    Arbolg directorioAnterior = NULL;
     while (directorio != NULL && strcmp(arbol_nombre(directorio), nombreDirectorio) != 0) {
         directorioAnterior = directorio;
         directorio = arbol_sh(directorio);  // nuestro nodo a eliminar
@@ -155,7 +208,7 @@ TipoRet RMDIR(Sistema &s, Cadena nombreDirectorio) {
     }
 
     // Eliminamos el nodo.
-    Sistema actual = arbol_actual(s);
+    Arbolg actual = s->actual;
     arbol_eliminar(actual, directorio, directorioAnterior);
     cout << "El directorio '" << nombreDirectorio << "' fue eliminado exitosamente." << endl;
 
@@ -166,11 +219,11 @@ TipoRet MOVE(Sistema &s, Cadena nombre, Cadena directorioDestino) {
     // Mueve un directorio o archivo desde su directorio origen hacia un nuevo
     // directorio destino.
 
-    Sistema origen = arbol_actual(s);  // El origen siempre es el directorio actual.
+    Arbolg origen = s->actual;  // El origen siempre es el directorio actual.
 
     // Buscamos el nodo (archivo o directorio).
-    Sistema mover = arbol_ph(origen);  // bajamos al primer hijo del directorio origen para comenzar a buscar.
-    Sistema moverAnterior = NULL;
+    Arbolg mover = arbol_ph(origen);  // bajamos al primer hijo del directorio origen para comenzar a buscar.
+    Arbolg moverAnterior = NULL;
 
     while (mover != NULL && strcmp(arbol_nombre(mover), nombre) != 0) {
         moverAnterior = mover;
@@ -197,7 +250,7 @@ TipoRet MOVE(Sistema &s, Cadena nombre, Cadena directorioDestino) {
 
     Cadena pathToken = strtok(path, "/");  // Usaremos pathToken para ir tomando los nombres de los directorios.
     pathToken = strtok(NULL, "/");         // Nos salteamos la raiz.
-    Sistema cursorDestino = s;             // Comenzaremos a buscar desde la raiz.
+    Arbolg cursorDestino = s->arbol;       // Comenzaremos a buscar desde la raiz.
 
     while (pathToken != NULL) {
         // Validación (nombre del directorio destino debe ser distinto del directorio de origen, exceptuando el caso RAIZ que lo validamos arriba).
@@ -230,8 +283,8 @@ TipoRet MOVE(Sistema &s, Cadena nombre, Cadena directorioDestino) {
     }
 
     // Comparamos que no exista en destino.
-    Sistema comparador = arbol_ph(cursorDestino);  // bajamos al primer hijo del directorio destino para comenzar a comparar.
-    Sistema comparadorAnterior = NULL;
+    Arbolg comparador = arbol_ph(cursorDestino);  // bajamos al primer hijo del directorio destino para comenzar a comparar.
+    Arbolg comparadorAnterior = NULL;
     while (comparador != NULL && strcmp(arbol_nombre(comparador), arbol_nombre(mover)) != 0) {
         comparadorAnterior = comparador;
         comparador = arbol_sh(comparador);  // el nodo a comparar.
@@ -242,7 +295,7 @@ TipoRet MOVE(Sistema &s, Cadena nombre, Cadena directorioDestino) {
         // Lo insertaremos como ultimo siguiente hermano de sus hijos.
         // No hace falta sobrescribir, por lo tanto solo lo insertamos.
 
-        Sistema insertar = copiar_nodo(mover);
+        Arbolg insertar = copiar_nodo(mover);
         // Como se insertara como ultimo hermano, modificamos su puntero sh a NULL.
         arbol_insertar(cursorDestino, insertar);
         modificar_sh(insertar, NULL);
@@ -257,7 +310,7 @@ TipoRet MOVE(Sistema &s, Cadena nombre, Cadena directorioDestino) {
         // Se 'sobreescribe' el archivo/directorio con el mismo nombre.
         // Debemos arreglar los punteros, quitamos el nodo a sobreescribir e insertamos el nuevo como ultimo hermano.
 
-        Sistema insertar = copiar_nodo(mover);
+        Arbolg insertar = copiar_nodo(mover);
 
         // Ajustamos los punteros:
         if (comparadorAnterior != NULL) {
@@ -291,15 +344,15 @@ TipoRet DIR(Sistema &s, Cadena parametro) {
     Lista archivos_ordenados = crear();
     Lista directorios_ordenados = crear();
     if (parametro != NULL && strcmp(parametro, "/S") == 0) {
-        cout << arbol_path(s) << endl;
-        mostrar_estructura_recursiva(arbol_actual(s), arbol_path(s));
+        cout << s->path << endl;
+        mostrar_estructura_recursiva(s->actual, s->path);
     } else {
         // imprimimos la lista que creamos.
-        if (s == arbol_actual(s)) {
+        if (s->arbol == s->actual) {
             // Caso en el que el directorio actual sea la RAIZ y no se usó el parámetro '/s'.
-            Sistema auxArchivos = s;
+            Arbolg auxArchivos = s->arbol;  // Desde la raiz.
             auxArchivos = arbol_ph(auxArchivos);
-            Sistema auxDirectorios = s;
+            Arbolg auxDirectorios = s->arbol;  // Desde la raiz.
             auxDirectorios = arbol_ph(auxDirectorios);
 
             // insertamos todos los archivos del primer nivel en la lista.
@@ -331,9 +384,9 @@ TipoRet DIR(Sistema &s, Cadena parametro) {
         } else {
             // Caso donde nos encontramos en un subdirectorio.
             // Encontrar el directorio actual.
-            Sistema auxArchivos = arbol_actual(s);
+            Arbolg auxArchivos = s->actual;
             auxArchivos = arbol_ph(auxArchivos);  // bajamos un nivel desde el "actual".
-            Sistema auxDirectorios = arbol_actual(s);
+            Arbolg auxDirectorios = s->actual;
             auxDirectorios = arbol_ph(auxDirectorios);
 
             // insertamos todos los archivos del primer nivel del directorio
@@ -357,7 +410,7 @@ TipoRet DIR(Sistema &s, Cadena parametro) {
             }
 
             // Imprimimos el path del subdirectorio.
-            cout << arbol_path(s) << endl;
+            cout << s->path << endl;
             cout << endl;
 
             // Luego se imprimen los archivos ordenados alfabéticamente, seguido de los
@@ -399,15 +452,15 @@ TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo) {
     } else {
         // Si pasó las validaciones, se le asigna nombre al archivo y se lo
         // sigue creando.
-        Sistema newFile = crear_archivo(nombreArchivo);
+        Arbolg newFile = crear_archivo(nombreArchivo);
 
-        if (arbol_pertenece_un_nivel(arbol_actual(s), nombreArchivo)) {
+        if (arbol_pertenece_un_nivel(s->actual, nombreArchivo)) {
             cout << "El archivo '" << nombreArchivo << "' ya existe." << endl;
             delete auxiliar;
             return ERROR;
         } else {
             // insertamos el nuevo archivo como último hermano.
-            Sistema actual = arbol_actual(s);
+            Arbolg actual = s->actual;
             arbol_insertar(actual, newFile);
             cout << "El archivo '" << nombreArchivo << "' fue creado exitosamente."
                  << endl;
@@ -421,14 +474,14 @@ TipoRet DELETE(Sistema &s, Cadena nombreArchivo) {
     // Elimina un archivo del directorio actual, siempre y cuando no sea de sólo
     // lectura.
 
-    if (!arbol_pertenece_un_nivel(arbol_actual(s), nombreArchivo)) {
+    if (!arbol_pertenece_un_nivel(s->actual, nombreArchivo)) {
         cout << "El archivo '" << nombreArchivo << "' no existe en el directorio actual." << endl;
         return ERROR;  // El archivo no existe en el directorio actual
     }
 
     // Encontrar el archivo
-    Sistema archivo = arbol_ph(arbol_actual(s));  // bajamos un nivel desde el actual
-    Sistema archivoAnterior = NULL;
+    Arbolg archivo = arbol_ph(s->actual);  // bajamos un nivel desde el actual
+    Arbolg archivoAnterior = NULL;
     while (archivo != NULL && strcmp(arbol_nombre(archivo), nombreArchivo) != 0) {
         archivoAnterior = archivo;
         archivo = arbol_sh(archivo);
@@ -444,7 +497,7 @@ TipoRet DELETE(Sistema &s, Cadena nombreArchivo) {
         return ERROR;
     }
 
-    Sistema actual = arbol_actual(s);
+    Arbolg actual = s->actual;
     arbol_eliminar(actual, archivo, archivoAnterior);
     cout << "El archivo '" << nombreArchivo << "' fue eliminado exitosamente." << endl;
     return OK;
@@ -453,12 +506,12 @@ TipoRet DELETE(Sistema &s, Cadena nombreArchivo) {
 TipoRet ATTRIB(Sistema &s, Cadena nombreArchivo, Cadena parametro) {
     // Agrega un texto al comienzo del archivo NombreArchivo.
 
-    if (arbol_pertenece_un_nivel(arbol_actual(s), nombreArchivo)) {
+    if (arbol_pertenece_un_nivel(s->actual, nombreArchivo)) {
         if ((strcasecmp(parametro, "+W") == 0 ||
              strcasecmp(parametro, "-W") == 0)) {
             // buscamos el nodo a editar,
-            Sistema archivo = arbol_ph(arbol_actual(s));  // bajamos un nivel desde el actual
-            Sistema archivoAnterior = NULL;
+            Arbolg archivo = arbol_ph(s->actual);  // bajamos un nivel desde el actual
+            Arbolg archivoAnterior = NULL;
             while (archivo != NULL && strcmp(arbol_nombre(archivo), nombreArchivo) != 0) {
                 archivoAnterior = archivo;
                 archivo = arbol_sh(archivo);
@@ -486,10 +539,10 @@ TipoRet ATTRIB(Sistema &s, Cadena nombreArchivo, Cadena parametro) {
 TipoRet IC(Sistema &s, Cadena nombreArchivo, Cadena texto) {
     // Agrega un texto al principio del archivo NombreArchivo.
 
-    if (arbol_pertenece_un_nivel(arbol_actual(s), nombreArchivo)) {
+    if (arbol_pertenece_un_nivel(s->actual, nombreArchivo)) {
         // buscamos el nodo a editar,
-        Sistema archivo = arbol_ph(arbol_actual(s));  // bajamos un nivel desde el actual
-        Sistema archivoAnterior = NULL;
+        Arbolg archivo = arbol_ph(s->actual);  // bajamos un nivel desde el actual
+        Arbolg archivoAnterior = NULL;
         while (archivo != NULL && strcmp(arbol_nombre(archivo), nombreArchivo) != 0) {
             archivoAnterior = archivo;
             archivo = arbol_sh(archivo);
@@ -525,10 +578,10 @@ TipoRet IC(Sistema &s, Cadena nombreArchivo, Cadena texto) {
 TipoRet IF(Sistema &s, Cadena nombreArchivo, Cadena texto) {
     // Agrega un texto al final del archivo NombreArchivo.
 
-    if (arbol_pertenece_un_nivel(arbol_actual(s), nombreArchivo)) {
+    if (arbol_pertenece_un_nivel(s->actual, nombreArchivo)) {
         // buscamos el nodo a editar,
-        Sistema archivo = arbol_ph(arbol_actual(s));  // bajamos un nivel desde el actual
-        Sistema archivoAnterior = NULL;
+        Arbolg archivo = arbol_ph(s->actual);  // bajamos un nivel desde el actual
+        Arbolg archivoAnterior = NULL;
         while (archivo != NULL && strcmp(arbol_nombre(archivo), nombreArchivo) != 0) {
             archivoAnterior = archivo;
             archivo = arbol_sh(archivo);
@@ -561,10 +614,10 @@ TipoRet IF(Sistema &s, Cadena nombreArchivo, Cadena texto) {
 TipoRet DC(Sistema &s, Cadena nombreArchivo, int k) {
     // Elimina los a lo sumo K primeros caracteres del archivo parámetro.
 
-    if (arbol_pertenece_un_nivel(arbol_actual(s), nombreArchivo)) {
+    if (arbol_pertenece_un_nivel(s->actual, nombreArchivo)) {
         // buscamos el nodo a editar,
-        Sistema archivo = arbol_ph(arbol_actual(s));  // bajamos un nivel desde el actual
-        Sistema archivoAnterior = NULL;
+        Arbolg archivo = arbol_ph(s->actual);  // bajamos un nivel desde el actual
+        Arbolg archivoAnterior = NULL;
         while (archivo != NULL && strcmp(arbol_nombre(archivo), nombreArchivo) != 0) {
             archivoAnterior = archivo;
             archivo = arbol_sh(archivo);
@@ -609,10 +662,10 @@ TipoRet DC(Sistema &s, Cadena nombreArchivo, int k) {
 TipoRet DF(Sistema &s, Cadena nombreArchivo, int k) {
     // Elimina los a lo sumo K últimos caracteres del archivo parámetro.
 
-    if (arbol_pertenece_un_nivel(arbol_actual(s), nombreArchivo)) {
+    if (arbol_pertenece_un_nivel(s->actual, nombreArchivo)) {
         // buscamos el nodo a editar,
-        Sistema archivo = arbol_ph(arbol_actual(s));  // bajamos un nivel desde el actual
-        Sistema archivoAnterior = NULL;
+        Arbolg archivo = arbol_ph(s->actual);  // bajamos un nivel desde el actual
+        Arbolg archivoAnterior = NULL;
         while (archivo != NULL && strcmp(arbol_nombre(archivo), nombreArchivo) != 0) {
             archivoAnterior = archivo;
             archivo = arbol_sh(archivo);
@@ -655,13 +708,13 @@ TipoRet TYPE(Sistema &s, Cadena nombreArchivo) {
     // Imprime el contenido del archivo parámetro.
 
     // Verificar si el archivo existe en el directorio actual.
-    if (!arbol_pertenece_un_nivel(arbol_actual(s), nombreArchivo)) {
+    if (!arbol_pertenece_un_nivel(s->actual, nombreArchivo)) {
         cout << "El archivo '" << nombreArchivo << "' no existe en el directorio actual" << endl;
         return ERROR;
     }
     // buscamos el nodo a editar,
-    Sistema archivo = arbol_ph(arbol_actual(s));  // bajamos un nivel desde el actual
-    Sistema archivoAnterior = NULL;
+    Arbolg archivo = arbol_ph(s->actual);  // bajamos un nivel desde el actual
+    Arbolg archivoAnterior = NULL;
     while (archivo != NULL && strcmp(arbol_nombre(archivo), nombreArchivo) != 0) {
         archivoAnterior = archivo;
         archivo = arbol_sh(archivo);
@@ -688,14 +741,14 @@ TipoRet SEARCH(Sistema &s, Cadena nombreArchivo, Cadena texto) {
     // en que lo encuentra.
 
     // Chequea si el archivo existe
-    if (!arbol_pertenece_un_nivel(arbol_actual(s), nombreArchivo)) {
+    if (!arbol_pertenece_un_nivel(s->actual, nombreArchivo)) {
         cout << "El archivo '" << nombreArchivo << "' no existe en el directorio actual" << endl;
         return ERROR;
     }
 
     // Encontrar el archivo
-    Sistema archivo = arbol_ph(arbol_actual(s));  // bajamos un nivel desde el actual
-    Sistema archivoAnterior = NULL;
+    Arbolg archivo = arbol_ph(s->actual);  // bajamos un nivel desde el actual
+    Arbolg archivoAnterior = NULL;
     while (archivo != NULL && strcmp(arbol_nombre(archivo), nombreArchivo) != 0) {
         archivoAnterior = archivo;
         archivo = arbol_sh(archivo);
@@ -722,14 +775,14 @@ TipoRet SEARCH(Sistema &s, Cadena nombreArchivo, Cadena texto) {
 
 TipoRet REPLACE(Sistema &s, Cadena nombreArchivo, Cadena texto1, Cadena texto2) {
     // Chequea si el archivo existe
-    if (!arbol_pertenece_un_nivel(arbol_actual(s), nombreArchivo)) {
+    if (!arbol_pertenece_un_nivel(s->actual, nombreArchivo)) {
         cout << "El archivo '" << nombreArchivo << "' no existe en el directorio actual" << endl;
         return ERROR;
     }
 
     // Encontrar el archivo
-    Sistema archivo = arbol_ph(arbol_actual(s));  // bajamos un nivel desde el actual
-    Sistema archivoAnterior = NULL;
+    Arbolg archivo = arbol_ph(s->actual);  // bajamos un nivel desde el actual
+    Arbolg archivoAnterior = NULL;
     while (archivo != NULL && strcmp(arbol_nombre(archivo), nombreArchivo) != 0) {
         archivoAnterior = archivo;
         archivo = arbol_sh(archivo);

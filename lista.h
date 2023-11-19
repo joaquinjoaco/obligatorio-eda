@@ -18,13 +18,13 @@ typedef struct _nodo_lista *Lista;
 Lista crear();
 // Crea la lista vacía.
 
-Lista cons(Sistema s, Lista l);
+Lista cons(Arbolg s, Lista l);
 // Inserta el nodo (archivo o directorio) al inicio de l.
 
 bool isEmpty(Lista l);
 // Retorna true si l es vacía, false en caso contrario.
 
-Sistema nodo(Lista l);
+Arbolg nodo(Lista l);
 // Retorna el nodo (archivo o directorio) del primer elemento de la lista.
 // Pre: l no vacía.
 
@@ -35,7 +35,7 @@ Lista tail(Lista l);
 // Retorna el "resto" de la lista.
 // Pre: l no vacia.
 
-Lista insertar(Sistema archivo, Lista l);
+Lista insertar(Arbolg archivo, Lista l);
 // Retorna la lista fruto de insertar ordenadamente el nodo 'n' en la lista.
 // El nodo puede ser tanto un directorio como un archivo.
 // La lista resultante no comparte memoria con la lista resultado.

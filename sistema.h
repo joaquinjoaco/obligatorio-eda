@@ -13,6 +13,8 @@
 #include "arbolg.h"
 #include "lista.h"
 
+typedef struct _sistema *Sistema;
+
 TipoRet CREARSISTEMA(Sistema &s);
 // Inicializa el sistema para que contenga únicamente al directorio RAIZ,
 // sin subdirectorios ni archivos.

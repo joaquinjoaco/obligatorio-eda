@@ -17,53 +17,46 @@
 
 using namespace std;
 
-struct _sistema {
+struct _arbolg {
     // aquí deben figurar los campos que usted considere necesarios para
     // manipular el sistema de directorios. Se deberan crear nuevos modulos.
 
     // LA ESTRUCTURA OPTADA ES LA DE TIPO ARBOL GENERAL
     // Tipo de nodo
-    TipoNodo tipo;  //  "DIR" || "FILE"
+    TipoNodo tipo;  //  "DIR" || "FILE".
     // --------------------------------
 
-    // Nombre del archivo/directorio
+    // Nombre del archivo/directorio.
     Cadena nombre = new (char[MAX_NOMBRE]);
     // -----------------------------
 
-    // Primer hijo (para directorios)
-    Sistema ph;
+    // Primer hijo (para directorios).
+    Arbolg ph;
+    // directorio anterior (para directorios).
+    Arbolg anterior;
     // ------------------------------
-    // Siguiente hermano (para directorios y archivos)
-    Sistema sh;
+    // Siguiente hermano (para directorios y archivos).
+    Arbolg sh;
     // -----------------------------------------------
 
-    // SOLO LA RAIZ (en el futuro solo el sistema, el arbol va por separado)
-    // directorio actual.
-    Sistema actual;
-    // directorio anterior.
-    Sistema anterior;
-    // Cadena para el path.
-    Cadena path = new (char[64]);
-
-    // Atributos para archivos
+    // Atributos para archivos.
     Cadena contenido = new (char[TEXTO_MAX]);
     bool lectura;
     bool escritura;
     // -----------------------
 };
 
-Sistema crear_raiz() {
+Arbolg crear_raiz() {
     // crea la RAIZ vacía.
 
-    Sistema raiz = new (_sistema);
+    Arbolg raiz = new (_arbolg);
     raiz->tipo = _tipo(0);
     strcpy(raiz->nombre, NOMBRE_RAIZ);
 
     raiz->ph = NULL;
     raiz->sh = NULL;
-    raiz->actual = raiz;
-    raiz->anterior = NULL;
-    strcpy(raiz->path, NOMBRE_RAIZ);
+    raiz->anterior = NULL;  // Raíz no tiene anterior.
+
     strcpy(raiz->contenido, "");
     raiz->lectura = true;
     raiz->escritura = true;
@@ -71,10 +64,10 @@ Sistema crear_raiz() {
     return raiz;
 }
 
-Sistema crear_archivo(Cadena nombreArchivo) {
+Arbolg crear_archivo(Cadena nombreArchivo) {
     // crea un archivo vacío.
 
-    Sistema newFile = new (_sistema);
+    Arbolg newFile = new (_arbolg);
     strcpy(newFile->nombre, nombreArchivo);
     newFile->tipo = _tipo(1);
     strcpy(newFile->contenido, "");
@@ -86,10 +79,10 @@ Sistema crear_archivo(Cadena nombreArchivo) {
     return newFile;
 }
 
-Sistema crear_directorio(Cadena nombreDirectorio, Sistema directorioActual) {
+Arbolg crear_directorio(Cadena nombreDirectorio, Arbolg directorioActual) {
     // crea un directorio vacío.
 
-    Sistema newDir = new (_sistema);
+    Arbolg newDir = new (_arbolg);
     strcpy(newDir->nombre, nombreDirectorio);
     newDir->tipo = _tipo(0);
     newDir->ph = NULL;
@@ -101,11 +94,11 @@ Sistema crear_directorio(Cadena nombreDirectorio, Sistema directorioActual) {
     return newDir;
 }
 
-Sistema copiar_nodo(Sistema &copiar) {
+Arbolg copiar_nodo(Arbolg &copiar) {
     // Retorna un nodo con los mismos datos que el nodo que recibe y no comparte memoria con el mismo.
     // Pre: nodo 'copiar' no vacio.
 
-    Sistema nodo = new (_sistema);
+    Arbolg nodo = new (_arbolg);
     strcpy(nodo->nombre, copiar->nombre);
     nodo->tipo = copiar->tipo;
     strcpy(nodo->contenido, copiar->contenido);
@@ -116,134 +109,96 @@ Sistema copiar_nodo(Sistema &copiar) {
     return nodo;
 }
 
-bool vacio(Sistema s) {
+bool vacio(Arbolg s) {
     // retorna true si el arbol es vacío, false en caso contrario.
     return (s == NULL);
 }
 
-Sistema arbol_ph(Sistema s) {
+Arbolg arbol_ph(Arbolg s) {
     // retorna el primer hijo.
     // Pre: s no vacio.
     return s->ph;
 }
 
-Sistema arbol_sh(Sistema s) {
+Arbolg arbol_sh(Arbolg s) {
     // retorna el siguiente hermano.
     // Pre: s no vacio.
     return s->sh;
 }
 
-Sistema arbol_actual(Sistema s) {
-    // retorna el directorio actual.
-    // Pre: s no vacío.
-    return s->actual;
-}
+// Arbolg arbol_actual(Arbolg s) {
+//     // retorna el directorio actual.
+//     // Pre: s no vacío.
+//     return s->actual;
+// }
 
-Sistema arbol_anterior(Sistema s) {
+Arbolg arbol_anterior(Arbolg s) {
     // retorna el directorio actual.
     // Pre: s no vacío.
     return s->anterior;
 }
 
-Cadena arbol_nombre(Sistema s) {
+Cadena arbol_nombre(Arbolg s) {
     // retorna el nombre del archivo.
     // Pre: s no vacio.
     return s->nombre;
 }
 
-Cadena arbol_contenido(Sistema s) {
+Cadena arbol_contenido(Arbolg s) {
     // retorna el valor del contenido.
     // Pre: s no vacio.
     return s->contenido;
 }
 
-TipoNodo arbol_tipo(Sistema s) {
+TipoNodo arbol_tipo(Arbolg s) {
     // retorna el tipo del nodo.
     // Pre: s no vacio.
     return s->tipo;
 }
 
-Cadena arbol_path(Sistema s) {
-    // retorna el path actual.
-    // Pre: s no vacio.
-    return s->path;
-}
-bool arbol_escritura(Sistema s) {
+// Cadena arbol_path(Sistema s) {
+//     // retorna el path actual.
+//     // Pre: s no vacio.
+//     return s->path;
+// }
+
+bool arbol_escritura(Arbolg s) {
     // retorna el valor del permiso de escritura.
     // Pre: s no vacio.
     return s->escritura;
 }
 
-void modificar_escritura(Sistema &s, bool valor) {
+void modificar_escritura(Arbolg &s, bool valor) {
     // modifica el valor del permiso de escritura.
     // Pre: s no vacio.
     s->escritura = valor;
 }
 
-void modificar_actual(Sistema &s, Sistema actual) {
-    // modifica el directorio actual del sistema.
-    // Pre: s no vacío.
-    s->actual = actual;
-}
-
-void modificar_anterior(Sistema &s, Sistema anterior) {
+void modificar_anterior(Arbolg &s, Arbolg anterior) {
     // cambia el directorio anterior del sistema.
     // Pre: s no vacío.
     s->anterior = anterior;
 }
 
-void modificar_ph(Sistema &s, Sistema q) {
+void modificar_ph(Arbolg &s, Arbolg q) {
     // modifica el puntero primer hijo del nodo dado.
     // Pre: s no vacío.
     s->ph = q;
 }
 
-void modificar_sh(Sistema &s, Sistema q) {
+void modificar_sh(Arbolg &s, Arbolg q) {
     // modifica el puntero siguiente hermano del nodo dado.
     // Pre: s no vacío.
     s->sh = q;
 }
 
-void sumar_path(Sistema &s, Cadena subdirectorio) {
-    // modifica el path, concatenándole un nuevo nombre de subdirectorio al final.
-    // Pre: s no vacío.
-    strcat(s->path, "/");
-    strcat(s->path, subdirectorio);
-}
-
-void restar_path(Sistema &s) {
-    // modifica el path, removiéndole un nombre de subdirectorio al final.
-    // Pre: s no vacío.
-
-    Cadena src = new (char[64]);
-    Cadena dest = new (char[64]);
-
-    // copiamos el contenido del path actual en 'src'.
-    strcpy(src, s->path);
-    // tomamos el largo de la cadena.
-    int len = strlen(src);
-    // invertimos la cadena para hacer un strtok posteriormente.
-    for (int i = 0; i < len; i++) {
-        dest[len - i - 1] = src[i];
-    }
-    // le hacemos un strtok para quitar el ultimo subdirectorio del path.
-    dest = strtok(dest, "(/)\n");
-    // invertimos la cadena nuevamente para que sea legible.
-    for (int i = 0; i < len; i++) {
-        s->path[len - i - 1] = dest[i];
-    }
-
-    delete src;
-    delete dest;
-}
-
-Sistema arbol_insertar(Sistema &s, Sistema nuevoNodo) {
+Arbolg arbol_insertar(Arbolg &s, Arbolg nuevoNodo) {
     // Inserta un nodo como último sigiente
     // hermano en el primer nivel del arbol.
 
     if (!vacio(arbol_ph(s))) {
         // Tiene un primer hijo
-        Sistema aux = s;
+        Arbolg aux = s;
         aux = arbol_ph(aux);  // vamos al primer hijo.
 
         // vamos al último hermano (o último elemento de la lista).
@@ -262,7 +217,7 @@ Sistema arbol_insertar(Sistema &s, Sistema nuevoNodo) {
     return s;
 }
 
-void arbol_eliminar(Sistema &s, Sistema &nodo, Sistema &nodoAnterior) {
+void arbol_eliminar(Arbolg &s, Arbolg &nodo, Arbolg &nodoAnterior) {
     // Elimina un archivo o directorio del árbol en el directorio actual.
 
     if (nodoAnterior == NULL) {
@@ -281,7 +236,7 @@ void arbol_eliminar(Sistema &s, Sistema &nodo, Sistema &nodoAnterior) {
     }
 }
 
-void destruir_arbol(Sistema &s) {
+void destruir_arbol(Arbolg &s) {
     // Destruye el arbol dado.
     if (!vacio(s)) {
         destruir_arbol(s->ph);
@@ -292,7 +247,7 @@ void destruir_arbol(Sistema &s) {
     s = NULL;
 }
 
-void eliminar_nodo(Sistema &s, Sistema &nodo, Sistema &nodoAnterior) {
+void eliminar_nodo(Arbolg &s, Arbolg &nodo, Arbolg &nodoAnterior) {
     // Elimina un nodo cualquiera dado, sin condiciones, ni cambios en punteros.
     if (nodoAnterior == NULL) {
         s->ph = nodo->sh;  // Actualiza el puntero del primer hijo del directorio
@@ -313,7 +268,7 @@ int mayor(int a, int b) {
     }
 }
 
-int arbol_profunidad(Sistema s) {
+int arbol_profunidad(Arbolg s) {
     // Retorna la profundidad del árbol.
 
     if (s == NULL) {
@@ -323,7 +278,7 @@ int arbol_profunidad(Sistema s) {
     }
 }
 
-void imprimir_nivel(Sistema s, int nivel) {
+void imprimir_nivel(Arbolg s, int nivel) {
     // Imprime el nivel dado del arbol general.
     if (s != NULL) {
         if (nivel != 0) {
@@ -348,7 +303,7 @@ void imprimir_nivel(Sistema s, int nivel) {
     }
 }
 
-bool arbol_pertenece(Sistema s, Cadena nombre) {
+bool arbol_pertenece(Arbolg s, Cadena nombre) {
     // Retorna true si la cadena 'nombre' pertenece al arbol 's'.
 
     if (s == NULL) {
@@ -360,7 +315,7 @@ bool arbol_pertenece(Sistema s, Cadena nombre) {
     }
 }
 
-bool arbol_pertenece_un_nivel(Sistema s, Cadena nombre) {
+bool arbol_pertenece_un_nivel(Arbolg s, Cadena nombre) {
     // Retorna true si la cadena 'nombre' pertenece al nivel actual del árbol 's'.
     s = s->ph;
     while (s != NULL) {
@@ -372,7 +327,7 @@ bool arbol_pertenece_un_nivel(Sistema s, Cadena nombre) {
     return false;
 }
 
-void mostrar_estructura_recursiva(Sistema s, Cadena path) {
+void mostrar_estructura_recursiva(Arbolg s, Cadena path) {
     // Se muestra en pantalla la estructura de los archivos y directorios desde cualquier lugar del sistema de manera recursiva
     // Mostrando al principio los archivos del directorio y luego los subdirectorios del mismo.
 
@@ -384,7 +339,7 @@ void mostrar_estructura_recursiva(Sistema s, Cadena path) {
     int numDirectorios = 0;
 
     // Procesar los hijos del directorio actual
-    Sistema subdirectorio = arbol_ph(s);
+    Arbolg subdirectorio = arbol_ph(s);
     while (subdirectorio != NULL) {
         if (arbol_tipo(subdirectorio) == 1) {
             // Es un archivo, almacenar su nombre
@@ -420,7 +375,7 @@ void mostrar_estructura_recursiva(Sistema s, Cadena path) {
         cout << aux_path << endl;
 
         // Llamada recursiva con la ruta del subdirectorio
-        Sistema subdir = arbol_ph(s);
+        Arbolg subdir = arbol_ph(s);
         while (subdir != NULL) {
             if (strcmp(arbol_nombre(subdir), directorios[i]) == 0) {
                 mostrar_estructura_recursiva(subdir, aux_path);

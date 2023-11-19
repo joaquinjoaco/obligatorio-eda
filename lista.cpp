@@ -20,7 +20,7 @@
 using namespace std;
 
 struct _nodo_lista {
-    Sistema nodo;  // archivo o directorio.
+    Arbolg nodo;  // archivo o directorio.
     Lista sig;
 };
 
@@ -29,7 +29,7 @@ Lista crear() {
     return NULL;
 }
 
-Lista cons(Sistema n, Lista l) {
+Lista cons(Arbolg n, Lista l) {
     // Inserta el nodo (archivo o directorio) al inicio de l.
     Lista aux = new (_nodo_lista);
     aux->nodo = n;
@@ -42,7 +42,7 @@ bool isEmpty(Lista l) {
     return (l == NULL);
 }
 
-Sistema nodo(Lista l) {
+Arbolg nodo(Lista l) {
     // Retorna el nodo (archivo o directorio) del primer elemento de la lista.
     // Pre: l no vacia.
     return l->nodo;
@@ -59,7 +59,7 @@ Lista tail(Lista l) {
     return l->sig;
 }
 
-Lista insertar(Sistema n, Lista l) {
+Lista insertar(Arbolg n, Lista l) {
     // Retorna la lista fruto de insertar ordenadamente el nodo 'n' en la lista.
     // El nodo puede ser tanto un directorio como un archivo.
     // La lista resultante no comparte memoria con la lista resultado.
